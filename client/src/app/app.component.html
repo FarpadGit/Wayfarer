@@ -1,0 +1,5 @@
+<app-background />
+<div class="app-container">
+  <app-login-button [ngClass]="{ 'login-btn': true, 'hidden': animationState === 'entering'}"></app-login-button>
+  <router-outlet></router-outlet>
+</div>

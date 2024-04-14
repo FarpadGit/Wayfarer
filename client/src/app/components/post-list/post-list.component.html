@@ -1,0 +1,34 @@
+<div *ngIf="loadingState === 'loading'"><app-loader [text]="'Posztok betöltése...'"/></div>
+<h1 *ngIf="loadingState === 'error'" class="error-msg">{{ error }}</h1>
+
+<div *ngIf="loadingState === 'success' || loadingState === 'reloading'" [ngClass]="{ 'post-list': true, 'fadeout': animationState === 'finished' }"
+    (animationend)="startBgAnimation()"
+    >
+  <div class="post-list-header">
+    <h1>Posztok</h1>
+    <app-new-post-button />
+  </div>
+  <div
+    [ngClass]="{ 'body-container': true, 'collapsed': animationState !== 'none' }"
+    (animationend)="$event.stopPropagation(); animationState = 'finished'"
+  >
+    <div [ngClass]="{ 'post-list-body': true, 'loading': loadingState === 'reloading' }">
+          <app-post-item *ngFor="let post of posts | paginate: { itemsPerPage: paginator.itemsPerPage, currentPage: paginator.currentPage }"
+              [id]="post.id"
+              [title]="post.title"
+              [uploader]="post.uploader"
+              [uploadedSince]="post.createdAt"
+              (onClick)="onPostItemClicked($event)"
+              (onDeleteClick)="deletePost($event)"
+            />
+    </div>
+    <div
+      class="post-list-footer"
+      (animationend)="$event.stopPropagation()"
+    >
+      <h1>
+        <app-paginator #paginator></app-paginator>
+      </h1>
+    </div>
+  </div>
+</div>

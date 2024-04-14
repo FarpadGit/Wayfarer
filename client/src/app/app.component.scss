@@ -1,0 +1,20 @@
+.app-container {
+  max-width: 1200px;
+  width: calc(100vw - 10rem);
+  margin: 0 auto;
+  padding: 2rem 0;
+}
+
+.login-btn {
+  position: fixed;
+  top: 5%;
+  right: 3%;
+  opacity: 1;
+  z-index: 100;
+  transition: opacity 0.5s;
+
+  &.hidden{
+    opacity: 0;
+    user-select: none;
+  }
+}

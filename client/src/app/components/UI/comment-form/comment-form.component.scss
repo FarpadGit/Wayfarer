@@ -1,0 +1,21 @@
+.comment-form-row {
+    display: flex;
+    gap: .5rem;
+}
+
+.message-input {
+    flex-grow: 1;
+    resize: none;
+    height: 70px;
+    border-radius: .5em;
+    padding: .5em;
+    font-size: inherit;
+    font-family: inherit;
+    border: 2px solid var(--app-glow-color);
+    line-height: 1.4;
+
+    &:focus {
+        border-color: hsl(28.9, 100%, 67%);
+        outline: none;
+    }
+}

@@ -1,0 +1,17 @@
+<div class="login-dialog">
+    <img src="../../../assets/lookout.jpg" alt="">
+    <div class="dialog-body">
+        <div class="greeting-text">
+            <h2>Helló {{currentUserName}}, szeretnél másként bejelentkezni?</h2>
+            <p *ngIf="isGuestUser">
+                *Jelenleg a vendég fiókkal vagy bejelentkezve, ami azt jelenti hogy bárki módosíthatja vagy törölheti az ez alatt<br/>
+                létrehozott írásaidat vagy felülbírálhatja a like-jaidat.
+            </p>
+        </div>
+        <div class="dialog-buttons">
+            <button class="btn" (click)="onLoginClick()">Belépek Google fiókkal</button>
+            <button class="btn" (click)="onLogoutClick()" *ngIf="!isGuestUser">Folytatás vendégként</button>
+            <button class="btn" (click)="dismiss()">Most nem</button>
+        </div>
+    </div>
+</div>

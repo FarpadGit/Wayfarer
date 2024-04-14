@@ -1,0 +1,101 @@
+.post-item {
+    position: relative;
+    border: 1px solid var(--app-post-list-border-color);
+    border-top: 1px solid transparent;
+    padding: 15px;
+    transition: scale 0.2s linear, filter 0.2s linear, border-color 0.2s linear, background-color 0.2s linear;
+    overflow: hidden;
+
+    &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        margin-left: 200%;
+        background-image: var(--app-post-highlight-img-url);
+        background-repeat: no-repeat;
+        background-size: 100%;
+        background-position: center 40%;
+        transition: left 0.2s ease, margin-left 0.2s ease;
+        z-index: -1;
+    }
+
+    h3,
+    p {
+        width: fit-content;
+        padding-right: 60px;
+    }
+
+    p {
+        color: gray;
+        font-size: 0.75rem;
+        padding: 0.2rem 0;
+    }
+
+    a {
+        text-decoration: none;
+        color: var(--app-post-list-text-color);
+
+        &:hover,
+        &:focus-visible {
+            text-decoration: underline;
+        }
+    }
+
+    .post-delete-btn {
+        position: absolute;
+        top: 50%;
+        right: 3%;
+        transform: translateY(-50%);
+        color: var(--app-danger-color);
+    
+        &:hover,
+        &:focus-visible {
+            color: var(--app-danger-color-hover);
+        }
+    }
+
+    @media (max-width: 639px) {
+        font-size: smaller;
+    }
+}
+
+/* post item highlight animation */
+
+:host-context(.post-list-body:has(.post-item.highlight)) .post-item:not(.highlight) {
+    filter: blur(0.15rem);
+    scale: 1;
+}
+
+:host-context(.body-container:not(.collapsed)) .post-item.highlight {
+    filter: none;
+    scale: 1.1;
+    border-color: black;
+    background-color: hsl(50, 82%, 82%);
+    border-radius: 10px;
+    z-index: 10;
+}
+
+.post-item.highlight {
+    &:hover::before,
+    &:focus-visible::before {
+        left: 0;
+        margin-left: 0;
+        transition: left 0.2s ease;
+    }
+
+    a {
+        color: whitesmoke;
+    }
+
+    p {
+        color: white;
+    }
+
+}
+
+:host-context(.body-container.collapsed) .post-item {
+    filter: none !important;
+}

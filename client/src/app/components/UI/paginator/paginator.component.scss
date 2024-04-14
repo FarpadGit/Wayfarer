@@ -1,0 +1,105 @@
+.ngx-pagination {
+    margin-left: 0;
+    border: 1px solid #63733f;
+    margin-bottom: 0.1rem;
+    font-size: 16pt;
+    border-radius: 50px;
+    overflow: hidden;
+    display: flex;
+    justify-content: space-between;
+
+    li {
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        border-radius: 0; 
+        overflow: hidden;
+        display: inline-flex;
+        transform: skewX(-25deg);
+        border-left: 1px solid var(--app-post-list-text-color);
+        flex-grow: 1;
+
+        &:first-child {
+            transform: skewX(-25deg);
+            border-left: none;
+        }
+
+        & > a > span,
+        & > span {
+            display: flex;
+            transform: skewX(25deg);
+        }
+    }
+
+    a,
+    button {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        color: #0a0a0a;
+        border-radius: 0; 
+        cursor: pointer; 
+
+        &:hover {
+            background: #e6e6e6; 
+        }
+    }
+
+    .ellipsis {
+        display: flex;
+        justify-content: center;
+        padding: 0.1875rem 0.625rem;
+        user-select: none;
+    }
+
+    .pagination-page {
+        a, button {
+            padding: 0.1875rem 0.625rem;
+        }
+    }
+
+    .current {
+        display: flex;
+        justify-content: center;
+        padding: 0.1875rem 0.625rem;
+        color: #fefefe;
+        cursor: default; 
+        background-color: var(--app-post-list-text-color);
+    }
+
+    .disabled {
+        color: #cacaca;
+        cursor: default; 
+
+        &:hover {
+            background: transparent; 
+        }
+    }
+
+    %pagination-next-previous{
+        width: 3.0rem;
+        display: flex;
+        justify-content: center;
+
+        a {
+            padding: 0 1rem;
+        }
+
+        & > * {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    }
+
+    .pagination-previous {
+        @extend %pagination-next-previous;
+        margin-left: -0.25rem;
+    }
+
+    .pagination-next {
+        @extend %pagination-next-previous;
+        margin-right: -0.25rem;
+    }
+}

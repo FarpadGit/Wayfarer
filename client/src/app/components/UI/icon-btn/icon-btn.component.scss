@@ -1,0 +1,33 @@
+%font-large {
+    font-size: large;
+}
+
+@mixin colored-btn($primary, $hover) {
+    --app-btn-color: #{$primary};
+
+    &:hover,
+    &:focus-visible {
+        --app-btn-color: #{$hover};
+    }
+}
+
+.post-back-btn {
+    @extend %font-large;
+
+    @media (max-width: 639px) {
+        font-size: medium;
+    }
+}
+
+.btn-like {
+    @include colored-btn(var(--app-danger-color), var(--app-danger-color-hover));
+}
+
+.btn-delete {
+    @include colored-btn(var(--app-black-color), var(--app-black-color-hover));
+
+    &-post {
+        @extend .btn-delete, %font-large;
+    }
+}
+

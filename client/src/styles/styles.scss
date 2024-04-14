@@ -1,0 +1,111 @@
+/* You can add global styles to this file, and also import other style files */
+@use "buttonBase";
+$login-drawer-half-height: 15vh;
+
+@font-face {
+    font-family: URW Gothic L;
+    src: local("URW Gothic L"), url("../assets/urw_gothic_l_book.ttf");
+}
+
+@font-face {
+  font-family: Manrope;
+  src: local("Manrope"), url("../assets/Manrope-Regular.ttf");
+}
+  
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.4;
+  min-height: 100vh;
+  scroll-behavior: smooth;
+  --app-glow-color: hsl(30, 100%, 50%);
+  --app-glow-color-hover: hsl(30, 100%, 67%);
+  --app-btn-color: hsl(48, 100%, 50%);
+  --app-btn-color-hover: hsl(48, 100%, 67%);
+  --app-btn-color-disable: hsl(48, 20%, 67%);
+  --app-danger-color: hsl(0, 100%, 50%);
+  --app-danger-color-hover: hsl(0, 100%, 67%);
+  --app-black-color: hsl(0, 0%, 0%);
+  --app-black-color-hover: hsl(0, 0%, 35%);
+  --app-backdrop-url: url("../assets/background.jpg");
+  --app-post-highlight-img-url: url("../assets/Landscape.jpg");
+  --app-post-list-img-url: url("../assets/WorldMap.png");
+  --app-background-img-url: url("../assets/ForestEntry1.jpg");
+  --app-ease-function: cubic-bezier(0.87, 0, 0.13, 1);
+  --app-login-drawer-height: #{$login-drawer-half-height * 2};
+}
+
+body {
+  background-image: linear-gradient(to bottom, transparent 35%, hsl(50, 40%, 60%)), var(--app-backdrop-url);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-color: hsl(42, 75%, 75%);
+  background-blend-mode: multiply;
+  filter: none;
+  transition: filter 0.5s ease;
+
+  &.blur {
+    filter: blur(10px);
+  }
+
+  &:has(.background-image.dropdown) {
+    overflow: hidden;
+  }
+}
+
+.hide {
+  display: none !important;
+}
+
+.error-msg {
+  color: var(--app-danger-color-hover);
+}
+
+
+@mixin dialog-anim($name, $top, $fade: true) {
+  @keyframes #{$name}-dialog-enter {
+    0% {
+      @if $fade { 
+        opacity: 0; 
+        top: 0%;
+      }
+      @else { 
+        opacity: 1; 
+        top: -#{$top};
+      }
+    }
+
+    100% {
+      opacity: 1;
+      top: $top;
+    }
+  }
+
+  @keyframes #{$name}-dialog-exit {
+    0% {
+      opacity: 1;
+      top: $top;
+    }
+
+    100% {
+      @if $fade { 
+        opacity: 0; 
+        top: 0%;
+      }
+      @else { 
+        opacity: 1; 
+        top: -#{$top};
+      }
+    }
+  }
+}
+
+@include dialog-anim("new-post", 50%);
+@include dialog-anim("login", $login-drawer-half-height, false);

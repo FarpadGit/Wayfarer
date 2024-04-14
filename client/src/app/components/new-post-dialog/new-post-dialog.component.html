@@ -1,0 +1,31 @@
+<form class="new-post-dialog" (ngSubmit)="onSubmit()" #dialogForm="ngForm">
+      <div class="dialog-title">
+        Új poszt
+      </div>
+      <div class="dialog-body">
+        <input
+          #titleInput
+          required
+          id="title"
+          name="title"
+          [(ngModel)]="newPost.title"
+          placeholder="Cím"
+          type="text"
+        />
+        <textarea
+          required
+          rows="4"
+          id="body"
+          name="body"
+          [(ngModel)]="newPost.body"
+        ></textarea>
+      </div>
+      <div class="dialog-buttons">
+        <button class="btn" (click)="dismiss()" type="button">
+          Mégse
+        </button>
+        <button class="btn" [disabled]="!dialogForm.form.valid" type="submit">
+          Létrehoz
+        </button>
+      </div>
+    </form>

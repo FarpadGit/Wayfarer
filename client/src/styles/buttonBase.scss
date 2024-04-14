@@ -1,0 +1,61 @@
+.btn {
+    padding: 0.5em 1em;
+    background: var(--app-btn-color);
+    color: rgb(0, 0, 0);
+    border: 3px outset var(--app-btn-color);
+    border-radius: 0.5em;
+    font-size: 0.75em;
+    font-family: Helvetica;
+    cursor: pointer;
+    font-weight: bold;
+
+    &:hover,
+    &:focus-visible {
+        --app-btn-color: var(--app-btn-color-hover);
+    }
+
+    &[disabled] {
+        --app-btn-color: var(--app-btn-color-disable);
+    }
+    
+    @media (max-width: 639px) {
+        font-size: 0.8em;
+    }
+}
+
+.icon-btn {
+    background: none;
+    border: none;
+    color: var(--app-btn-color);
+    padding: 0.25em;
+    display: flex;
+    align-items: center;
+
+    &:hover,
+    &:focus-visible {
+        --app-btn-color: var(--app-glow-color-hover);
+    }
+
+    &-active {
+        position: relative;
+        --app-btn-color: var(--app-danger-color);
+
+        &:hover,
+        &:focus-visible {
+            --app-btn-color: var(--app-danger-color-hover);
+        }
+
+        &::before {
+            content: "\00D7";
+            position: absolute;
+            font-size: 0.75em;
+            width: 1em;
+            height: 1em;
+            color: white;
+            background-color: var(--app-btn-color);
+            border-radius: 50%;
+            bottom: 0.1em;
+            right: 0.1em;
+        }
+    }
+}

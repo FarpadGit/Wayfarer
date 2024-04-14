@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "module": "NodeNext",
+    "target": "es2021",
+    "moduleResolution": "NodeNext",
+  },
+    "ts-node": {
+      "esm": true,
+      "experimentalSpecifierResolution": "node"
+    }
+  }

@@ -1,0 +1,14 @@
+<form (ngSubmit)="handleSubmit()" #commentForm="ngForm">
+    <div class="comment-form-row">
+      <textarea #textArea
+        [(ngModel)]="message"
+        name="message"
+        placeholder="Írj egy véleményt..."
+        class="message-input"
+      ></textarea>
+      <button class="btn" type="submit" [disabled]=loading>
+        {{loading ? "Loading" : "Post"}}
+      </button>
+    </div>
+    <div *ngIf="error" class="error-msg">{{error}}</div>
+  </form>

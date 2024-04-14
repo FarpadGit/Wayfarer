@@ -1,0 +1,6 @@
+<button [ngClass]="classes" [disabled]="disabled" (click)="onClick.emit()" [attr.aria-label]="ariaLabel">
+    <span [ngStyle]="{ 'margin-right': text.children.length > 0 || text.innerText ? '0.25rem' : undefined }">
+      <ng-content select="[icon]" />
+    </span>
+    <div #text><ng-content /></div>
+</button>

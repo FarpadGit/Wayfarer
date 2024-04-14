@@ -1,0 +1,127 @@
+%rounded-top {
+    border-top-right-radius: 2rem;
+    border-top-left-radius: 2rem;
+}
+
+.post-list {
+    --app-post-list-header-color: hsl(79, 29%, 50%);
+    --app-post-list-header-height: 4rem;
+    --app-post-list-border-color: hsl(79, 29%, 35%);
+    --app-post-list-text-color: hsl(68, 92%, 23%);
+    position: relative;
+    opacity: 1;
+    animation: entry 0.5s ease;
+    @extend %rounded-top;
+
+    &.fadeout {
+        animation: fadeout 0.2s linear forwards;
+    }
+
+    %header-footer  {
+        position: relative;
+        height: var(--app-post-list-header-height);
+        background-color: var(--app-post-list-header-color);
+        /* #e3d8aa; */
+        border: 1px solid var(--app-post-list-border-color);
+        z-index: 5;
+        overflow: hidden;
+
+        h1 {
+            padding: 0.5rem 1rem;
+            align-self: center;
+            /* text-align: center; */
+        }
+    }
+
+    &-header {
+        @extend %header-footer;
+        @extend %rounded-top;
+        display: flex;
+        justify-content: space-between;
+
+        h1 {
+            font-weight: 400;
+        }
+
+        @media (max-width: 639px) {
+            font-size: smaller;
+        }
+    }
+
+    &-footer {
+        @extend %header-footer;
+        display: flex;
+        align-items: center;
+        border-top: none;
+        border-bottom-right-radius: 2rem;
+        border-bottom-left-radius: 2rem;
+
+        h1 {
+            max-width: 30%;
+        }
+    }
+
+    &-body {
+        display: flex;
+        position: relative;
+        flex-direction: column;
+        background-color: hsl(52, 60%, 95%);
+        background-image: var(--app-post-list-img-url);
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center;
+        background-blend-mode: multiply;
+        opacity: 1;
+        transition: opacity 0.5s ease;
+
+        &.loading {
+            opacity: 0.2;
+        }
+    }
+}
+
+@keyframes entry {
+    0% {
+        opacity: 0;
+        top: 20px;
+    }
+
+    100% {
+        opacity: 1;
+        top: 0;
+    }
+}
+
+@keyframes fadeout {
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+/* collapse animation */
+
+.post-list:has(.body-container.collapsed) {
+    overflow-y: clip;
+    overflow-x: visible;
+    pointer-events: none;
+}
+
+.body-container.collapsed {
+    overflow-y: clip;
+    overflow-x: visible;
+    animation: collapse 1.0s var(--app-ease-function) forwards;
+}
+
+@keyframes collapse {
+    0% {
+        translate: 0;
+    }
+
+    100% {
+        translate: 0 calc(-100% + var(--app-post-list-header-height));
+    }
+}

@@ -1,0 +1,16 @@
+<div [ngClass]="{ 'background-image': true, 'full': pathname.includes('/posts/'), 'dropdown': animationState === 'entering', 'blur': blur }"
+      (animationend)="blur = true; delayedNavigate()"
+    >
+      <img
+        [src]="'../../../assets/' + backgroundImage"
+        alt=""
+        (load)="onImgLoad()"
+        [ngClass]="{ 'hide': !pathname.includes('/posts/') || animationState === 'entering' }"
+      />
+      <div
+        id="Logo"
+        [ngClass]="{ 'slideup': animationState === 'entering' }"
+      >
+        Wayfarer
+      </div>
+    </div>

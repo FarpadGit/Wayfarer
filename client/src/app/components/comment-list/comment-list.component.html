@@ -1,0 +1,22 @@
+<div *ngFor="let comment of comments" class="comment-stack">
+    <app-comment [comment]="comment" />
+    <ng-container *ngIf="getChildComments(comment.id).length > 0">
+        <div [ngClass]="{'nested-comments-stack': true, 'hide': areChildrenHidden }">
+            <button
+                class="collapse-line"
+                aria-label="Hide Replies"
+                (click)="areChildrenHidden = true"
+            ></button>
+            <div class="nested-comments">
+                <app-comment-list [comments]="getChildComments(comment.id)" />
+            </div>
+        </div>
+        <button
+            [ngClass]="{'btn': true, 'hide': !areChildrenHidden }"
+            [ngStyle]="{ 'margin-top': '1rem' }"
+            (click)="areChildrenHidden = false"
+        >
+        Mutatsd a megjegyzést
+        </button>
+    </ng-container>
+</div>
