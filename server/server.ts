@@ -9,7 +9,10 @@ dotenv.config();
 
 const app = fastify();
 app.register(sensible);
-app.register(cookie, { secret: process.env.COOKIE_SECRET, parseOptions: { sameSite: "none", secure: true } });
+app.register(cookie, {
+  secret: process.env.COOKIE_SECRET,
+  parseOptions: { sameSite: "none", secure: true },
+});
 app.register(cors, {
   origin: process.env.CLIENT_URL,
   credentials: true,
@@ -288,3 +291,5 @@ async function resolveAsync(promise: Promise<any>) {
 }
 
 app.listen(<FastifyListenOptions>{ port: +process.env.PORT });
+
+module.exports = app;
