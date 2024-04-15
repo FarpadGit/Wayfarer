@@ -1,7 +1,7 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { LoginService, userAccounts } from '../../services/login.service';
 import { ModalService } from 'ngx-modal-ease';
-import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-login-dialog',

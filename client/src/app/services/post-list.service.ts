@@ -1,8 +1,8 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { AsyncService } from './async.service';
-import { ApiService } from './api.service';
 import { Subscription } from 'rxjs';
 import { postTitleType } from '../types';
+import { AsyncService } from './async.service';
+import { ApiService } from './api.service';
 
 @Injectable({
   providedIn: 'root',
