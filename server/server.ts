@@ -7,7 +7,7 @@ import { PrismaClient } from "@prisma/client";
 
 dotenv.config();
 
-export const app = fastify();
+const app = fastify();
 app.register(sensible);
 app.register(cookie, {
   secret: process.env.COOKIE_SECRET,
@@ -291,3 +291,5 @@ async function resolveAsync(promise: Promise<any>) {
 }
 
 app.listen(<FastifyListenOptions>{ port: +process.env.PORT });
+
+export default () => app;
