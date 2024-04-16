@@ -1,6 +1,17 @@
 {
 	"version": 2,
-	"rewrites": [{"source": "/(.*)", "destination": "/src/index.html" }],
+	"builds": [
+		{
+			"src": "dist/*",
+			"use": "@vercel/static"
+		}
+	],
+	"routes": [
+		{
+			"src": "/(.*)",
+			"dest": "/index.html"
+		}
+	],
 	"headers": [
 		{
 			"source": "/(.*)",
