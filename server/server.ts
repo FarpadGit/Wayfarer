@@ -11,7 +11,7 @@ const app = fastify();
 app.register(sensible);
 app.register(cookie, {
   secret: process.env.COOKIE_SECRET,
-  parseOptions: { sameSite: "none", httpOnly: false, secure: true },
+  parseOptions: { sameSite: "none", secure: true },
 });
 app.register(cors, {
   origin: process.env.CLIENT_URL,
