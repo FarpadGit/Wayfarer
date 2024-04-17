@@ -88,7 +88,7 @@ export class ApiService {
   public toggleCommentLike({ id, postId }: { id: string; postId: string }) {
     return this.makeRequest(`/posts/${postId}/comments/${id}/toggleLike`, {
       method: 'POST',
-      data: true,
+      data: { body: '' },
     });
   }
 }
