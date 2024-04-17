@@ -14,7 +14,9 @@ export class ApiService {
     return this.callAxios(url, options)
       .then((res) => res.data)
       .catch((error) =>
-        Promise.reject(error?.response?.data?.message ?? 'Error')
+        Promise.reject(
+          error?.response?.data?.message ?? 'Sajnos ismeretlen hiba lépett fel'
+        )
       );
   }
 
