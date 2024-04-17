@@ -11,11 +11,12 @@ const app = fastify();
 app.register(sensible);
 app.register(cookie, {
   secret: process.env.COOKIE_SECRET,
-  parseOptions: { sameSite: "none", httpOnly: true, secure: true },
+  parseOptions: { sameSite: "none", secure: true },
 });
 app.register(cors, {
   origin: process.env.CLIENT_URL,
   credentials: true,
+  exposedHeaders: "userId",
 });
 app.addHook("onRequest", (req, res, done) => {
   if (!req.cookies.userId) {
@@ -24,6 +25,10 @@ app.addHook("onRequest", (req, res, done) => {
     res.setCookie("userId", GUEST_USER_ID, { path: "/" });
   }
   done();
+});
+
+app.addHook("onSend", async (req, res) => {
+  res.headers({ userId: req.cookies.userId });
 });
 
 const prisma: PrismaClient = new PrismaClient();

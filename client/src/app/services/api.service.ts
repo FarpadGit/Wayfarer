@@ -12,7 +12,10 @@ export class ApiService {
 
   private async makeRequest(url: string, options?: AxiosRequestConfig<any>) {
     return this.callAxios(url, options)
-      .then((res) => res.data)
+      .then((res) => {
+        sessionStorage.setItem('userId', res.headers['userid']);
+        return res.data;
+      })
       .catch((error) =>
         Promise.reject(
           error?.response?.data?.message ??

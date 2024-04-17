@@ -42,8 +42,8 @@ export class LoginService {
     else this.apiService.validateUser(user.id);
   }
 
-  logoutUser() {
-    this.oAuthService.revokeTokenAndLogout();
+  async logoutUser() {
+    await this.oAuthService.revokeTokenAndLogout();
     this.oAuthService.logOut();
   }
 
@@ -52,7 +52,7 @@ export class LoginService {
   }
 
   get currentUserId() {
-    return document.cookie.match(/userId=(?<id>[^;]+);?/)?.groups?.['id'] || '';
+    return sessionStorage.getItem('userId') || '';
   }
 
   get currentUserName() {
