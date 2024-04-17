@@ -27,7 +27,7 @@ export class LoginDialogComponent {
   }
 
   onLoginClick() {
-    if (this.loginService.isCurrentUserSignedIn) this.loginService.logoutUser();
+    //if (this.loginService.isCurrentUserSignedIn) this.loginService.logoutUser();
     this.loginService.loginUser();
   }
 

@@ -15,7 +15,8 @@ export class ApiService {
       .then((res) => res.data)
       .catch((error) =>
         Promise.reject(
-          error?.response?.data?.message ?? 'Sajnos ismeretlen hiba lépett fel'
+          error?.response?.data?.message ??
+            'Sajnos egy ismeretlen hiba lépett fel'
         )
       );
   }

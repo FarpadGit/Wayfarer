@@ -28,6 +28,10 @@
 
     &-post {
         @extend .btn-delete, %font-large;
+
+        &:disabled {
+            --app-btn-color: var(--app-black-color-hover);
+        }
     }
 }
 

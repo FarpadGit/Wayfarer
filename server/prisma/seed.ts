@@ -131,6 +131,19 @@ Ezeken túl még egy ngx-linky nevű könyvtárat is használ ami automatikusan 
 
   const post5 = await prisma.post.create({
     data: {
+      title: "Vercel telepítés",
+      body: `Ja, és ne tudd meg mennyit kellett szenvednem mire működésbe tudtam hozni ezt az oldalt a Vercelen. Kellett nekem egy egzotikus monorepoval szórakoznom 🙄...
+
+Először is a backend Typescriptben van megírva amit először össze kell állítani Javascriptté és külön feltölteni mert csak azt tudja futtatni a platform. Ezen túl Express helyett Fastify-t használ, amit egy külön default exportált metódussal kell ellátni, hogy a megfelelő belépési ponton tudja futtatni mint serverless functiont. Ezután kell még egy vercel.json nevű konfigurációs fájl is mind a backend, mind a frontend könyvtárába ami többek közt átirányítja a webkéréseket hogy SPA oldalként tudjon működni, illetve hogy fejléceket állítson be a CORS miatt.
+Ja, és mivel a backend az adatbázissal Prisma ORM-en keresztül kommunikál ezért azt is újra kell migrálni minden build parancs elején a platform oldalon hogy biztos szinkronban legyen a DB-vel...
+
+Talán most már működik 🤞.`,
+      uploaderId: admin.id,
+    },
+  });
+
+  const post6 = await prisma.post.create({
+    data: {
       title: "Névjegy",
       body: `Fabók Árpád informatikus vagyok, az email címem farpadmail@gmail.com. Mint webfejlesztő ismerős vagyok többek közt React, NextJs, Angular 2+, TypeScript, CSS, SCSS valamint egyéb fejlesztői technológiákkal (komponens és animációs könyvtárak, tailwind, zod, stb.). És néha a szabadidőmben ilyen projekteket csinálok a saját jobb belátásom ellenére.`,
       uploaderId: admin.id,

@@ -26,6 +26,8 @@ export class PostItemComponent {
   @Output() onClick = new EventEmitter<string>();
   @Output() onDeleteClick = new EventEmitter<string>();
 
+  isDeleting = false;
+
   constructor(private loginService: LoginService) {}
 
   highlighted = false;

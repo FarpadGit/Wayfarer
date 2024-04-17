@@ -12,7 +12,7 @@
           [error]="updateCommentFn.error.value"
       />
       <div *ngIf="!isEditing" class="message">{{comment?.message}}</div>
-      <div class="footer">
+      <div [ngClass]="{footer: true, disabled: isLoadingChanges}">
         <div>
           <app-icon-btn
             [appTooltip]="isLiked ? 'Unlike' : 'Like'"

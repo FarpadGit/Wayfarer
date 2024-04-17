@@ -68,6 +68,7 @@ export class CommentComponent {
     );
   }
 
+  isLoadingChanges = false;
   isReplying = false;
   isEditing = false;
   get isLiked() {
@@ -113,17 +114,21 @@ export class CommentComponent {
   }
 
   onCommentDelete() {
+    this.isLoadingChanges = true;
     this.deleteCommentFn
       .execute({ postId: this.postService.id, id: this.comment?.id })
-      .then((comment: commentType) =>
-        this.postService.deleteLocalComment(comment.id)
-      );
+      .then((comment: commentType) => {
+        this.isLoadingChanges = false;
+        this.postService.deleteLocalComment(comment.id);
+      });
   }
 
   onToggleCommentLike() {
+    this.isLoadingChanges = true;
     this.toggleCommentLikeFn
       .execute({ id: this.comment?.id, postId: this.postService.id })
       .then(({ isLikeAdded }: { isLikeAdded: boolean }) => {
+        this.isLoadingChanges = false;
         this.postService.toggleLocalCommentLike(this.comment!.id, isLikeAdded);
       });
   }

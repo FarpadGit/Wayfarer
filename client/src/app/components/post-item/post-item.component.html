@@ -21,8 +21,9 @@
       [appTooltip]="'poszt törlése'"
       [ngClass]="{ 'post-delete-btn': true, 'hide': highlighted }"
       [iconClass]="'btn btn-delete-post'"
-      (onClick)="onDeleteClick.emit(id)"
+      (onClick)="onDeleteClick.emit(id); isDeleting = true"
       [ariaLabel]="'Delete Post'"
+      [disabled]="isDeleting"
     >
       <ng-icon icon name="tablerEraser"></ng-icon>
     </app-icon-btn>
