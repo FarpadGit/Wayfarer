@@ -13,7 +13,7 @@
 }
 
 .fadeout {
-    animation: entry 0.5s ease var(--post-entry-delay) both, exit 0.5s ease forwards;
+    animation: exit 0.5s ease forwards;
 }
 
 @keyframes entry {
