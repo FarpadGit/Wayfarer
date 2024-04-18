@@ -25,7 +25,7 @@
       [ariaLabel]="'Delete Post'"
       [disabled]="isDeleting"
     >
-      <ng-icon icon name="tablerEraser" *ngIf="!isDeleting"></ng-icon>
+      <ng-icon icon name="tablerEraser" *ngIf="!isDeleting; else spinner"></ng-icon>
+      <ng-template #spinner><div class="spinner"></div></ng-template>
     </app-icon-btn>
-  
   </div>
