@@ -20,16 +20,18 @@ export class CommentFormComponent {
   @Input() loading = false;
   @Input() error? = '';
   @Input() autoFocus = false;
-  @Input('initialValue') message = '';
+  @Input() initialValue = '';
   @Output() onSubmit = new EventEmitter<string>();
   @ViewChild('textArea') set textAreaRef(ref: ElementRef) {
-    if (ref) {
+    if (ref && this.autoFocus) {
       ref.nativeElement.focus();
     }
   }
 
+  message = this.initialValue;
+
   handleSubmit() {
     this.onSubmit.emit(this.message);
-    this.message = '';
+    if (this.initialValue === '') this.message = '';
   }
 }

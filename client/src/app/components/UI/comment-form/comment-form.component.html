@@ -5,6 +5,7 @@
         name="message"
         placeholder="Írj egy véleményt..."
         class="message-input"
+        [disabled]=loading
       ></textarea>
       <button class="btn" type="submit" [disabled]=loading>
         {{loading ? "Betöltés" : "Küldés"}}
