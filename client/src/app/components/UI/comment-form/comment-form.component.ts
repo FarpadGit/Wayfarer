@@ -37,6 +37,6 @@ export class CommentFormComponent {
 
   handleSubmit() {
     this.onSubmit.emit(this.message);
-    if (this.initialValue === '') this.message = '';
+    if (this._initialValue === '') this.message = '';
   }
 }
