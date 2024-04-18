@@ -18,4 +18,8 @@
         border-color: hsl(28.9, 100%, 67%);
         outline: none;
     }
+
+    &:disabled {
+        color: initial;
+    }
 }
