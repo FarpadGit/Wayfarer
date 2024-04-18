@@ -18,6 +18,8 @@ export class LoginService {
     const authConfig: AuthConfig = {
       issuer: 'https://accounts.google.com',
       strictDiscoveryDocumentValidation: false,
+      responseType: 'code',
+      dummyClientSecret: import.meta.env['NG_APP_GOOGLE_SECRET'],
       clientId: import.meta.env['NG_APP_GOOGLE_CLIENTID'],
       redirectUri: window.location.origin,
       scope: 'openid profile email',
@@ -36,7 +38,7 @@ export class LoginService {
   }
 
   loginUser(user?: { id: string; display: string }) {
-    if (!user) this.oAuthService.initImplicitFlow();
+    if (!user) this.oAuthService.initCodeFlow();
     else if (user.id === import.meta.env['NG_APP_ADMIN_EMAIL'])
       this.apiService.validateUser(userAccounts.ADMIN.id);
     else this.apiService.validateUser(user.id);

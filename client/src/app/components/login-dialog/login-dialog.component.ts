@@ -26,8 +26,9 @@ export class LoginDialogComponent {
     return this.loginService.currentUserName === userAccounts.GUEST.display;
   }
 
-  onLoginClick() {
-    if (this.loginService.isCurrentUserSignedIn) this.loginService.logoutUser();
+  async onLoginClick() {
+    if (this.loginService.isCurrentUserSignedIn)
+      await this.loginService.logoutUser();
     this.loginService.loginUser();
   }
 
