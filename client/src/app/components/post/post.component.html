@@ -17,6 +17,7 @@
         <app-comment-form
           [loading]="commentsLoading"
           [error]="commentsError ?? undefined"
+          [autoFocus]="true"
           (onSubmit)="onCommentCreate($event)"
         />
           <div *ngIf="rootComments != null && rootComments.length > 0" style="margin-top: 1rem">

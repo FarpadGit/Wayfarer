@@ -54,7 +54,7 @@ Aki ezt nem szeretné és csak kipróbálná hogy melyik gomb mit csinál az nyu
     data: {
       title: "Szóval hogyan is működik ez?",
       body: `Maga a frontend oldal (amit most látsz) Angular 17 keretrendszerrel készült ami TypeScript 5.3 és SCSS stíluslapokat használ. A szerver oldal ami az adatbázissal kommunikál és fogadja a kéréseket egy Node.js-ben írt REST API ami egy Fastify nevű web keretrendszerre épül. Az adatbázis integráció Prisma-n keresztül történik. 
-Ez a szerver minden kliens oldali kérés válaszához egy cookie-t csatol amivel azonosítja a felhasználót aki a kérést intézte (vendég vagy bejelentkezett). Ez alapján tudja a böngésző összehasonlítani, hogy pl. az adott poszt szerzője van-e bejelentkezve.`,
+Ez a szerver minden kliens oldali kérés válaszához egy cookie-t és egy saját fejlécet csatol amivel azonosítja a felhasználót aki a kérést intézte (vendég vagy bejelentkezett). Ez alapján tudja a böngésző összehasonlítani, hogy pl. az adott poszt szerzője van-e bejelentkezve.`,
       uploaderId: admin.id,
     },
   });
@@ -62,7 +62,16 @@ Ez a szerver minden kliens oldali kérés válaszához egy cookie-t csatol amive
   const comment2_1 = await prisma.comment.create({
     data: {
       message:
-        "Amikor létrehozol egy új kommentet (vagy szerkeszted vagy törlöd, stb.) ezt a kérést aszinkron módon elküldi a szervernek, majd a böngészőben azonnal elvégzi a változást anélkül, hogy újra lekérdezné az adatbázist. Új posztok létrehozásakor ez kicsit másképp van, akkor valóban kér egy frissítést a szervertől és újra lekérdezi a posztok listáját miután a beszúrás megtörtént. Ez főleg a listanézet lapozhatóságát szolgálja. (a jelenlegi beállítás, hogy 6 posztot látsz oldalanként.)",
+        "Amikor létrehozol egy új kommentet (vagy szerkeszted, vagy törlöd, stb.) ezt a kérést először elküldi a szervernek, majd a válaszul kapott bejegyzést beszúrja a böngésző nézetébe anélkül, hogy a többi kommentet újratöltené. Új posztok létrehozásakor ez kicsit másképp van, ekkor valóban kér egy teljes újralekérdezést az összes posztról miután a beszúrás megtörtént. Ez főleg a listanézet lapozhatóságát szolgálja. (A jelenlegi beállítás hogy 6 posztot látsz oldalanként, legrégebbitől a legújabbig.)",
+      userId: admin.id,
+      postId: post2.id,
+    },
+  });
+
+  const comment2_2 = await prisma.comment.create({
+    data: {
+      message:
+        "Ha érdekel a forráskód itt megtalálhatod: https://github.com/FarpadGit/Wayfarer",
       userId: admin.id,
       postId: post2.id,
     },
@@ -72,7 +81,7 @@ Ez a szerver minden kliens oldali kérés válaszához egy cookie-t csatol amive
     data: {
       title: "Ez az izé mozog!",
       body: `Csinos kis animáció, ugye? Kár, hogy egy kisebb állapotgépet kellett összeraknom érte. (Kulcsszó a 'kisebb'. Szerencsére Redux/NgRx-nél még nem tartunk.) 
-A trükk abban rejlik, hogy minden HTML elemnek van egy onAnimationEnd eseménye, amit akkor süt el ha egy stíluslapban definiált animációja befejezte a lejátszását. Ha ezen eseményhez hozzáadunk egy callback metódust akkor egy tetszőlegesen hosszú, eszterláncba kötött animációsorozatot tudunk létrehozni. Csak arra érdemes ügyelni hogy lehetőleg mindig egy másik, még nem animált elem osztályát változtassuk meg következő lépésként.`,
+A trükk abban rejlik, hogy minden HTML elemnek van egy onAnimationEnd eseménye amit akkor süt el ha egy stíluslapban definiált animációja befejezte a lejátszását. Ha ezen eseményhez hozzáadunk egy callback metódust akkor egy tetszőlegesen hosszú, eszterláncba kötött animációsorozatot tudunk létrehozni. Csak arra érdemes ügyelni hogy lehetőleg mindig egy másik, még nem animált elem osztályát változtassuk meg következő lépésként.`,
       uploaderId: admin.id,
     },
   });
@@ -115,7 +124,7 @@ Amíg ez nem történik meg addig kitartja a banner képet mint afféle betölt�
   const post4 = await prisma.post.create({
     data: {
       title: "Egyéb függőségek",
-      body: `A szervernek küldött kéréseket az Axios könyvtárcsomagon keresztül intézi a weboldal. A felugró ablakokhoz (bár inkább "leugró" mind a kettő) egy ngx-modal-ease nevű csomagot használ, a poszt lista lapozhatóvá tételéhez ngx-pagination-t, illetve a Google fiókos bejelentkezésért az angular-oauth2-oidc nevű csomag felel. 
+      body: `A szervernek küldött kéréseket az Axios könyvtárcsomagon keresztül intézi a weboldal. A felugró ablakokhoz (bár inkább a többsége "leugró") egy ngx-modal-ease nevű csomagot használ, a poszt lista lapozhatóvá tételéhez ngx-pagination-t, illetve a Google fiókos bejelentkezésért az angular-oauth2-oidc nevű csomag felel. 
 Ezeken túl még egy ngx-linky nevű könyvtárat is használ ami automatikusan linkekké változtatja a posztokban szereplő email címeket, weboldal url-eket, stb., valamint egyéb kisebb ikonok is be lettek importálva az ng-icons könyvtárból.`,
       uploaderId: admin.id,
     },
@@ -132,10 +141,11 @@ Ezeken túl még egy ngx-linky nevű könyvtárat is használ ami automatikusan 
   const post5 = await prisma.post.create({
     data: {
       title: "Vercel telepítés",
-      body: `Ja, és ne tudd meg mennyit kellett szenvednem mire működésbe tudtam hozni ezt az oldalt a Vercelen. Kellett nekem egy egzotikus monorepoval szórakoznom 🙄...
+      body: `Ja, és ne tudd meg mennyit kellett szenvednem mire működésbe tudtam hozni ezt az oldalt a Vercelen. Kellett nekem egy egzotikus monorepóval szórakoznom 🙄...
 
 Először is a backend Typescriptben van megírva amit először össze kell állítani Javascriptté és külön feltölteni mert csak azt tudja futtatni a platform. Ezen túl Express helyett Fastify-t használ, amit egy külön default exportált metódussal kell ellátni, hogy a megfelelő belépési ponton tudja futtatni mint serverless functiont. Ezután kell még egy vercel.json nevű konfigurációs fájl is mind a backend, mind a frontend könyvtárába ami többek közt átirányítja a webkéréseket hogy SPA oldalként tudjon működni, illetve hogy fejléceket állítson be a CORS miatt.
-Ja, és mivel a backend az adatbázissal Prisma ORM-en keresztül kommunikál ezért azt is újra kell migrálni minden build parancs elején a platform oldalon hogy biztos szinkronban legyen a DB-vel...
+Ja, és mivel a backend az adatbázissal Prisma ORM-en keresztül kommunikál ezért azt is újra migrálni kell minden build parancs elején a platform oldalon hogy biztos szinkronban legyen a DB-vel... 
+És valamiért még az Angular frontendnek is külön meg kell adnia, hogy milyen mappában keresse a lefordított kész fájlokat. (Alapvetően a 'dist/<project könyvtár>/browser' helyre fordít az ng build parancs, de ezt nem feltételezi alapból.)
 
 Talán most már működik 🤞.`,
       uploaderId: admin.id,

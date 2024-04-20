@@ -21,6 +21,16 @@
     @media (max-width: 639px) {
         font-size: 0.8em;
     }
+
+    &-special {
+        --app-btn-color: var(--app-glow-color);
+        color: white;
+
+        &:hover,
+        &:focus-visible {
+            --app-btn-color: var(--app-glow-color-hover);
+        }
+    }
 }
 
 .icon-btn {

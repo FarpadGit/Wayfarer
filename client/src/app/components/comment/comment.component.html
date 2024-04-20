@@ -49,10 +49,11 @@
           <div>
            <app-icon-btn
               [appTooltip]="'Törlés'"
-              (onClick)="onCommentDelete()"
               [iconClass]="'btn-delete'"
               [ariaLabel]="'Delete'"
               [disabled]="deleteCommentFn.loading.value"
+              (appConfirmPopup)="onCommentDelete()"
+              [confirmPosition]="'right'"
            >
                <ng-icon icon name="matDelete"></ng-icon>
            </app-icon-btn>

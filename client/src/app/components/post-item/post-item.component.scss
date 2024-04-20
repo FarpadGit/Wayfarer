@@ -49,12 +49,6 @@
         top: 50%;
         right: 3%;
         transform: translateY(-50%);
-        color: var(--app-danger-color);
-    
-        &:hover,
-        &:focus-visible {
-            color: var(--app-danger-color-hover);
-        }
 
         /* HTML: <div class="loader"></div> */
         .spinner {

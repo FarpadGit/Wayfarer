@@ -3,13 +3,20 @@ import { CommonModule } from '@angular/common';
 import { LoginService } from '../../services/login.service';
 import { IconBtnComponent } from '../UI/icon-btn/icon-btn.component';
 import { TooltipDirective } from '../UI/tooltip/tooltip.directive';
+import { ConfirmPopupDirective } from '../delete-post-dialog/confirm-popup.directive';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { tablerEraser } from '@ng-icons/tabler-icons';
 
 @Component({
   selector: 'app-post-item',
   standalone: true,
-  imports: [CommonModule, IconBtnComponent, NgIconComponent, TooltipDirective],
+  imports: [
+    CommonModule,
+    IconBtnComponent,
+    NgIconComponent,
+    TooltipDirective,
+    ConfirmPopupDirective,
+  ],
   templateUrl: './post-item.component.html',
   styleUrl: './post-item.component.scss',
   viewProviders: [
@@ -42,6 +49,11 @@ export class PostItemComponent {
   PostItemClicked(e: Event) {
     e.preventDefault();
     this.onClick.emit(this.id);
+  }
+
+  DeleteButtonClicked() {
+    this.onDeleteClick.emit(this.id);
+    this.isDeleting = true;
   }
 
   getUploadedSinceText(uploadDate: string) {

@@ -8,6 +8,7 @@ import { LoginService } from '../../services/login.service';
 import { CommentFormComponent } from '../UI/comment-form/comment-form.component';
 import { IconBtnComponent } from '../UI/icon-btn/icon-btn.component';
 import { TooltipDirective } from '../UI/tooltip/tooltip.directive';
+import { ConfirmPopupDirective } from '../delete-post-dialog/confirm-popup.directive';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import {
   matFavorite,
@@ -26,6 +27,7 @@ import {
     NgIconComponent,
     CommentFormComponent,
     TooltipDirective,
+    ConfirmPopupDirective,
   ],
   templateUrl: './comment.component.html',
   styleUrl: './comment.component.scss',
