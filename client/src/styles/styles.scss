@@ -70,7 +70,7 @@ body {
 }
 
 
-@mixin dialog-anim($name, $top, $fade: true) {
+@mixin dialog-dropdown-anim($name, $top, $fade: true) {
   @keyframes #{$name}-dialog-enter {
     0% {
       @if $fade { 
@@ -108,5 +108,22 @@ body {
   }
 }
 
-@include dialog-anim("new-post", 50%);
-@include dialog-anim("login", $login-drawer-half-height, false);
+@keyframes delete-dialog-enter {
+  0% {
+    scale: 0 0.01;
+    transform-origin: center top;
+    background-color: var(--app-glow-color-hover);
+  }
+  50% {
+    scale: 1 0.01;
+    transform-origin: center top;
+    background-color: var(--app-glow-color-hover);
+  }
+  100% {
+    scale: 1 1;
+    transform-origin: center top;
+  }
+}
+
+@include dialog-dropdown-anim("new-post", 50%);
+@include dialog-dropdown-anim("login", $login-drawer-half-height, false);

@@ -54,6 +54,9 @@ export class ConfirmPopupDirective implements OnDestroy {
         modal: {
           top: modalTop,
           left: modalLeft,
+          enter:
+            'delete-dialog-enter 0.2s cubic-bezier(0.165, 0.840, 0.440, 1.000)',
+          leave: 'fade-out 0.2s ease',
         },
         data: {
           position: this.confirmPosition,
