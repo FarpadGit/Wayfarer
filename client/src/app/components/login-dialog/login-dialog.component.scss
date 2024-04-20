@@ -34,12 +34,24 @@
         justify-content: center;
         padding: 20px 24px;
         height: 60%;
+        
+        h2 {
+            text-align: center;
+
+            @media (max-width: 639px) {
+                font-size: large;
+            }
+        }
 
         p {
             margin-top: 0.5rem;
             text-align: center;
             font-size: smaller;
             color: var(--app-danger-color);
+
+            @media (max-width: 639px) {
+                font-size: x-small;
+            }
         }
     }
 
@@ -50,5 +62,17 @@
         align-items: center;
         justify-content: center;
         gap: 10px;
+
+        @media (max-width: 639px) {
+            font-size: smaller;
+        }
+    } 
+    
+    @media (max-width: 639px) {
+        width: 80%;
+    }
+
+    @media (max-width: 767px) {
+        width: 65%;
     }
 }

@@ -8,8 +8,8 @@ import {
   Output,
 } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { ModalService } from 'ngx-modal-ease';
 import { DeletePostDialogComponent } from './delete-post-dialog.component';
+import { ModalService } from 'ngx-modal-ease';
 
 @Directive({
   selector: '[appConfirmPopup]',
