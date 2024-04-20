@@ -1,0 +1,8 @@
+<div [ngClass]="{ 'delete-dialog': true, 'left': position === 'left', 'right': position === 'right' }">
+    <p>Biztos, hogy törölni szeretnéd?</p>
+    <p>(Ezt a műveletet nem lehet visszavonni)</p>
+    <div class="buttons">
+        <button class="btn" (click)="onCancel()">Mégse</button>
+        <button class="btn btn-special" (click)="onConfirm()">Törlés</button>
+    </div>
+</div>
