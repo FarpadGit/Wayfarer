@@ -54,7 +54,9 @@ Aki ezt nem szeretné és csak kipróbálná hogy melyik gomb mit csinál az nyu
     data: {
       title: "Szóval hogyan is működik ez?",
       body: `Maga a frontend oldal (amit most látsz) Angular 17 keretrendszerrel készült ami TypeScript 5.3 és SCSS stíluslapokat használ. A szerver oldal ami az adatbázissal kommunikál és fogadja a kéréseket egy Node.js-ben írt REST API ami egy Fastify nevű web keretrendszerre épül. Az adatbázis integráció Prisma-n keresztül történik. 
-Ez a szerver minden kliens oldali kérés válaszához egy cookie-t és egy saját fejlécet csatol amivel azonosítja a felhasználót aki a kérést intézte (vendég vagy bejelentkezett). Ez alapján tudja a böngésző összehasonlítani, hogy pl. az adott poszt szerzője van-e bejelentkezve.`,
+Ez a szerver minden kliens oldali kérés válaszához egy cookie-t és egy saját fejlécet csatol amivel azonosítja a felhasználót aki a kérést intézte (vendég vagy bejelentkezett). Ez alapján tudja a böngésző összehasonlítani, hogy pl. az adott poszt szerzője van-e bejelentkezve.
+
+Ha érdekel a forráskód itt megtalálhatod: https://www.github.com/FarpadGit/Wayfarer`,
       uploaderId: admin.id,
     },
   });
@@ -63,15 +65,6 @@ Ez a szerver minden kliens oldali kérés válaszához egy cookie-t és egy saj�
     data: {
       message:
         "Amikor létrehozol egy új kommentet (vagy szerkeszted, vagy törlöd, stb.) ezt a kérést először elküldi a szervernek, majd a válaszul kapott bejegyzést beszúrja a böngésző nézetébe anélkül, hogy a többi kommentet újratöltené. Új posztok létrehozásakor ez kicsit másképp van, ekkor valóban kér egy teljes újralekérdezést az összes posztról miután a beszúrás megtörtént. Ez főleg a listanézet lapozhatóságát szolgálja. (A jelenlegi beállítás hogy 6 posztot látsz oldalanként, legrégebbitől a legújabbig.)",
-      userId: admin.id,
-      postId: post2.id,
-    },
-  });
-
-  const comment2_2 = await prisma.comment.create({
-    data: {
-      message:
-        "Ha érdekel a forráskód itt megtalálhatod: https://github.com/FarpadGit/Wayfarer",
       userId: admin.id,
       postId: post2.id,
     },
