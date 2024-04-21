@@ -69,6 +69,22 @@ body {
   text-align: center;
 }
 
+.spinner {
+  width: 18px;
+  padding: 3px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: black;
+  --_m: conic-gradient(#0000 10%,#000), linear-gradient(#000 0 0) content-box;
+  -webkit-mask: var(--_m);
+  mask: var(--_m);
+  -webkit-mask-composite: source-out;
+  mask-composite: subtract;
+  animation: spinner 1s infinite linear;
+
+  @keyframes spinner { to{ transform: rotate(1turn) } }
+}   
+
 
 @mixin dialog-dropdown-anim($name, $top, $fade: true) {
   @keyframes #{$name}-dialog-enter {

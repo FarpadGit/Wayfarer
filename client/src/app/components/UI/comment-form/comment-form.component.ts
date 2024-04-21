@@ -26,6 +26,7 @@ export class CommentFormComponent {
   }
 
   @Output() onSubmit = new EventEmitter<string>();
+  @Output() onEscape = new EventEmitter<void>();
   @ViewChild('textArea') set textAreaRef(ref: ElementRef) {
     if (ref && this.autoFocus) {
       ref.nativeElement.focus();
@@ -34,6 +35,10 @@ export class CommentFormComponent {
 
   message = '';
   _initialValue = '';
+
+  onKeyDown(e: KeyboardEvent) {
+    if (e.key.toLowerCase() === 'escape') this.onEscape.emit();
+  }
 
   handleSubmit() {
     this.onSubmit.emit(this.message);

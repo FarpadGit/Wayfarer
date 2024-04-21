@@ -73,6 +73,7 @@ export class CommentComponent {
   isLoadingChanges = false;
   isReplying = false;
   isEditing = false;
+  isDeleting = false;
   get isLiked() {
     return this.comment?.isLikedByMe || false;
   }
@@ -116,6 +117,7 @@ export class CommentComponent {
   }
 
   onCommentDelete() {
+    this.isDeleting = true;
     this.isLoadingChanges = true;
     this.deleteCommentFn
       .execute({ postId: this.postService.id, id: this.comment?.id })
