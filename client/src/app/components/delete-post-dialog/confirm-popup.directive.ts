@@ -63,7 +63,9 @@ export class ConfirmPopupDirective implements OnDestroy {
         },
       })
       .subscribe((response: boolean | undefined) => {
-        if (response) this.onConfirm.emit();
+        if (response) {
+          this.onConfirm.emit();
+        }
       });
   }
 }

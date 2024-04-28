@@ -17,6 +17,7 @@ import { CommonModule } from '@angular/common';
 export class IconBtnComponent {
   @Input() iconClass: string = '';
   @Input() isActive: boolean = false;
+  @Input() loading: boolean = false;
   @Input() disabled: boolean = false;
   @Input() ariaLabel: string = '';
   @Output() onClick = new EventEmitter<null>();

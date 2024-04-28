@@ -19,13 +19,12 @@
     <app-icon-btn 
       *ngIf="authorLoggedIn"
       [appTooltip]="'poszt törlése'"
-      [ngClass]="{ 'post-delete-btn': true, 'hide': highlighted, 'loading': isDeleting }"
+      [ngClass]="{ 'post-delete-btn': true, 'hide': highlighted }"
       [iconClass]="'btn btn-delete-post'"
       [ariaLabel]="'Delete Post'"
-      [disabled]="isDeleting"
+      [loading]="isDeleting"
       (appConfirmPopup)="DeleteButtonClicked()"
     >
-      <ng-icon icon name="tablerEraser" *ngIf="!isDeleting; else spinner"></ng-icon>
-      <ng-template #spinner><div class="spinner"></div></ng-template>
+      <ng-icon icon name="tablerEraser"></ng-icon>
     </app-icon-btn>
   </div>

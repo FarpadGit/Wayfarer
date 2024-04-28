@@ -53,11 +53,11 @@
               [iconClass]="'btn-delete'"
               [ariaLabel]="'Delete'"
               [disabled]="deleteCommentFn.loading.value"
+              [loading]="isDeleting"
               (appConfirmPopup)="onCommentDelete()"
               [confirmPosition]="'right'"
            >
-               <ng-icon icon name="matDelete" *ngIf="!isDeleting; else spinner"></ng-icon>
-               <ng-template #spinner><div class="spinner"></div></ng-template>
+           <ng-icon icon name="matDelete"></ng-icon>
            </app-icon-btn>
           </div>
         </ng-container>

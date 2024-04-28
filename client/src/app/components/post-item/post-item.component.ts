@@ -33,11 +33,10 @@ export class PostItemComponent {
   @Output() onClick = new EventEmitter<string>();
   @Output() onDeleteClick = new EventEmitter<string>();
 
-  isDeleting = false;
-
   constructor(private loginService: LoginService) {}
 
   highlighted = false;
+  isDeleting = false;
   get authorLoggedIn() {
     return (
       this.loginService.currentUserId === this.uploader.id ||
@@ -52,8 +51,8 @@ export class PostItemComponent {
   }
 
   DeleteButtonClicked() {
-    this.onDeleteClick.emit(this.id);
     this.isDeleting = true;
+    this.onDeleteClick.emit(this.id);
   }
 
   getUploadedSinceText(uploadDate: string) {

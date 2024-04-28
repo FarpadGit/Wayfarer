@@ -106,13 +106,13 @@
 /* collapse animation */
 
 .post-list:has(.body-container.collapsed) {
-    overflow-y: clip;
+    overflow-y: hidden;
     overflow-x: visible;
     pointer-events: none;
 }
 
 .body-container.collapsed {
-    overflow-y: clip;
+    overflow-y: hidden;
     overflow-x: visible;
     animation: collapse 1.0s var(--app-ease-function) forwards;
 }
