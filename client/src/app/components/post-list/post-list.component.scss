@@ -81,6 +81,10 @@
     }
 }
 
+.body-wrapper {
+    overflow-y: clip;
+}
+
 @keyframes entry {
     0% {
         opacity: 0;
@@ -106,13 +110,13 @@
 /* collapse animation */
 
 .post-list:has(.body-container.collapsed) {
-    overflow-y: hidden;
+    overflow-y: clip;
     overflow-x: visible;
     pointer-events: none;
 }
 
 .body-container.collapsed {
-    overflow-y: hidden;
+    overflow-y: clip;
     overflow-x: visible;
     animation: collapse 1.0s var(--app-ease-function) forwards;
 }
