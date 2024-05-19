@@ -42,9 +42,7 @@ export class BackgroundComponent implements OnInit, OnDestroy {
         return;
       }
 
-      const newBgImage =
-        backgroundImages[this.getRandomIndex(backgroundImages.length)].name +
-        '.jpg';
+      const newBgImage = this.getRandomBgImage();
       if (this._backgroundImage === newBgImage)
         this.transitionService.readyToNavigate();
       else this._backgroundImage = newBgImage;
@@ -67,17 +65,15 @@ export class BackgroundComponent implements OnInit, OnDestroy {
 
   blur = false;
 
-  //private backgroundImages = ['Cabin1.jpg', 'Cabin2.jpg', 'Cabin3.jpg'];
-  private _backgroundImage =
-    backgroundImages[this.getRandomIndex(backgroundImages.length)].name +
-    '.jpg';
+  private _backgroundImage = this.getRandomBgImage();
 
   get backgroundImage() {
     return this._backgroundImage;
   }
 
-  private getRandomIndex(length: number) {
-    return Math.floor(Math.random() * length);
+  private getRandomBgImage() {
+    const index = Math.floor(Math.random() * backgroundImages.length);
+    return backgroundImages[index].name + '.jpg';
   }
 
   delayedNavigate() {
