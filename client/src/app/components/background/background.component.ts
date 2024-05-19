@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TransitionService } from '../../services/transition.service';
 import { AnimationService } from '../../services/animation.service';
+import backgroundImages from '../../../assets/bgs/index.json';
 
 @Component({
   selector: 'app-background',
@@ -42,9 +43,8 @@ export class BackgroundComponent implements OnInit, OnDestroy {
       }
 
       const newBgImage =
-        this.backgroundImages[
-          this.getRandomIndex(this.backgroundImages.length)
-        ];
+        backgroundImages[this.getRandomIndex(backgroundImages.length)].name +
+        '.jpg';
       if (this._backgroundImage === newBgImage)
         this.transitionService.readyToNavigate();
       else this._backgroundImage = newBgImage;
@@ -67,9 +67,10 @@ export class BackgroundComponent implements OnInit, OnDestroy {
 
   blur = false;
 
-  private backgroundImages = ['Cabin1.jpg', 'Cabin2.jpg', 'Cabin3.jpg'];
+  //private backgroundImages = ['Cabin1.jpg', 'Cabin2.jpg', 'Cabin3.jpg'];
   private _backgroundImage =
-    this.backgroundImages[this.getRandomIndex(this.backgroundImages.length)];
+    backgroundImages[this.getRandomIndex(backgroundImages.length)].name +
+    '.jpg';
 
   get backgroundImage() {
     return this._backgroundImage;

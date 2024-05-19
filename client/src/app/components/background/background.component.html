@@ -2,7 +2,7 @@
       (animationend)="blur = true; delayedNavigate()"
     >
       <img
-        [src]="'../../../assets/' + backgroundImage"
+        [src]="'../../../assets/bgs/' + backgroundImage"
         alt=""
         (load)="onImgLoad()"
         [ngClass]="{ 'hide': !pathname.includes('/posts/') || animationState === 'entering' }"
