@@ -8,6 +8,7 @@
   color: white;
   cursor: pointer;
   font-size: 1.1rem;
+  overflow: visible;
 
   .border {
     display: flex;
@@ -24,6 +25,10 @@
     .content {
       rotate: -45deg;
     }
+  }
+
+  &:after {
+    content: none;
   }
 
   &:hover {

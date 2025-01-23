@@ -30,6 +30,11 @@
         letter-spacing: 0.0075em;
         padding: 16px 24px;
         flex: 0 0 auto;
+
+        p {
+            color: #fefefe;
+            filter: drop-shadow(2px 2px color-mix(in hsl, hsl(79, 29%, 50%), black 50%));
+        }
     }
 
     &-body {

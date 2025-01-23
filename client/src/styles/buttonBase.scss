@@ -1,4 +1,30 @@
+%shine {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -75%;
+    width: 50%;
+    height: 100%;
+    opacity: 0;
+    background: linear-gradient(to right,
+            rgba(255, 255, 255, 0.13) 0%,
+            rgba(255, 255, 255, 0.13) 77%,
+            rgba(255, 255, 255, 0.75) 92%,
+            rgba(255, 255, 255, 0.0) 100%);
+    transform: skewX(-25deg);
+    z-index: 2;
+}
+
+%shine-hover {
+    opacity: 1;
+    left: 125%;
+    transition-property: left, opacity;
+    transition-duration: 0.7s, 0.15s;
+    transition-timing-function: ease;
+}
+
 .btn {
+    position: relative;
     padding: 0.5em 1em;
     background: var(--app-btn-color);
     color: rgb(0, 0, 0);
@@ -8,16 +34,30 @@
     font-family: Helvetica;
     cursor: pointer;
     font-weight: bold;
+    overflow: hidden;
 
     &:hover,
     &:focus-visible {
         --app-btn-color: var(--app-btn-color-hover);
     }
 
-    &[disabled] {
-        --app-btn-color: var(--app-btn-color-disable);
+    &:not(.icon-btn):after {
+        @extend %shine
     }
     
+    &:not(.icon-btn):hover:after,
+    &:not(.icon-btn):focus-visible:after {
+        @extend %shine-hover
+    }
+    
+    &[disabled] {
+        --app-btn-color: var(--app-btn-color-disable);
+        cursor: default;
+        &:after {
+            content: none;
+        }
+    }
+
     @media (max-width: 639px) {
         font-size: 0.8em;
     }
@@ -55,7 +95,7 @@
             --app-btn-color: var(--app-danger-color-hover);
         }
 
-        &::before {
+        &:before {
             content: "\00D7";
             position: absolute;
             font-size: 0.75em;

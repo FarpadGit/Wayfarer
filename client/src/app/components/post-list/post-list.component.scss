@@ -20,13 +20,15 @@
     %header-footer  {
         position: relative;
         height: var(--app-post-list-header-height);
+        background-blend-mode: multiply;
+        background-image: var(--app-backdrop-url);
         background-color: var(--app-post-list-header-color);
         /* #e3d8aa; */
         border: 1px solid var(--app-post-list-border-color);
         z-index: 5;
         overflow: hidden;
 
-        h1 {
+        h1, h3 {
             padding: 0.5rem 1rem;
             align-self: center;
             /* text-align: center; */
@@ -41,6 +43,8 @@
 
         h1 {
             font-weight: 400;
+            color: #fefefe;
+            filter: drop-shadow(2px 2px color-mix(in hsl, var(--app-post-list-header-color), black 50%));
         }
 
         @media (max-width: 639px) {
@@ -52,11 +56,11 @@
         @extend %header-footer;
         display: flex;
         align-items: center;
-        border-top: none;
+        border-top: none !important;
         border-bottom-right-radius: 2rem;
         border-bottom-left-radius: 2rem;
 
-        h1 {
+        h3 {
             max-width: 30%;
         }
     }

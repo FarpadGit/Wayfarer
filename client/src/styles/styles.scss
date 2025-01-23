@@ -43,6 +43,7 @@ $login-drawer-half-height: 15vh;
 }
 
 body {
+  position: relative;
   background-image: linear-gradient(to bottom, transparent 35%, hsl(50, 40%, 60%)), var(--app-backdrop-url);
   background-size: cover;
   background-repeat: no-repeat;
@@ -54,9 +55,40 @@ body {
   &.blur {
     filter: blur(10px);
   }
+  
+  &:has(.background-image.full) {
+      background-color: black;
+    }
 
   &:has(.background-image.dropdown) {
     overflow: hidden;
+
+    &:after {
+      width: 100%;
+    }
+  }
+
+  &:after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: calc(100% + 16px);
+    height: max(100%, 100vh);
+    background-image: var(--app-backdrop-url), var(--app-post-list-img-url);
+    background-color: hsl(45.3, 61.6%, 52%);
+    background-blend-mode: difference;
+    background-repeat: no-repeat;
+    background-size: cover;
+    transition: opacity 0.5s linear 0.5s;
+    opacity: 0;
+    z-index: -1;
+  }
+
+  &:has(.post-list .collapsed) {
+    &:after {
+      opacity: 1;
+    }
   }
 }
 

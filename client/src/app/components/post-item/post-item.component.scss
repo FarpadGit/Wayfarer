@@ -6,7 +6,7 @@
     transition: scale 0.2s linear, filter 0.2s linear, border-color 0.2s linear, background-color 0.2s linear;
     overflow: hidden;
 
-    &::before {
+    &:before {
         content: "";
         position: absolute;
         top: 0;
@@ -73,8 +73,8 @@
 }
 
 .post-item.highlight {
-    &:hover::before,
-    &:focus-visible::before {
+    &:hover:before,
+    &:focus-visible:before {
         left: 0;
         margin-left: 0;
         transition: left 0.2s ease;

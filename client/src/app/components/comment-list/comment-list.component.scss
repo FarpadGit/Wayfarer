@@ -26,16 +26,16 @@
     outline: none;
     transform: translateX(-50%);
 
-    &:hover::before,
-    &:focus-visible::before {
+    &:hover:before,
+    &:focus-visible:before {
         background-image: linear-gradient(to bottom, transparent 0, hsl(28.9, 100%, 67%) 50%, transparent 100%);
     }
 
-    &:focus-visible::before {
+    &:focus-visible:before {
         outline: 1px solid white;
     }
 
-    &::before {
+    &:before {
         content: "";
         position: absolute;
         top: 0;
