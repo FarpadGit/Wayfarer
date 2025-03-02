@@ -3,8 +3,8 @@ import { ApiService } from './api.service';
 import { AuthConfig, OAuthService } from 'angular-oauth2-oidc';
 
 export const userAccounts = {
-  GUEST: { id: 'Guest', display: 'Anonymus' },
-  ADMIN: { id: 'Admin', display: 'Admin' },
+  GUEST: { email: 'WF_GUEST', display: 'Anonymus' },
+  ADMIN: { email: 'WF_ADMIN', display: 'Admin' },
 };
 
 @Injectable({
@@ -29,19 +29,20 @@ export class LoginService {
     this.oAuthService.setupAutomaticSilentRefresh();
     this.oAuthService.loadDiscoveryDocumentAndTryLogin();
     this.oAuthService.events.subscribe((event) => {
-      if (event.type === 'token_received')
+      if (event.type === 'token_received') {
         this.loginUser({
-          id: this.currentUserEmail,
+          email: this.currentUserEmail,
           display: this.currentUserName,
         });
+      }
     });
   }
 
-  loginUser(user?: { id: string; display: string }) {
+  loginUser(user?: { email: string; display: string }) {
     if (!user) this.oAuthService.initCodeFlow();
-    else if (user.id === import.meta.env['NG_APP_ADMIN_EMAIL'])
-      this.apiService.validateUser(userAccounts.ADMIN.id);
-    else this.apiService.validateUser(user.id);
+    else if (user.email === import.meta.env['NG_APP_ADMIN_EMAIL'])
+      this.apiService.validateUser(userAccounts.ADMIN);
+    else this.apiService.validateUser(user);
   }
 
   async logoutUser() {
@@ -53,10 +54,6 @@ export class LoginService {
     return this.oAuthService.getIdentityClaims() !== null;
   }
 
-  get currentUserId() {
-    return sessionStorage.getItem('userId') || '';
-  }
-
   get currentUserName() {
     return (
       this.oAuthService.getIdentityClaims()?.['name'] ??
@@ -66,7 +63,8 @@ export class LoginService {
 
   get currentUserEmail() {
     return (
-      this.oAuthService.getIdentityClaims()?.['email'] ?? userAccounts.GUEST.id
+      this.oAuthService.getIdentityClaims()?.['email'] ??
+      userAccounts.GUEST.email
     );
   }
 }

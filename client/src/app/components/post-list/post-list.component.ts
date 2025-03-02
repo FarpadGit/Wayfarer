@@ -1,16 +1,19 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ApiService } from '../../services/api.service';
 import { PostListService } from '../../services/post-list.service';
 import { TransitionService } from '../../services/transition.service';
 import { AnimationService } from '../../services/animation.service';
-import { LoaderComponent } from '../UI/loader/loader.component';
 import { NewPostButtonComponent } from '../UI/new-post-button/new-post-button.component';
-import { PostItemComponent } from '../post-item/post-item.component';
+import { PostItemComponent } from './post-item/post-item.component';
 import { PaginatorComponent } from '../UI/paginator/paginator.component';
 import { NgxPaginationModule } from 'ngx-pagination';
-
-type animStates = 'none' | 'animating' | 'finished';
+import {
+  collapseAnimations,
+  emptyListLabelAnimations,
+  listAnimations,
+  listItemAnimations,
+  animStates,
+} from './animations';
 
 @Component({
   selector: 'app-post-list',
@@ -18,17 +21,21 @@ type animStates = 'none' | 'animating' | 'finished';
   imports: [
     CommonModule,
     NgxPaginationModule,
-    LoaderComponent,
     NewPostButtonComponent,
     PostItemComponent,
     PaginatorComponent,
   ],
   templateUrl: './post-list.component.html',
   styleUrl: './post-list.component.scss',
+  animations: [
+    listAnimations,
+    listItemAnimations,
+    emptyListLabelAnimations,
+    collapseAnimations,
+  ],
 })
-export class PostListComponent implements OnInit {
+export class PostListComponent {
   constructor(
-    private apiService: ApiService,
     private postListService: PostListService,
     private transitionService: TransitionService,
     private animationService: AnimationService
@@ -36,18 +43,16 @@ export class PostListComponent implements OnInit {
 
   @ViewChild('paginator') paginator: PaginatorComponent | null = null;
 
-  animationState: animStates = 'none';
+  animationState: animStates = animStates.none;
+  isListClipped: boolean = true;
+  private timeoutToken?: ReturnType<typeof setTimeout>;
 
-  private hasLoaded = false;
+  get animStates() {
+    return animStates;
+  }
 
-  get loadingState() {
-    if (this.postListService.loading) {
-      if (this.hasLoaded) return 'reloading';
-      else return 'loading';
-    }
-    if (this.postListService.error) return 'error';
-    this.hasLoaded = true;
-    return 'success';
+  get reloading() {
+    return this.postListService.reloading;
   }
   get error() {
     return this.postListService.error;
@@ -56,12 +61,17 @@ export class PostListComponent implements OnInit {
     return this.postListService.posts;
   }
 
-  ngOnInit(): void {
-    this.postListService.refreshPosts();
+  onHightlightChanged(highlighted: boolean) {
+    clearTimeout(this.timeoutToken);
+    if (highlighted) this.isListClipped = false;
+    else
+      this.timeoutToken = setTimeout(() => {
+        this.isListClipped = true;
+      }, 200);
   }
 
-  startBgAnimation() {
-    if (this.animationState === 'finished')
+  startEnterAnimation() {
+    if (this.animationState === animStates.finished)
       this.animationService.startEnterAnimation();
   }
 
@@ -69,23 +79,17 @@ export class PostListComponent implements OnInit {
     this.transitionService.setNavigate(`/posts/${id}`);
     if (this.transitionService.firstTime) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      this.animationState = 'animating';
+      this.animationService.startCollapseAnimation();
+      this.animationState = animStates.animating;
       this.transitionService.firstTime = false;
     } else {
-      document.body.classList.add('blur');
-      setTimeout(() => {
-        this.transitionService.callNavigate();
-      }, 500);
+      this.transitionService.blur = true;
+      this.transitionService.callDelayedNavigate(500);
     }
   }
 
   deletePost(id: string) {
-    this.apiService
-      .deletePost(id)
-      .then(() =>
-        this.postListService
-          .refreshPosts()
-          .then(() => (this.paginator!.currentPage = 0))
-      );
+    this.postListService.deletePost(id);
+    this.paginator!.currentPage = 0;
   }
 }

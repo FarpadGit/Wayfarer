@@ -1,10 +1,22 @@
 import { Injectable } from '@angular/core';
+import { AsyncService } from './async.service';
 import axios, { AxiosRequestConfig } from 'axios';
+import { postTitleType, postType, categoryTitleType } from '../types';
+
+type postParamsType = { title: string; body: string; categoryId: string };
+type commentParamsType = {
+  id: string;
+  postId: string;
+  message: string;
+  parentId?: string | null;
+};
 
 @Injectable({
   providedIn: 'root',
 })
 export class ApiService {
+  constructor(private asyncService: AsyncService) {}
+
   private callAxios = axios.create({
     baseURL: import.meta.env['NG_APP_SERVER_URL'],
     withCredentials: true,
@@ -12,86 +24,136 @@ export class ApiService {
 
   private async makeRequest(url: string, options?: AxiosRequestConfig<any>) {
     return this.callAxios(url, options)
-      .then((res) => {
-        sessionStorage.setItem('userId', res.headers['userid']);
-        return res.data;
-      })
+      .then((res) => res.data)
       .catch((error) =>
         Promise.reject(
           error?.response?.data?.message ??
-            'Sajnos egy ismeretlen hiba lépett fel'
+            'Sajnos egy ismeretlen eredetű hiba lépett fel a szerverhez kapcsolódás közben.'
         )
       );
   }
 
-  public validateUser(user: string) {
+  validateUser(user: { email: string; display: string }) {
     return this.makeRequest('/login', {
       method: 'POST',
-      data: { userToken: user },
+      data: {
+        userToken: {
+          email: user.email,
+          name: user.display,
+        },
+      },
     });
   }
 
-  public getPosts() {
-    return this.makeRequest('/posts');
+  getCategories() {
+    return this.makeRequest('/categories');
   }
 
-  public getPost(id: string) {
+  getCategoriesAsync = this.asyncService.asAsyncFn<categoryTitleType[]>(() =>
+    this.getCategories()
+  );
+
+  createCategory(title: string) {
+    return this.makeRequest('/categories', {
+      method: 'POST',
+      data: { title },
+    });
+  }
+
+  createCategoryAsync = this.asyncService.asAsyncFn((title: string) =>
+    this.createCategory(title)
+  );
+
+  deleteCategory(id: string) {
+    return this.makeRequest(`/categories/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  deleteCategoryAsync = this.asyncService.asAsyncFn((id: string) =>
+    this.deleteCategory(id)
+  );
+
+  getPosts(categoryId: string) {
+    return this.makeRequest(`/categories/${categoryId}/posts`);
+  }
+
+  getPostsAsync = this.asyncService.asAsyncFn<postTitleType[]>(
+    (categoryId: string) => this.getPosts(categoryId)
+  );
+
+  getPost(id: string) {
     return this.makeRequest(`/posts/${id}`);
   }
 
-  public createPost({ title, body }: { title: string; body: string }) {
-    return this.makeRequest('/posts', {
+  getPostAsync = this.asyncService.asAsyncFn<postType>((id: string) =>
+    this.getPost(id)
+  );
+
+  createPost({ title, body, categoryId }: postParamsType) {
+    return this.makeRequest(`/categories/${categoryId}/posts`, {
       method: 'POST',
       data: { title, body },
     });
   }
 
-  public deletePost(id: string) {
+  createPostAsync = this.asyncService.asAsyncFn((post: postParamsType) =>
+    this.createPost(post)
+  );
+
+  deletePost(id: string) {
     return this.makeRequest(`/posts/${id}`, {
       method: 'DELETE',
     });
   }
 
-  public createComment({
-    postId,
-    message,
-    parentId,
-  }: {
-    postId: string;
-    message: string;
-    parentId: string;
-  }) {
-    return this.makeRequest(`posts/${postId}/comments`, {
+  deletePostAsync = this.asyncService.asAsyncFn((id: string) =>
+    this.deletePost(id)
+  );
+
+  createComment({ postId, message, parentId }: Omit<commentParamsType, 'id'>) {
+    return this.makeRequest(`/posts/${postId}/comments`, {
       method: 'POST',
-      data: { id: postId, message, parentId },
+      data: { postId, message, parentId },
     });
   }
 
-  public updateComment({
-    postId,
+  createCommentAsync = this.asyncService.asAsyncFn(
+    (comment: Omit<commentParamsType, 'id'>) => this.createComment(comment)
+  );
+
+  updateComment({
     message,
     id,
-  }: {
-    postId: string;
-    message: string;
-    id: string;
-  }) {
-    return this.makeRequest(`posts/${postId}/comments/${id}`, {
+  }: Omit<commentParamsType, 'parentId' | 'postId'>) {
+    return this.makeRequest(`/comments/${id}`, {
       method: 'PUT',
       data: { message },
     });
   }
 
-  public deleteComment({ postId, id }: { postId: string; id: string }) {
-    return this.makeRequest(`posts/${postId}/comments/${id}`, {
+  updateCommentAsync = this.asyncService.asAsyncFn(
+    (comment: Omit<commentParamsType, 'parentId'>) =>
+      this.updateComment(comment)
+  );
+
+  deleteComment(id: string) {
+    return this.makeRequest(`/comments/${id}`, {
       method: 'DELETE',
     });
   }
 
-  public toggleCommentLike({ id, postId }: { id: string; postId: string }) {
-    return this.makeRequest(`/posts/${postId}/comments/${id}/toggleLike`, {
+  deleteCommentAsync = this.asyncService.asAsyncFn((id: string) =>
+    this.deleteComment(id)
+  );
+
+  toggleCommentLike(id: string) {
+    return this.makeRequest(`/comments/${id}/toggleLike`, {
       method: 'POST',
-      data: { body: '' },
     });
   }
+
+  toggleCommentLikeAsync = this.asyncService.asAsyncFn((id: string) =>
+    this.toggleCommentLike(id)
+  );
 }

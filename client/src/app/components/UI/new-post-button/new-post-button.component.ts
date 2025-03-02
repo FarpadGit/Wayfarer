@@ -1,6 +1,5 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { ApiService } from '../../../services/api.service';
 import { PostListService } from '../../../services/post-list.service';
 import { NewPostDialogComponent } from '../../new-post-dialog/new-post-dialog.component';
 import { ModalService } from 'ngx-modal-ease';
@@ -21,7 +20,6 @@ import { matPostAdd } from '@ng-icons/material-icons/baseline';
 })
 export class NewPostButtonComponent implements OnDestroy {
   constructor(
-    private apiService: ApiService,
     private modalService: ModalService,
     private postListService: PostListService
   ) {}
@@ -44,9 +42,8 @@ export class NewPostButtonComponent implements OnDestroy {
   }
 
   createPost(title: string, body: string) {
-    this.apiService
-      .createPost({ title, body })
-      .then(() => this.postListService.refreshPosts());
+    const categoryId = this.postListService.getCurrentCategory();
+    this.postListService.createPost(title, body, categoryId);
   }
 
   ngOnDestroy(): void {

@@ -1,0 +1,32 @@
+<div class="post-item" [ngClass]="{ 'highlight': highlighted }">
+    <h3
+      (mouseenter)="highlighted = true"
+      (mouseleave)="highlighted = false"
+    >
+      <a
+        href="#"
+        (click)="PostItemClicked($event)"
+      >
+        {{title}}
+      </a>
+    </h3>
+    <p
+      (mouseenter)="highlighted = true"
+      (mouseleave)="highlighted = false"
+    >
+      {{uploader.name}} töltötte fel {{getUploadedSinceText(uploadedSince)}}
+    </p>
+    @if(authorLoggedIn) {
+      <app-icon-btn
+        class="post-delete-btn"
+        [appTooltip]="'poszt törlése'"
+        [ngClass]="{ 'hide': highlighted }"
+        [iconClass]="'btn btn-black btn-large'"
+        [ariaLabel]="'Delete Post'"
+        [loading]="isDeleting"
+        (appConfirmPopup)="DeleteButtonClicked()"
+      >
+        <ng-icon icon name="tablerEraser"></ng-icon>
+      </app-icon-btn>
+    }
+  </div>

@@ -19,19 +19,25 @@
     }
 }
 
-.btn-like {
-    @include colored-btn(var(--app-danger-color), var(--app-danger-color-hover));
-}
+.btn {
+    &-white {
+        @include colored-btn(white, rgba(255, 255, 255, 0.8));
+    }
 
-.btn-delete {
-    @include colored-btn(var(--app-black-color), var(--app-black-color-hover));
-
-    &-post {
-        @extend .btn-delete, %font-large;
-
+    &-red {
+        @include colored-btn(var(--app-danger-color), var(--app-danger-color-hover));
+    }
+    
+    &-black {
+        @include colored-btn(var(--app-black-color), var(--app-black-color-hover));
+        
         &:disabled {
             --app-btn-color: var(--app-black-color-hover);
         }
+    }
+
+    &-large {
+        @extend %font-large; 
     }
 }
 

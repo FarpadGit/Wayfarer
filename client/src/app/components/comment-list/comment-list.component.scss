@@ -28,7 +28,7 @@
 
     &:hover:before,
     &:focus-visible:before {
-        background-image: linear-gradient(to bottom, transparent 0, hsl(28.9, 100%, 67%) 50%, transparent 100%);
+        background-image: linear-gradient(to bottom, transparent 0, var(--app-glow-color-hover) 50%, transparent 100%);
     }
 
     &:focus-visible:before {

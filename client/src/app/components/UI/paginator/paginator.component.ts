@@ -21,10 +21,6 @@ import {
   ],
 })
 export class PaginatorComponent {
-  public currentPage: number = 0;
-  public itemsPerPage: number = 6;
-
-  trackByIndex(index: number, item: { value: number }) {
-    return item.value;
-  }
+  currentPage: number = 0;
+  itemsPerPage: number = 6;
 }

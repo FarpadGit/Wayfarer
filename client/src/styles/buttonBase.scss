@@ -63,12 +63,12 @@
     }
 
     &-special {
-        --app-btn-color: var(--app-glow-color);
+        --app-btn-color: color-mix(in srgb, var(--app-danger-color) 70%, hsl(0, 0%, 0%) 30%);
         color: white;
 
         &:hover,
         &:focus-visible {
-            --app-btn-color: var(--app-glow-color-hover);
+            --app-btn-color: color-mix(in srgb, var(--app-danger-color-hover) 70%, hsl(0, 0%, 0%) 30%);
         }
     }
 }

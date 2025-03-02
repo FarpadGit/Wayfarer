@@ -1,50 +1,47 @@
-%rounded-top {
-    border-top-right-radius: 2rem;
-    border-top-left-radius: 2rem;
+@mixin rounded-corners($top) {
+    @if($top) {
+        border-top-right-radius: 2rem;
+        border-top-left-radius: 2rem;
+    }
+    @else {
+        border-bottom-right-radius: 2rem;
+        border-bottom-left-radius: 2rem;
+    }
 }
 
 .post-list {
-    --app-post-list-header-color: hsl(79, 29%, 50%);
-    --app-post-list-header-height: 4rem;
-    --app-post-list-border-color: hsl(79, 29%, 35%);
-    --app-post-list-text-color: hsl(68, 92%, 23%);
     position: relative;
-    opacity: 1;
-    animation: entry 0.5s ease;
-    @extend %rounded-top;
-
-    &.fadeout {
-        animation: fadeout 0.2s linear forwards;
-    }
+    @include rounded-corners(true);
 
     %header-footer  {
         position: relative;
         height: var(--app-post-list-header-height);
-        background-blend-mode: multiply;
         background-image: var(--app-backdrop-url);
         background-color: var(--app-post-list-header-color);
-        /* #e3d8aa; */
+        background-blend-mode: multiply;
         border: 1px solid var(--app-post-list-border-color);
         z-index: 5;
         overflow: hidden;
 
-        h1, h3 {
+        h2, h3 {
             padding: 0.5rem 1rem;
             align-self: center;
-            /* text-align: center; */
         }
     }
 
     &-header {
         @extend %header-footer;
-        @extend %rounded-top;
+        @include rounded-corners(true);
         display: flex;
         justify-content: space-between;
+        box-shadow: 0px 5px 5px hsla(0, 0%, 0%, 0.33);
 
-        h1 {
+        h2 {
+            font-size: 24pt;
             font-weight: 400;
             color: #fefefe;
             filter: drop-shadow(2px 2px color-mix(in hsl, var(--app-post-list-header-color), black 50%));
+            user-select: none;
         }
 
         @media (max-width: 639px) {
@@ -54,11 +51,11 @@
 
     &-footer {
         @extend %header-footer;
+        @include rounded-corners(false);
         display: flex;
         align-items: center;
         border-top: none !important;
-        border-bottom-right-radius: 2rem;
-        border-bottom-left-radius: 2rem;
+        box-shadow: 0px -5px 5px hsla(0, 0%, 0%, 0.33);
 
         h3 {
             max-width: 30%;
@@ -69,68 +66,41 @@
         display: flex;
         position: relative;
         flex-direction: column;
+        min-height: 488px;
+        background: var(--app-worldmap-img-url) center / cover no-repeat;
         background-color: hsl(52, 60%, 95%);
-        background-image: var(--app-post-list-img-url);
-        background-repeat: no-repeat;
-        background-size: cover;
-        background-position: center;
         background-blend-mode: multiply;
         opacity: 1;
+        border-left: 1px solid var(--app-post-list-border-color);
+        border-right: 1px solid var(--app-post-list-border-color);
         transition: opacity 0.5s ease;
+
+        &.clipped {
+            overflow: clip;
+        }
 
         &.loading {
             opacity: 0.2;
             pointer-events: none;
         }
+
+        .empty-list-notice {
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            width: 100%;
+            height: 100%;
+            font-family: Manrope;
+            font-size: 28pt;
+            font-weight: 600;
+            color: var(--app-post-list-text-color);
+            user-select: none;
+        }
     }
 }
 
-.body-wrapper {
+.body-wrapper:not(:has(.highlight)) {
     overflow-y: clip;
-}
-
-@keyframes entry {
-    0% {
-        opacity: 0;
-        top: 20px;
-    }
-
-    100% {
-        opacity: 1;
-        top: 0;
-    }
-}
-
-@keyframes fadeout {
-    0% {
-        opacity: 1;
-    }
-
-    100% {
-        opacity: 0;
-    }
-}
-
-/* collapse animation */
-
-.post-list:has(.body-container.collapsed) {
-    overflow-y: clip;
-    overflow-x: visible;
-    pointer-events: none;
-}
-
-.body-container.collapsed {
-    overflow-y: clip;
-    overflow-x: visible;
-    animation: collapse 1.0s var(--app-ease-function) forwards;
-}
-
-@keyframes collapse {
-    0% {
-        translate: 0;
-    }
-
-    100% {
-        translate: 0 calc(-100% + var(--app-post-list-header-height));
-    }
 }

@@ -7,9 +7,7 @@
     max-width: 75vw;
     max-height: calc(100% - 64px);
     border-radius: 2rem;
-    background-image: var(--app-post-highlight-img-url);
-    background-repeat: no-repeat;
-    background-size: cover;
+    background: var(--app-post-highlight-img-url) 0 / cover no-repeat;
     color: rgba(0, 0, 0, 0.87);
     box-shadow: 0 11px 15px -7px rgba(0, 0, 0, 0.2), 0 24px 38px 3px rgba(0, 0, 0, 0.14), 0 9px 46px 8px rgba(0, 0, 0, 0.12);
 }
@@ -19,21 +17,23 @@
         display: flex;
         justify-content: center;
         text-align: center;
-        background-color: hsl(79, 29%, 50%);
-        background-image: var(--app-backdrop-url);
         background-size: 150%;
+        background-image: var(--app-backdrop-url);
+        background-color: var(--app-post-list-header-color);
         background-blend-mode: multiply;
+        border-bottom: 2px solid var(--app-post-list-border-color);
         font-family: Segoe UI;
-        font-size: 1.25rem;
+        font-size: 1.5rem;
         font-weight: 500;
         line-height: 1.6;
         letter-spacing: 0.0075em;
         padding: 16px 24px;
         flex: 0 0 auto;
+        user-select: none;
 
         p {
             color: #fefefe;
-            filter: drop-shadow(2px 2px color-mix(in hsl, hsl(79, 29%, 50%), black 50%));
+            filter: drop-shadow(2px 2px color-mix(in hsl, var(--app-post-list-header-color), black 50%));
         }
     }
 
@@ -57,7 +57,6 @@
 
             &:focus-visible {
                 outline-color: var(--app-btn-color);
-                // box-shadow: 0 2px 0 var(--app-btn-color);
             }
         }
 
@@ -74,6 +73,10 @@
             font-family: Arial;
             outline: 2px solid transparent;
             transition: outline 0.5s;
+
+            &::placeholder {
+                text-align: center;
+            }
 
             &:focus-visible {
                 outline-color: var(--app-btn-color);

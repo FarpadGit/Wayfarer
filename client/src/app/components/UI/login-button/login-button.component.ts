@@ -23,10 +23,11 @@ export class LoginButtonComponent {
     this.modalService.open(LoginDialogComponent, {
       size: {
         padding: '0',
+        width: '100vw',
       },
       modal: {
-        top: 'calc(var(--app-login-drawer-height) / 2)',
-        left: '50%',
+        top: '0',
+        left: '0',
         enter: 'login-dialog-enter 0.5s ease-out',
         leave: 'login-dialog-exit 0.5s ease-out',
       },

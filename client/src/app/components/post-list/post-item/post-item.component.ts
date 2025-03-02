@@ -1,11 +1,12 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LoginService } from '../../services/login.service';
-import { IconBtnComponent } from '../UI/icon-btn/icon-btn.component';
-import { TooltipDirective } from '../UI/tooltip/tooltip.directive';
-import { ConfirmPopupDirective } from '../delete-post-dialog/confirm-popup.directive';
+import { LoginService } from '../../../services/login.service';
+import { IconBtnComponent } from '../../UI/icon-btn/icon-btn.component';
+import { TooltipDirective } from '../../UI/tooltip/tooltip.directive';
+import { ConfirmPopupDirective } from '../../delete-post-dialog/confirm-popup.directive';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { tablerEraser } from '@ng-icons/tabler-icons';
+import { userType } from '../../../types';
 
 @Component({
   selector: 'app-post-item',
@@ -28,18 +29,26 @@ import { tablerEraser } from '@ng-icons/tabler-icons';
 export class PostItemComponent {
   @Input() id: string = '';
   @Input() title: string = '';
-  @Input() uploader: { id: string; name: string } = { id: '', name: '' };
+  @Input() uploader: userType = { email: '', name: '' };
   @Input() uploadedSince: string = '';
   @Output() onClick = new EventEmitter<string>();
   @Output() onDeleteClick = new EventEmitter<string>();
+  @Output() onHighlightChanged = new EventEmitter<boolean>();
 
   constructor(private loginService: LoginService) {}
 
-  highlighted = false;
+  _highlighted = false;
+  get highlighted() {
+    return this._highlighted;
+  }
+  set highlighted(value: boolean) {
+    this._highlighted = value;
+    this.onHighlightChanged.emit(value);
+  }
   isDeleting = false;
   get authorLoggedIn() {
     return (
-      this.loginService.currentUserId === this.uploader.id ||
+      this.loginService.currentUserEmail === this.uploader.email ||
       this.loginService.currentUserEmail ===
         import.meta.env['NG_APP_ADMIN_EMAIL']
     );

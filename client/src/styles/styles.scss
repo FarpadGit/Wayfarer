@@ -1,6 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
 @use "buttonBase";
-$login-drawer-half-height: 15vh;
 
 @font-face {
     font-family: URW Gothic L;
@@ -34,61 +33,24 @@ $login-drawer-half-height: 15vh;
   --app-danger-color-hover: hsl(0, 100%, 67%);
   --app-black-color: hsl(0, 0%, 0%);
   --app-black-color-hover: hsl(0, 0%, 35%);
+  --app-post-list-header-color: hsl(79, 29%, 50%);
+  --app-post-list-header-height: 4rem;
+  --app-post-list-border-color: hsl(77, 29%, 35%);
+  --app-post-list-text-color: hsl(68, 92%, 23%);
   --app-backdrop-url: url("../assets/background.jpg");
   --app-post-highlight-img-url: url("../assets/Landscape.jpg");
-  --app-post-list-img-url: url("../assets/WorldMap.png");
-  --app-background-img-url: url("../assets/ForestEntry1.jpg");
-  --app-ease-function: cubic-bezier(0.87, 0, 0.13, 1);
-  --app-login-drawer-height: #{$login-drawer-half-height * 2};
+  --app-worldmap-img-url: url("../assets/WorldMap.png");
+  --app-globe-img-url: url("../assets/globe.jpg");
+  --app-banner-img-url: url("../assets/ForestEntry1.jpg");
+  --app-login-drawer-height: 30vh;
 }
 
 body {
-  position: relative;
-  background-image: linear-gradient(to bottom, transparent 35%, hsl(50, 40%, 60%)), var(--app-backdrop-url);
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-color: hsl(42, 75%, 75%);
-  background-blend-mode: multiply;
-  filter: none;
-  transition: filter 0.5s ease;
+  background-color: black;
 
-  &.blur {
-    filter: blur(10px);
-  }
-  
-  &:has(.background-image.full) {
-      background-color: black;
-    }
-
-  &:has(.background-image.dropdown) {
+  &:has(.login-dialog), 
+  &:has(.new-post-dialog) {
     overflow: hidden;
-
-    &:after {
-      width: 100%;
-    }
-  }
-
-  &:after {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: calc(100% + 16px);
-    height: max(100%, 100vh);
-    background-image: var(--app-backdrop-url), var(--app-post-list-img-url);
-    background-color: hsl(45.3, 61.6%, 52%);
-    background-blend-mode: difference;
-    background-repeat: no-repeat;
-    background-size: cover;
-    transition: opacity 0.5s linear 0.5s;
-    opacity: 0;
-    z-index: -1;
-  }
-
-  &:has(.post-list .collapsed) {
-    &:after {
-      opacity: 1;
-    }
   }
 }
 
@@ -97,45 +59,53 @@ body {
 }
 
 .error-msg {
+  position: relative;
   color: var(--app-danger-color-hover);
   text-align: center;
 }
 
+.ngx-modal {
+  &:has(.login-dialog) {
+    transform: none;
+  }
 
-@mixin dialog-dropdown-anim($name, $top, $fade: true) {
+  &:has(.delete-dialog) {
+    position: absolute !important;
+  }
+}
+
+@mixin dialog-dropdown-anim($name, $from: 0%, $to: 50%, $fade: true) {
   @keyframes #{$name}-dialog-enter {
     0% {
       @if $fade { 
-        opacity: 0; 
-        top: 0%;
+        opacity: 0;
       }
       @else { 
         opacity: 1; 
-        top: -#{$top};
       }
+      top: $from;
     }
 
     100% {
       opacity: 1;
-      top: $top;
+      top: $to;
     }
   }
 
   @keyframes #{$name}-dialog-exit {
     0% {
       opacity: 1;
-      top: $top;
+      top: $to;
     }
 
     100% {
       @if $fade { 
         opacity: 0; 
-        top: 0%;
       }
       @else { 
         opacity: 1; 
-        top: -#{$top};
       }
+      top: $from;
     }
   }
 }
@@ -157,5 +127,5 @@ body {
   }
 }
 
-@include dialog-dropdown-anim("new-post", 50%);
-@include dialog-dropdown-anim("login", $login-drawer-half-height, false);
+@include dialog-dropdown-anim("new-post");
+@include dialog-dropdown-anim("login", calc(-1 * var(--app-login-drawer-height)), 0%, false);

@@ -1,0 +1,48 @@
+.category-item {
+    position: relative;
+    border-bottom: 1px solid var(--app-category-list-border-color);
+    padding: 15px;
+    transition: filter 0.2s linear, background-color 0.2s linear;
+    overflow: hidden;
+
+    h3, p {
+        width: fit-content;
+    }
+
+    p {
+        color: gray;
+        font-size: 0.75rem;
+        padding: 0.2rem 0;
+    }
+
+    a {
+        text-decoration: none;
+        color: var(--app-category-list-text-color);
+
+        &:hover,
+        &:focus-visible {
+            text-decoration: underline;
+        }
+    }
+
+    .category-delete-btn {
+        position: absolute;
+        top: 50%;
+        right: 3%;
+        transform: translateY(-50%);
+    }
+
+    &.active {
+        a {
+            color: whitesmoke;
+        }
+        
+        p {
+            color: white;
+        }
+}
+
+    @media (max-width: 639px) {
+        font-size: smaller;
+    }
+}

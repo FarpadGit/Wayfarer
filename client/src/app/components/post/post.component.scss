@@ -1,42 +1,11 @@
 .post-container {
-    --post-entry-delay: 0s;
     position: relative;
-    opacity: 0;
+    width: 1200px;
     font-family: Manrope;
     word-break: keep-all;
-    transition: opacity 0.5s ease, top 0.5s ease, left 0.5s ease;
-    animation: entry 0.5s ease var(--post-entry-delay) forwards;
 
     @media (max-width: 639px) {
         font-size: 0.75rem;        
-    }
-}
-
-.fadeout {
-    animation: exit 0.5s ease forwards;
-}
-
-@keyframes entry {
-    0% {
-        opacity: 0;
-        top: 20px;
-    }
-
-    100% {
-        opacity: 1;
-        top: 0;
-    }
-}
-
-@keyframes exit {
-    0% {
-        opacity: 1;
-        left: 0;
-    }
-
-    100% {
-        opacity: 0;
-        left: 100px;
     }
 }
 

@@ -1,0 +1,59 @@
+<div class="category-list-wrapper" [@fade-out]="animationState">
+  <div class="category-list" 
+    @fade-in
+    [@collapsable]="animationState"
+    (@collapsable.done)="animationState === animStates.animating ? animationState = animStates.finished : null"
+  >
+    <div class="category-list-header">
+      <h2>Járások</h2>
+      <div 
+        class="input-container" 
+        [ngClass]="{'active': isInputActive}"
+        [ngStyle]="{'--input-slide-duration': inputSlideDuration + 'ms'}"
+        >
+          <input type="text" #addCategoryInput 
+            (keydown)="$event.key === 'Enter' ? addCategory(addCategoryInput.value) : null"
+            (blur)="isInputActive = false; addCategoryInput.value = ''" 
+            tabindex="-1"
+          >
+          <app-icon-btn 
+          class="add-button"
+          [iconClass]="'btn-large'"
+          (mousedown)="$event.preventDefault()"
+          (onClick)="isInputActive ? addCategory(addCategoryInput.value) : showInput()"
+          >
+            <ng-icon icon name="tablerPlus"></ng-icon>
+          </app-icon-btn>
+      </div>
+    </div>
+    <div class="category-list-body-wrapper" [ngClass]="{ 'loading': reloading }">
+      <div class="category-list-body">
+        @for(category of categories; track category.id) {
+          @if(activeCategory === category.id){ 
+            <div class="overlay">
+              <app-category-item
+                [id]="category.id"
+                [title]="category.title"
+                [creator]="category.creator"
+                [uploadedSince]="category.createdAt"
+                [isActive]="activeCategory === category.id"
+                (onClick)="onCategoryItemClicked($event)"
+                (onDeleteClick)="deleteCategory($event)"
+              />
+            </div>
+          } @else {
+            <app-category-item
+              [id]="category.id"
+              [title]="category.title"
+              [creator]="category.creator"
+              [uploadedSince]="category.createdAt"
+              [isActive]="activeCategory === category.id"
+              (onClick)="onCategoryItemClicked($event)"
+              (onDeleteClick)="deleteCategory($event)"
+            />
+          }
+        }
+      </div>
+    </div>
+  </div>
+</div>

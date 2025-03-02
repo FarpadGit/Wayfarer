@@ -1,0 +1,16 @@
+@switch (loadingState) {
+    @case ('loading') {
+        <app-loader [text]="'Posztok betöltése...'"/>
+    }
+    @case ('error') {
+        <h1 class="error-msg">{{ error }}</h1>
+    }
+    @case ('success') {
+        <div class="wrapper">
+            <div class="grid-layout">
+                <app-category-list></app-category-list>
+                <app-post-list></app-post-list>
+            </div>
+        </div>
+    }
+}

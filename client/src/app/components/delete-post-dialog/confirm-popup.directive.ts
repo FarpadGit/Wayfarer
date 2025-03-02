@@ -17,8 +17,8 @@ import { ModalService } from 'ngx-modal-ease';
 })
 export class ConfirmPopupDirective implements OnDestroy {
   constructor(
-    private elementRef: ElementRef,
-    private modalService: ModalService
+    private modalService: ModalService,
+    private elementRef: ElementRef
   ) {}
 
   private dialogSub: Subscription | null = null;
@@ -36,7 +36,7 @@ export class ConfirmPopupDirective implements OnDestroy {
     const { top, left, width, height } =
       this.elementRef.nativeElement.getBoundingClientRect();
 
-    const modalTop = top + height / 2 + 'px';
+    const modalTop = top + height / 2 + window.scrollY + 'px';
     const modalLeft =
       this.confirmPosition === 'left'
         ? left - popupWidth / 2 - 10 + 'px'

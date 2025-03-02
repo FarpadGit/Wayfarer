@@ -1,5 +1,10 @@
-<app-background />
-<div class="app-container">
-  <app-login-button [ngClass]="{ 'login-btn': true, 'hidden': animationState === 'entering'}"></app-login-button>
-  <router-outlet></router-outlet>
+<div class="app-wrapper" [ngClass]="{ 'blur': blur }">
+  @if(animationState === bgStates.entering) {
+    <div class="backdrop-image" @fade-in></div>
+  }
+  <app-background />
+  <div class="app-container">
+    <app-login-button class="login-btn" [@fade-out]="animationState"></app-login-button>
+    <router-outlet></router-outlet>
+  </div>
 </div>

@@ -1,7 +1,11 @@
 <button [ngClass]="classes" [disabled]="disabled" (click)="onClick.emit()" [attr.aria-label]="ariaLabel">
     <span [ngStyle]="{ 'margin-right': text.children.length > 0 || text.innerText ? '0.25rem' : undefined }">
-      <ng-content select="[icon]" *ngIf="!loading; else spinner"/>
-      <ng-template #spinner><div class="spinner"></div></ng-template>
+      @if(!loading){ 
+        <ng-content select="[icon]" /> 
+      }
+      @else { 
+        <div class="spinner"></div> 
+      }
     </span>
     <div #text><ng-content /></div>
 </button>

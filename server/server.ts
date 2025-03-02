@@ -3,9 +3,11 @@ import sensible from "@fastify/sensible";
 import cors from "@fastify/cors";
 import cookie from "@fastify/cookie";
 import * as dotenv from "dotenv";
-import { PrismaClient } from "@prisma/client";
+import * as service from "./service.js";
 
 dotenv.config();
+
+const { GUEST_USER_ID } = service;
 
 const app = fastify();
 app.register(sensible);
@@ -31,267 +33,202 @@ app.addHook("onSend", async (req, res) => {
   res.headers({ userId: req.cookies.userId });
 });
 
-const prisma: PrismaClient = new PrismaClient();
-let CURRENT_USER_ID: string = "";
-const ADMIN_USER_ID: string = <string>(
-  (await prisma.user.findFirst({ where: { name: "Admin" } }))?.id
-);
-const GUEST_USER_ID: string = <string>(
-  (await prisma.user.findFirst({ where: { name: "Guest" } }))?.id
-);
-const COMMENT_SELECT_FIELDS = {
-  id: true,
-  message: true,
-  parentId: true,
-  createdAt: true,
-  user: {
-    select: {
-      id: true,
-      name: true,
-    },
-  },
+type ReqParamsType = {
+  categoryId?: string;
+  postId?: string;
+  commentId?: string;
 };
-
-type ReqParamsType = { postId: string; commentId?: string };
+type ReqBodyForCategoriesType = {
+  title?: string;
+};
 type ReqBodyForPostsType = {
   title?: string;
   body?: string;
-  uploaderId?: string;
 };
 type ReqBodyForCommentsType = {
-  id?: string;
   message?: string;
   parentId?: string;
-  postId?: string;
 };
 type ReqBodyForLoginType = {
-  userToken?: string;
+  userToken?: {
+    email: string;
+    name: string;
+    sub: string;
+  };
 };
 
 app.post("/login", async (req, res) => {
-  const body = req.body as ReqBodyForLoginType;
+  const { userToken } = req.body as ReqBodyForLoginType;
+  let CURRENT_USER_ID: string = "";
 
-  if (body.userToken === "" || body.userToken == null) {
+  if (
+    userToken == null ||
+    userToken.email === "" ||
+    userToken.email === "WF_GUEST"
+  ) {
     CURRENT_USER_ID = GUEST_USER_ID;
   } else {
-    CURRENT_USER_ID =
-      (await prisma.user.findFirst({ where: { name: body.userToken } }))?.id ??
-      (await prisma.user.create({ data: { name: <string>body.userToken } }))
-        ?.id;
+    CURRENT_USER_ID = await service.createUserIfNew({ ...userToken });
   }
   req.cookies.userId = CURRENT_USER_ID;
+
   res.clearCookie("userId");
   res.setCookie("userId", CURRENT_USER_ID, { path: "/" });
   return true;
 });
 
-app.get("/posts", async (req, res) => {
+app.get("/categories", async (req, res) => {
+  return await resolveAsync(service.getCategories());
+});
+
+app.post("/categories", async (req, res) => {
+  const { title } = req.body as ReqBodyForCategoriesType;
   return await resolveAsync(
-    prisma.post.findMany({
-      select: {
-        id: true,
-        title: true,
-        createdAt: true,
-        uploader: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
-      },
-    })
+    service.createCategory({ title, creatorId: req.cookies.userId })
   );
 });
 
-app.post("/posts", async (req, res) => {
-  const body = req.body as ReqBodyForPostsType;
-  if (body.title === "" || body.title == null) {
+app.delete("/categories/:categoryId", async (req, res) => {
+  const { categoryId } = req.params as ReqParamsType;
+
+  const response = await resolveAsync(
+    service.deleteCategory(categoryId, req.cookies.userId)
+  );
+
+  if (Object.keys(response).includes("PrivilegeError"))
+    return res.send(
+      app.httpErrors.unauthorized("Nincs jogosultságod törölni ezt a járást!")
+    );
+
+  return response;
+});
+
+app.get("/categories/:categoryId/posts", async (req, res) => {
+  const { categoryId } = req.params as ReqParamsType;
+  return await resolveAsync(service.getPostsByCategory(categoryId));
+});
+
+app.post("/categories/:categoryId/posts", async (req, res) => {
+  const { title, body } = req.body as ReqBodyForPostsType;
+  const { categoryId } = req.params as ReqParamsType;
+
+  if (categoryId === "" || categoryId == null) {
+    return res.send(
+      app.httpErrors.badRequest(
+        "Minden posztnak tartoznia kell egy kategóriához"
+      )
+    );
+  }
+
+  if (title === "" || title == null) {
     return res.send(app.httpErrors.badRequest("A poszt címe kötelező"));
   }
 
-  if (body.body === "" || body.body == null) {
+  if (body === "" || body == null) {
     return res.send(app.httpErrors.badRequest("A poszt törzse kötelező"));
   }
 
   return await resolveAsync(
-    prisma.post.create({
-      data: {
-        title: <string>body.title,
-        body: <string>body.body,
-        uploaderId: <string>req.cookies.userId,
-      },
+    service.createPost({
+      title,
+      body,
+      categoryId,
+      uploaderId: req.cookies.userId,
     })
   );
 });
 
 app.get("/posts/:postId", async (req, res) => {
+  const { postId } = req.params as ReqParamsType;
   return await resolveAsync(
-    prisma.post
-      .findUnique({
-        where: { id: (req.params as ReqParamsType).postId },
-        select: {
-          body: true,
-          title: true,
-          comments: {
-            orderBy: { createdAt: "desc" },
-            select: {
-              ...COMMENT_SELECT_FIELDS,
-              _count: { select: { likes: true } },
-            },
-          },
-        },
-      })
-      .then(async (post) => {
-        const likes = await prisma.like.findMany({
-          where: {
-            userId: req.cookies.userId,
-            commentId: { in: post?.comments.map((comment) => comment.id) },
-          },
-        });
-
-        return {
-          ...post,
-          comments: post?.comments.map((comment) => {
-            const { _count, ...commentFields } = comment;
-            return {
-              ...commentFields,
-              isLikedByMe: Boolean(
-                likes.find((like) => like.commentId === comment.id)
-              ),
-              likeCount: _count.likes || 0,
-            };
-          }),
-        };
-      })
+    service.getPostWithComments(postId, req.cookies.userId)
   );
 });
 
 app.delete("/posts/:postId", async (req, res) => {
-  const userId: string = <string>(
-    await prisma.post.findUnique({
-      where: { id: (req.params as ReqParamsType).postId },
-      select: { uploaderId: true },
-    })
-  )?.uploaderId;
-  if (userId !== req.cookies.userId && req.cookies.userId !== ADMIN_USER_ID) {
+  const { postId } = req.params as ReqParamsType;
+
+  const response = await resolveAsync(
+    service.deletePost(postId, req.cookies.userId)
+  );
+  if (Object.keys(response).includes("PrivilegeError"))
     return res.send(
       app.httpErrors.unauthorized("Nincs jogosultságod törölni ezt a posztot!")
     );
-  }
 
-  return await resolveAsync(
-    prisma.post.delete({
-      where: { id: (req.params as ReqParamsType).postId },
-      select: { id: true },
-    })
-  );
+  return response;
 });
 
 app.post("/posts/:postId/comments", async (req, res) => {
-  const body = req.body as ReqBodyForCommentsType;
-  if (body.message === "" || body.message == null) {
+  const { postId } = req.params as ReqParamsType;
+  const { message, parentId = null } = req.body as ReqBodyForCommentsType;
+  if (message === "" || message == null) {
     return res.send(app.httpErrors.badRequest("Az üzenet szövege kötelező"));
   }
 
   return await resolveAsync(
-    prisma.comment
-      .create({
-        data: {
-          message: <string>body.message,
-          userId: <string>req.cookies.userId,
-          parentId: <string>body.parentId,
-          postId: <string>body.id,
-        },
-        select: COMMENT_SELECT_FIELDS,
-      })
-      .then((comment) => {
-        return {
-          ...comment,
-          likeCount: 0,
-          isLikedByMe: false,
-        };
-      })
+    service.createComment({
+      message,
+      postId,
+      parentId,
+      userId: req.cookies.userId,
+    })
   );
 });
 
-app.put("/posts/:postId/comments/:commentId", async (req, res) => {
-  const body = req.body as ReqBodyForCommentsType;
-  if (body.message === "" || body.message == null) {
+app.put("/comments/:commentId", async (req, res) => {
+  const { commentId } = req.params as ReqParamsType;
+  const { message } = req.body as ReqBodyForCommentsType;
+  if (message === "" || message == null) {
     return res.send(app.httpErrors.badRequest("Az üzenet szövege kötelező"));
   }
 
-  const userId: string = <string>(
-    await prisma.comment.findUnique({
-      where: { id: (req.params as ReqParamsType).commentId },
-      select: { userId: true },
+  const response = await resolveAsync(
+    service.updateComment({
+      id: commentId,
+      message,
+      userId: req.cookies.userId,
     })
-  )?.userId;
-  if (userId !== req.cookies.userId && req.cookies.userId !== ADMIN_USER_ID) {
+  );
+  if (Object.keys(response).includes("PrivilegeError"))
     return res.send(
       app.httpErrors.unauthorized(
         "Nincs jogosultságod szerkeszteni ezt az üzenetet!"
       )
     );
-  }
 
-  return await resolveAsync(
-    prisma.comment.update({
-      where: { id: (req.params as ReqParamsType).commentId },
-      data: { message: body.message },
-      select: { message: true },
-    })
-  );
+  return response;
 });
 
-app.delete("/posts/:postId/comments/:commentId", async (req, res) => {
-  const userId: string = <string>(
-    await prisma.comment.findUnique({
-      where: { id: (req.params as ReqParamsType).commentId },
-      select: { userId: true },
-    })
-  )?.userId;
-  if (userId !== req.cookies.userId && req.cookies.userId !== ADMIN_USER_ID) {
+app.delete("/comments/:commentId", async (req, res) => {
+  const { commentId } = req.params as ReqParamsType;
+
+  const response = await resolveAsync(
+    service.deleteComment(commentId, req.cookies.userId)
+  );
+  if (Object.keys(response).includes("PrivilegeError"))
     return res.send(
       app.httpErrors.unauthorized(
         "Nincs jogosultságod törölni ezt az üzenetet!"
       )
     );
-  }
 
-  return await resolveAsync(
-    prisma.comment.delete({
-      where: { id: (req.params as ReqParamsType).commentId },
-      select: { id: true },
-    })
-  );
+  return response;
 });
 
-app.post("/posts/:postId/comments/:commentId/toggleLike", async (req, res) => {
-  const data = {
-    commentId: <string>(req.params as ReqParamsType).commentId,
-    userId: <string>req.cookies.userId,
-  };
-
-  const like = await prisma.like.findUnique({
-    where: { userId_commentId: data },
-  });
-
-  if (like == null) {
-    return await resolveAsync(prisma.like.create({ data })).then(() => {
-      return { isLikeAdded: true };
-    });
-  } else {
-    return await resolveAsync(
-      prisma.like.delete({ where: { userId_commentId: data } })
-    ).then(() => {
-      return { isLikeAdded: false };
-    });
-  }
+app.post("/comments/:commentId/toggleLike", async (req, res) => {
+  const { commentId } = req.params as ReqParamsType;
+  return await resolveAsync(service.toggleLike(commentId, req.cookies.userId));
 });
 
 async function resolveAsync(promise: Promise<any>) {
   const [error, data] = await app.to(promise);
-  if (error) return app.httpErrors.internalServerError(error.message);
+  if (error) {
+    console.error(error.message);
+    return app.httpErrors.internalServerError(
+      "Sajnos ismeretlen eredetű hiba történt a szerver oldalán."
+    );
+  }
   return data;
 }
 

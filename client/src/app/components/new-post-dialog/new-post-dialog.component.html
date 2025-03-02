@@ -1,6 +1,6 @@
 <form class="new-post-dialog" (ngSubmit)="onSubmit()" #dialogForm="ngForm">
       <div class="dialog-title">
-        <p>Új poszt</p>
+        <p>Írj egy új bejegyzést</p>
       </div>
       <div class="dialog-body">
         <input
@@ -17,6 +17,7 @@
           rows="8"
           id="body"
           name="body"
+          placeholder="Törzs"
           [(ngModel)]="newPost.body"
         ></textarea>
       </div>

@@ -1,19 +1,9 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { computed, Injectable, signal } from '@angular/core';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AsyncService {
-  constructor() {}
-
-  public asAsync<T>(func: (...args: any[]) => Promise<any>) {
-    const { execute, ...state } = this.asAsyncInternal<T>(func, true);
-    execute();
-
-    return state;
-  }
-
   public asAsyncFn<T>(func: (...args: any[]) => Promise<any>) {
     return this.asAsyncInternal<T>(func, false);
   }
@@ -22,24 +12,27 @@ export class AsyncService {
     func: (...args: any[]) => Promise<any>,
     initialLoading: boolean = false
   ) {
-    const loading = new BehaviorSubject<boolean>(initialLoading);
-    const error = new BehaviorSubject<any>(null);
-    const value = new BehaviorSubject<T | null>(null);
-    const execute = (...params: any[]) => {
-      loading.next(true);
+    const _loading = signal<boolean>(initialLoading);
+    const loading = computed(() => _loading());
+    const _error = signal<any>(null);
+    const error = computed(() => _error());
+    const _value = signal<T | null>(null);
+    const value = computed(() => _value());
+    const execute = async (...params: any[]) => {
+      _loading.set(true);
       return func(...params)
-        .then((data: any) => {
-          value.next(data);
-          error.next(undefined);
+        .then((data: T) => {
+          _value.set(data);
+          _error.set(undefined);
           return data;
         })
         .catch((err: any) => {
-          error.next(err);
-          value.next(null);
+          _error.set(err);
+          _value.set(null);
           return Promise.reject(err);
         })
         .finally(() => {
-          loading.next(false);
+          _loading.set(false);
         });
     };
 

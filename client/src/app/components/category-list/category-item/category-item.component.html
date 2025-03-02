@@ -1,0 +1,25 @@
+<div class="category-item" [ngClass]="{ 'active': isActive }">
+  <h3>
+    <a
+      href="#"
+      (click)="PostItemClicked($event)"
+    >
+      {{title}}
+    </a>
+  </h3>
+  <p>
+    {{creator.name}} töltötte fel {{getUploadedSinceText(uploadedSince)}}
+  </p>
+  @if(authorLoggedIn) {
+    <app-icon-btn 
+    class="category-delete-btn"
+    [appTooltip]="'járás törlése'"
+    [iconClass]="'btn btn-large '.concat(isActive ? 'btn-white' : 'btn-black')"
+    [ariaLabel]="'Delete Category'"
+    [loading]="isDeleting"
+    (appConfirmPopup)="DeleteButtonClicked()"
+  >
+    <ng-icon icon name="tablerEraser"></ng-icon>
+  </app-icon-btn>
+  }
+</div>

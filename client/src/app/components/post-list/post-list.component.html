@@ -1,32 +1,36 @@
-<div *ngIf="loadingState === 'loading'"><app-loader [text]="'Posztok betöltése...'"/></div>
-<h1 *ngIf="loadingState === 'error'" class="error-msg">{{ error }}</h1>
-
-<div *ngIf="loadingState === 'success' || loadingState === 'reloading'" [ngClass]="{ 'post-list': true, 'fadeout': animationState === 'finished' }"
-    (animationend)="startBgAnimation()"
-    >
+<div class="post-list" [@list-fade-in-out]="animationState"
+  (@list-fade-in-out.done)="animationState === animStates.finished ? startEnterAnimation() : null"
+>
   <div class="post-list-header">
-    <h1>Posztok</h1>
+    <h2>Posztok</h2>
     <app-new-post-button />
   </div>
   <div class="body-wrapper">
-    <div
-      [ngClass]="{ 'body-container': true, 'collapsed': animationState !== 'none' }"
-      (animationend)="$event.stopPropagation(); animationState = 'finished'"
+    <div class="body-container" [@collapsable]="animationState"
+      (@collapsable.done)="animationState === animStates.animating ? animationState = animStates.finished : null"
     >
-      <div [ngClass]="{ 'post-list-body': true, 'loading': loadingState === 'reloading' }">
-            <app-post-item *ngFor="let post of posts | paginate: { itemsPerPage: paginator.itemsPerPage, currentPage: paginator.currentPage }"
-                [id]="post.id"
-                [title]="post.title"
-                [uploader]="post.uploader"
-                [uploadedSince]="post.createdAt"
-                (onClick)="onPostItemClicked($event)"
-                (onDeleteClick)="deletePost($event)"
-              />
-      </div>
-      <div
-        class="post-list-footer"
-        (animationend)="$event.stopPropagation()"
+      <div class="post-list-body" 
+        [ngClass]="{ 'loading': reloading, 'clipped': isListClipped }"
       >
+        @for(post of posts | paginate: { itemsPerPage: paginator.itemsPerPage, currentPage: paginator.currentPage }; let i = $index; track post) {
+          <app-post-item 
+              [@items-enter-leave]="{value: '', params: { 'delay-in': 50 + i * 200, 'delay-out': i * 200, i: i }}"
+              [id]="post.id"
+              [title]="post.title"
+              [uploader]="post.uploader"
+              [uploadedSince]="post.createdAt"
+              (onClick)="onPostItemClicked($event)"
+              (onDeleteClick)="deletePost($event)"
+              (onHighlightChanged)="onHightlightChanged($event)"
+            />
+        }
+        @if(posts.length === 0) {
+          <div class="empty-list-notice" @label-fade-in>
+            Légy az első aki erre az útra tér
+          </div>
+        }
+      </div>
+      <div class="post-list-footer">
         <h3>
           <app-paginator #paginator></app-paginator>
         </h3>

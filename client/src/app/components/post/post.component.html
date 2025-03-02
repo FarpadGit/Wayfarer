@@ -1,10 +1,21 @@
-<div *ngIf="loadingState === 'loading'"><app-loader [text]="'Poszt betöltése...'" [inverted]="true"/></div>
-<h1 *ngIf="loadingState === 'error'" class="error-msg">{{ error }}</h1>
-
-<div *ngIf="loadingState === 'success'"
-      [style]="delayStyle"
-      [ngClass]="{ 'post-container': true, 'fadeout': animationState === 'exiting' }"
-    >
+@switch (loadingState) {
+  @case ('loading') {
+    <app-loader [text]="'Poszt betöltése...'" [inverted]="true"/>
+  }
+  @case ('error') {
+    <div class="post-container" [@post-fade-in-out]="animationState">
+      <app-icon-btn [iconClass]="'post-back-btn'" (onClick)="backButtonClicked()">
+        <ng-icon icon name="matArrowBack"></ng-icon>
+        Vissza
+      </app-icon-btn>
+      <div class="post-body">
+        <h1 class="error-msg" style="text-align: center;">{{ error }}</h1>
+        <p class="error-msg">Valószínűleg a poszt amit keresel nem létezik az adatbázisban</p>
+      </div>
+    </div>
+  }
+  @case ('success') {
+    <div class="post-container" [@post-fade-in-out]="animationState">
       <app-icon-btn [iconClass]="'post-back-btn'" (onClick)="backButtonClicked()">
         <ng-icon icon name="matArrowBack"></ng-icon>
           Vissza
@@ -15,13 +26,17 @@
       </div>
       <section>
         <app-comment-form
-          [loading]="commentsLoading"
-          [error]="commentsError ?? undefined"
           [autoFocus]="true"
           (onSubmit)="onCommentCreate($event)"
         />
-          <div *ngIf="rootComments != null && rootComments.length > 0" style="margin-top: 1rem">
+        @if(rootComments != null && rootComments.length > 0) {
+          <div style="margin-top: 1rem" @comment-fade-in-out>
             <app-comment-list [comments]="rootComments" />
           </div>
+        }
       </section>
     </div>
+  }
+}
+
+

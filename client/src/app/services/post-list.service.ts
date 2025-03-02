@@ -1,52 +1,65 @@
-import { Injectable, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Injectable } from '@angular/core';
 import { postTitleType } from '../types';
-import { AsyncService } from './async.service';
 import { ApiService } from './api.service';
+import { userAccounts } from './login.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class PostListService implements OnDestroy {
-  public loading = true;
-  public error: unknown | null = null;
-  public getPostsFn = this.AsyncService.asAsyncFn(() =>
-    this.APIService.getPosts()
-  );
-  public posts: postTitleType[] = [];
+export class PostListService {
+  constructor(private apiService: ApiService) {}
 
-  private loadingSub: Subscription | null = null;
-  private errorSub: Subscription | null = null;
-
-  constructor(
-    private AsyncService: AsyncService,
-    private APIService: ApiService
-  ) {
-    this.loadingSub = this.getPostsFn.loading.subscribe(
-      (loading) => (this.loading = loading)
-    );
-    this.errorSub = this.getPostsFn.error.subscribe(
-      (err) => (this.error = err)
-    );
+  private getPosts = (categoryId: string) =>
+    this.apiService.getPostsAsync.execute(categoryId).then((posts) => {
+      this.currentCategoryId = categoryId;
+      posts.sort(
+        (post1, post2) =>
+          new Date(post2.createdAt).valueOf() -
+          new Date(post1.createdAt).valueOf()
+      );
+      return this.replaceAuthorNames(posts);
+    });
+  get reloading() {
+    return this.apiService.getPostsAsync.loading();
+  }
+  get error() {
+    return this.apiService.getPostsAsync.error();
+  }
+  get posts() {
+    return this.apiService.getPostsAsync.value() ?? [];
   }
 
-  ngOnDestroy(): void {
-    this.loadingSub?.unsubscribe();
-    this.errorSub?.unsubscribe();
+  private currentCategoryId: string = '';
+  getCurrentCategory() {
+    return this.currentCategoryId;
   }
 
-  public async refreshPosts() {
-    this.posts = (await this.getPostsFn.execute()) as postTitleType[];
+  async getPostsByCategory(categoryId: string) {
+    await this.getPosts(categoryId);
   }
 
-  createPost(title: string, body: string) {
-    this.APIService.createPost({ title, body }).then(() => {
+  private refreshPosts() {
+    this.getPostsByCategory(this.currentCategoryId);
+  }
+
+  private replaceAuthorNames(posts: postTitleType[]) {
+    posts.forEach((post) => {
+      if (post.uploader.email === userAccounts.ADMIN.email)
+        post.uploader.name = userAccounts.ADMIN.display;
+      if (post.uploader.email === userAccounts.GUEST.email)
+        post.uploader.name = userAccounts.GUEST.display;
+    });
+    return posts;
+  }
+
+  createPost(title: string, body: string, categoryId: string) {
+    this.apiService.createPost({ title, body, categoryId }).then(() => {
       this.refreshPosts();
     });
   }
 
   deletePost(id: string) {
-    this.APIService.deletePost(id).then(() => {
+    this.apiService.deletePost(id).then(() => {
       this.refreshPosts();
     });
   }

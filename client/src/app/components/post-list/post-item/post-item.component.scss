@@ -1,7 +1,7 @@
 .post-item {
     position: relative;
-    border: 1px solid var(--app-post-list-border-color);
-    border-top: 1px solid transparent;
+    border: 1px solid transparent;
+    border-bottom-color: var(--app-post-list-border-color);
     padding: 15px;
     transition: scale 0.2s linear, filter 0.2s linear, border-color 0.2s linear, background-color 0.2s linear;
     overflow: hidden;
@@ -14,10 +14,7 @@
         width: 100%;
         height: 100%;
         margin-left: 200%;
-        background-image: var(--app-post-highlight-img-url);
-        background-repeat: no-repeat;
-        background-size: 100%;
-        background-position: center 40%;
+        background: var(--app-post-highlight-img-url) center 40% / 100% no-repeat;
         transition: left 0.2s ease, margin-left 0.2s ease;
         z-index: -1;
     }
@@ -25,7 +22,7 @@
     h3,
     p {
         width: fit-content;
-        padding-right: 60px;
+        padding-right: 4rem;
     }
 
     p {

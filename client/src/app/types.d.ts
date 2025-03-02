@@ -1,13 +1,22 @@
 /* Mainly types of data recieved from the server as a response */
+export type userType = {
+  email: string;
+  name: string;
+};
+
+export type categoryTitleType = {
+  id: string;
+  title: string;
+  createdAt: string;
+  creator: userType;
+};
 
 export type postTitleType = {
   id: string;
   title: string;
   createdAt: string;
-  uploader: {
-    id: string;
-    name: string;
-  };
+  uploader: userType;
+  categoryId: string;
 };
 
 export type postType = {
@@ -23,8 +32,5 @@ export type commentType = {
   createdAt: string;
   message: string;
   parentId: string | null;
-  user: {
-    id: string;
-    name: string;
-  };
+  user: userType;
 };

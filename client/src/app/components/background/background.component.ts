@@ -1,9 +1,12 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
-import { TransitionService } from '../../services/transition.service';
-import { AnimationService } from '../../services/animation.service';
+import {
+  TransitionService,
+  navStates,
+} from '../../services/transition.service';
+import { AnimationService, bgStates } from '../../services/animation.service';
 import backgroundImages from '../../../assets/bgs/index.json';
+import { dropDownAnimations, slideUpAnimations } from './animations';
 
 @Component({
   selector: 'app-background',
@@ -11,52 +14,43 @@ import backgroundImages from '../../../assets/bgs/index.json';
   imports: [CommonModule],
   templateUrl: './background.component.html',
   styleUrl: './background.component.scss',
+  animations: [dropDownAnimations, slideUpAnimations],
 })
-export class BackgroundComponent implements OnInit, OnDestroy {
+export class BackgroundComponent {
   constructor(
-    private router: Router,
     private transitionService: TransitionService,
     private animationService: AnimationService
-  ) {}
-
-  ngOnInit(): void {
-    this.animationService.addAnimationCallback(
-      'none',
-      () => (this.blur = false)
-    );
-    this.animationService.addAnimationCallback('entering', () =>
-      window.scrollTo({ top: 0, behavior: 'instant' })
-    );
-    this.animationService.addAnimationCallback(
-      'entered',
-      () => (this.blur = false)
-    );
-    this.animationService.addAnimationCallback(
-      'exiting',
-      () => (this.blur = true)
-    );
-
-    this.transitionService.addCallback(() => {
-      if (this.pathname.includes('/posts/')) {
-        this.transitionService.readyToNavigate();
-        return;
-      }
-
-      const newBgImage = this.getRandomBgImage();
-      if (this._backgroundImage === newBgImage)
-        this.transitionService.readyToNavigate();
-      else this._backgroundImage = newBgImage;
+  ) {
+    effect(() => {
+      if (animationService.bgAnimationState === bgStates.none)
+        this.blur = false;
+      if (animationService.bgAnimationState === bgStates.entering)
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      if (animationService.bgAnimationState === bgStates.entered)
+        this.blur = false;
+      if (animationService.bgAnimationState === bgStates.exiting)
+        this.blur = true;
     });
+
+    effect(
+      () => {
+        if (transitionService.navigationState === navStates.waiting) {
+          const newBgImage = this.getRandomBgImage();
+          if (this._backgroundImage === newBgImage)
+            this.transitionService.readyToNavigate();
+          else this._backgroundImage = newBgImage;
+        }
+      },
+      { allowSignalWrites: true }
+    );
   }
 
-  ngOnDestroy(): void {
-    this.animationService.clearAnimationCallback('none');
-    this.animationService.clearAnimationCallback('entered');
-    this.animationService.clearAnimationCallback('exiting');
+  get bgStates() {
+    return bgStates;
   }
 
-  get pathname() {
-    return this.router.url;
+  get onPostPage() {
+    return this.transitionService.currentUrl.includes('/post');
   }
 
   get animationState() {
@@ -66,7 +60,6 @@ export class BackgroundComponent implements OnInit, OnDestroy {
   blur = false;
 
   private _backgroundImage = this.getRandomBgImage();
-
   get backgroundImage() {
     return this._backgroundImage;
   }
@@ -76,10 +69,9 @@ export class BackgroundComponent implements OnInit, OnDestroy {
     return backgroundImages[index].name + '.jpg';
   }
 
-  delayedNavigate() {
-    setTimeout(() => {
-      this.transitionService.callNavigate();
-    }, 1000);
+  navigate() {
+    this.blur = true;
+    this.transitionService.callDelayedNavigate(1000);
   }
 
   onImgLoad() {

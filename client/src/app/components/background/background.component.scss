@@ -5,10 +5,7 @@
     position: relative;
     width: 80vw;
     height: calc(100vh + var(--offset-top));
-    background-image: var(--app-background-img-url);
-    background-position: var(--background-offset);
-    background-repeat: no-repeat;
-    background-size: 100vw 100vh;
+    background: var(--app-banner-img-url) var(--background-offset) / 100vw 100vh no-repeat;
     margin-left: 10vw;
     margin-right: 10vw;
     scale: 1;
@@ -16,17 +13,9 @@
     filter: none;
     border: 2px solid black;
     border-top: 0;
-    border-radius: 0;
+    border-radius: 0 0 1rem 1rem;
     transition: filter 2s ease, scale 2s ease, border-radius 1s ease;
-
-    &:not(.dropdown):not(.full) {
-        border-radius: 0 0 1rem 1rem;
-    }
-
-    &.dropdown {
-        position: absolute;
-        animation: dropdown 1.5s var(--app-ease-function) forwards;
-    }
+    pointer-events: none;
 
     &.blur {
         scale: 1.2;
@@ -40,9 +29,10 @@
         width: 100vw;
         height: 100vh;
         margin: 0;
+        border-radius: 0;
         transform: none;
         background-position: bottom;
-        z-index: -1;
+        z-index: 0;
 
         #Logo {
             display: none;
@@ -64,37 +54,12 @@
     }
     
     @media (max-width: 1023px) {
-            --margin-top: -77vh;
             background-size: cover;
     }
 
     @media (max-width: 639px) {
-            --app-background-img-url: url("../../../assets/ForestEntry2.jpg");
-            --background-offset: 45% 40px;
-    }
-}
-
-@keyframes dropdown {
-    0% {
-        height: calc(100vh + var(--offset-top));
-        width: 80vw;
-        background-position: var(--background-offset);
-    }
-
-    30% {
-        height: calc(100vh + var(--offset-top));
-        width: 100vw;
-        margin-left: 0;
-        margin-right: 0;
-        background-position: var(--background-offset);
-    }
-
-    100% {
-        height: 100vh;
-        width: 100vw;
-        margin-left: 0;
-        margin-right: 0;
-        background-position: bottom;
+            --app-banner-img-url: url("../../../assets/ForestEntry2.jpg");
+            --offset-top: -80vh;
     }
 }
 
@@ -110,15 +75,4 @@
     opacity: 1;
     user-select: none;
     text-align: center;
-    transition: bottom 1.5s ease, opacity 1s ease;
-
-    &.slideup {
-        bottom: 300%;
-        opacity: 0;
-    }
-
-    
-    @media (max-width: 1023px) {
-        bottom: 8%;
-    }
 }

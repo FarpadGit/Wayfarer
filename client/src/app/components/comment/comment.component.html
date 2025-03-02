@@ -1,78 +1,74 @@
 <div class="comment">
-    <div class="comment-container">
-      <div class="header">
-        <span class="name">{{comment?.user!.name}}</span>
-        <span class="date">{{displayDate}}</span>
-      </div>
-      <app-comment-form *ngIf="isEditing"
-          [autoFocus]="true"
-          [initialValue]="comment?.message ?? ''"
-          (onSubmit)="onCommentUpdate($event)"
-          (onEscape)="isEditing = false"
-          [loading]="updateCommentFn.loading.value"
-          [error]="updateCommentFn.error.value"
+  <div class="comment-container">
+    <div class="header">
+      <span class="name">{{comment.user.name}}</span>
+      <span class="date">{{displayDate}}</span>
+    </div>
+    @if(isEditing) {
+      <app-comment-form
+        [autoFocus]="true"
+        [initialValue]="comment.message"
+        (onSubmit)="onCommentUpdate($event)"
+        (onEscape)="isEditing = false"
       />
-      <div *ngIf="!isEditing" class="message">{{comment?.message}}</div>
-      <div [ngClass]="{footer: true, disabled: isLoadingChanges}">
-        <div>
-          <app-icon-btn
-            [appTooltip]="isLiked ? 'Unlike' : 'Like'"
-            (onClick)="onToggleCommentLike()"
-            [ariaLabel]="isLiked ? 'Unlike' : 'Like'"
-            [iconClass]="'btn-like'"
-            [disabled]="toggleCommentLikeFn.loading.value"
-          >
-              <ng-icon icon [name]="isLiked ? 'matFavorite' : 'matFavoriteBorder'"></ng-icon>
-              {{comment?.likeCount}}
-          </app-icon-btn>
-        </div>
-        <div>
-          <app-icon-btn
-            [appTooltip]="isReplying ? 'Válasz törlése' : 'Válasz'"
-            (onClick)="isReplying = !isReplying"
-            [isActive]="isReplying"
-            [ariaLabel]="isReplying ? 'Cancel Reply' : 'Reply'"
-          >
-              <ng-icon icon name="matReply"></ng-icon>
-          </app-icon-btn>
-        </div>
-        <ng-container *ngIf="authorLoggedIn">
-          <div>
-            <app-icon-btn
-                [appTooltip]="isEditing ? 'Szerkesztés visszavonása' : 'Szerkesztés'"
-                (onClick)="isEditing = !isEditing"
-                [isActive]="isEditing"
-                [ariaLabel]="isEditing ? 'Cancel Edit' : 'Edit'"
-            >
-                <ng-icon icon name="matEdit"></ng-icon>
-            </app-icon-btn>
-          </div>
-          <div>
-           <app-icon-btn
-              [appTooltip]="'Törlés'"
-              [iconClass]="'btn-delete'"
-              [ariaLabel]="'Delete'"
-              [disabled]="deleteCommentFn.loading.value"
-              [loading]="isDeleting"
-              (appConfirmPopup)="onCommentDelete()"
-              [confirmPosition]="'right'"
-           >
-           <ng-icon icon name="matDelete"></ng-icon>
-           </app-icon-btn>
-          </div>
-        </ng-container>
-    </div>
-      <div *ngIf="deleteCommentFn.error.value" class="error-msg" [style]="{ 'margin-top': '0.5rem' }">
-        {{deleteCommentFn.error.value}}
+    } @else {
+      <div class="message">{{comment.message}}</div>
+    }
+    <div class="footer">
+      <div>
+        <app-icon-btn
+          [appTooltip]="isLiked ? 'Unlike' : 'Like'"
+          (onClick)="onToggleCommentLike()"
+          [ariaLabel]="isLiked ? 'Unlike' : 'Like'"
+          [iconClass]="'btn-red'"
+        >
+            <ng-icon icon [name]="isLiked ? 'matFavorite' : 'matFavoriteBorder'"></ng-icon>
+            {{comment.likeCount}}
+        </app-icon-btn>
       </div>
+      <div>
+        <app-icon-btn
+          [appTooltip]="isReplying ? 'Válasz törlése' : 'Válasz'"
+          (onClick)="isReplying = !isReplying"
+          [isActive]="isReplying"
+          [ariaLabel]="isReplying ? 'Cancel Reply' : 'Reply'"
+        >
+            <ng-icon icon name="matReply"></ng-icon>
+        </app-icon-btn>
+      </div>
+      @if(authorLoggedIn) {
+        <div>
+          <app-icon-btn
+              [appTooltip]="isEditing ? 'Szerkesztés visszavonása' : 'Szerkesztés'"
+              (onClick)="isEditing = !isEditing"
+              [isActive]="isEditing"
+              [ariaLabel]="isEditing ? 'Cancel Edit' : 'Edit'"
+          >
+            <ng-icon icon name="matEdit"></ng-icon>
+          </app-icon-btn>
+        </div>
+        <div>
+          <app-icon-btn
+            [appTooltip]="'Törlés'"
+            [iconClass]="'btn-black'"
+            [ariaLabel]="'Delete'"
+            [loading]="isDeleting"
+            (appConfirmPopup)="onCommentDelete()"
+            [confirmPosition]="'right'"
+          >
+            <ng-icon icon name="matDelete"></ng-icon>
+          </app-icon-btn>
+        </div>
+      }
     </div>
+  </div>
 </div>
-<div *ngIf="isReplying" class="comment-reply-box">
+@if(isReplying) {
+  <div class="comment-reply-box">
     <app-comment-form
     [autoFocus]="true"
     (onSubmit)="onCommentReply($event)"
     (onEscape)="isReplying = false"
-    [loading]="createCommentFn.loading.value"
-    [error]="createCommentFn.error.value"
     />
-</div>
+  </div>
+}

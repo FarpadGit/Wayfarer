@@ -1,20 +1,55 @@
+.app-wrapper {
+  position: relative;
+  min-height: 100vh;
+  background: linear-gradient(to bottom, transparent 35%, hsl(50, 40%, 60%)), var(--app-backdrop-url) 0 / cover no-repeat;
+  background-color: hsl(42, 75%, 75%);
+  background-blend-mode: multiply;
+  filter: none;
+  transition: filter 0.5s ease;
+  overflow-x: hidden;
+  z-index: 0;
+
+  &.blur {
+    filter: blur(10px);
+  }
+
+  .backdrop-image {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: calc(100% + 16px);
+    height: max(100%, 100vh);
+    background: var(--app-backdrop-url), var(--app-worldmap-img-url) center / cover no-repeat;
+    background-color: hsl(45.3, 61.6%, 52%);
+    background-blend-mode: difference;
+    z-index: -10;
+  }
+
+  &:has(.background-image.full) {
+    background-color: black;
+
+    .backdrop-image {
+      display: none;
+    }
+  }
+}
+
 .app-container {
-  max-width: 1200px;
+  display: flex;
+  justify-content: center;
+  max-width: 85vw;
   width: calc(100vw - 10rem);
   margin: 0 auto;
   padding: 2rem 0;
+
+  @media (max-width: 639px) {
+    width: calc(100vw - 1rem);
+  }
 }
 
 .login-btn {
   position: fixed;
   top: 5%;
   right: 3%;
-  opacity: 1;
   z-index: 100;
-  transition: opacity 0.5s;
-
-  &.hidden{
-    opacity: 0;
-    user-select: none;
-  }
 }
