@@ -5,7 +5,7 @@
   "main": "server.ts",
   "scripts": {
     "dev": "tsx watch server.ts",
-    "build": "npx tsc -t es2021 -m nodenext --moduleResolution nodenext --outDir . server.ts",
+    "build": "npx tsc -t es2021 -m nodenext --moduleResolution nodenext --outDir . server.ts service.ts",
     "postinstall": "prisma generate"
   },
   "author": "",

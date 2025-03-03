@@ -2,7 +2,18 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 export const ADMIN_USER_ID = await getAdminId();
 export const GUEST_USER_ID = await getGuestId();
-
+const COMMENT_SELECT_FIELDS = {
+    id: true,
+    message: true,
+    parentId: true,
+    createdAt: true,
+    user: {
+        select: {
+            email: true,
+            name: true,
+        },
+    },
+};
 async function getAdminId() {
     const admin = await prisma.user.findFirst({
         where: { email: "WF_ADMIN" },
@@ -91,7 +102,7 @@ export async function getPostsByCategory(categoryId) {
     });
 }
 export async function createPost(post) {
-    await prisma.post.create({
+    return await prisma.post.create({
         data: {
             title: post.title,
             body: post.body,
@@ -116,16 +127,7 @@ export async function getPostWithComments(id, userId) {
             comments: {
                 orderBy: { createdAt: "desc" },
                 select: {
-                    id: true,
-                    message: true,  
-                    parentId: true,
-                    createdAt: true,
-                    user: {
-                        select: {
-                            email: true,
-                            name: true,
-                        },
-                    },
+                    ...COMMENT_SELECT_FIELDS,
                     _count: { select: { likes: true } },
                 },
             },
@@ -134,12 +136,12 @@ export async function getPostWithComments(id, userId) {
     const likes = await prisma.like.findMany({
         where: {
             userId: userId,
-            commentId: { in: post?.comments.map((comment) => comment.id) },
+            commentId: { in: post.comments.map((comment) => comment.id) },
         },
     });
     return {
         ...post,
-        comments: post?.comments.map((comment) => {
+        comments: post.comments.map((comment) => {
             const { _count, ...commentFields } = comment;
             return {
                 ...commentFields,
@@ -168,13 +170,9 @@ export async function createComment(comment) {
             parentId: comment.parentId,
             postId: comment.postId,
         },
-        select: COMMENT_SELECT_FIELDS,
+        select: { id: true },
     })
-        .then((comment) => ({
-        ...comment,
-        likeCount: 0,
-        isLikedByMe: false,
-    }));
+        .then((comment) => comment.id);
 }
 async function getCommentAuthorId(commentId) {
     const post = await prisma.comment.findUnique({

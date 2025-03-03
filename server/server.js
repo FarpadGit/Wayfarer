@@ -31,12 +31,13 @@ app.addHook("onSend", async (req, res) => {
 app.post("/login", async (req, res) => {
     const { userToken } = req.body;
     let CURRENT_USER_ID = "";
-    if (userToken == null || userToken.email === "") {
+    if (userToken == null ||
+        userToken.email === "" ||
+        userToken.email === "WF_GUEST") {
         CURRENT_USER_ID = GUEST_USER_ID;
     }
     else {
-        service.createUserIfNew({ ...userToken });
-        CURRENT_USER_ID = userToken.email;
+        CURRENT_USER_ID = await service.createUserIfNew({ ...userToken });
     }
     req.cookies.userId = CURRENT_USER_ID;
     res.clearCookie("userId");
@@ -45,6 +46,17 @@ app.post("/login", async (req, res) => {
 });
 app.get("/categories", async (req, res) => {
     return await resolveAsync(service.getCategories());
+});
+app.post("/categories", async (req, res) => {
+    const { title } = req.body;
+    return await resolveAsync(service.createCategory({ title, creatorId: req.cookies.userId }));
+});
+app.delete("/categories/:categoryId", async (req, res) => {
+    const { categoryId } = req.params;
+    const response = await resolveAsync(service.deleteCategory(categoryId, req.cookies.userId));
+    if (Object.keys(response).includes("PrivilegeError"))
+        return res.send(app.httpErrors.unauthorized("Nincs jogosultságod törölni ezt a járást!"));
+    return response;
 });
 app.get("/categories/:categoryId/posts", async (req, res) => {
     const { categoryId } = req.params;
@@ -93,7 +105,7 @@ app.post("/posts/:postId/comments", async (req, res) => {
         userId: req.cookies.userId,
     }));
 });
-app.put("/posts/:postId/comments/:commentId", async (req, res) => {
+app.put("/comments/:commentId", async (req, res) => {
     const { commentId } = req.params;
     const { message } = req.body;
     if (message === "" || message == null) {
@@ -108,21 +120,23 @@ app.put("/posts/:postId/comments/:commentId", async (req, res) => {
         return res.send(app.httpErrors.unauthorized("Nincs jogosultságod szerkeszteni ezt az üzenetet!"));
     return response;
 });
-app.delete("/posts/:postId/comments/:commentId", async (req, res) => {
+app.delete("/comments/:commentId", async (req, res) => {
     const { commentId } = req.params;
     const response = await resolveAsync(service.deleteComment(commentId, req.cookies.userId));
     if (Object.keys(response).includes("PrivilegeError"))
         return res.send(app.httpErrors.unauthorized("Nincs jogosultságod törölni ezt az üzenetet!"));
     return response;
 });
-app.post("/posts/:postId/comments/:commentId/toggleLike", async (req, res) => {
+app.post("/comments/:commentId/toggleLike", async (req, res) => {
     const { commentId } = req.params;
     return await resolveAsync(service.toggleLike(commentId, req.cookies.userId));
 });
 async function resolveAsync(promise) {
     const [error, data] = await app.to(promise);
-    if (error)
-        return app.httpErrors.internalServerError(error.message);
+    if (error) {
+        console.error(error.message);
+        return app.httpErrors.internalServerError("Sajnos ismeretlen eredetű hiba történt a szerver oldalán.");
+    }
     return data;
 }
 app.listen({ port: +process.env.PORT });
