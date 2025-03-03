@@ -4,10 +4,8 @@ import {
   EventEmitter,
   HostListener,
   Input,
-  OnDestroy,
   Output,
 } from '@angular/core';
-import { Subscription } from 'rxjs';
 import { DeletePostDialogComponent } from './delete-post-dialog.component';
 import { ModalService } from 'ngx-modal-ease';
 
@@ -15,24 +13,19 @@ import { ModalService } from 'ngx-modal-ease';
   selector: '[appConfirmPopup]',
   standalone: true,
 })
-export class ConfirmPopupDirective implements OnDestroy {
+export class ConfirmPopupDirective {
   constructor(
     private modalService: ModalService,
     private elementRef: ElementRef
   ) {}
 
-  private dialogSub: Subscription | null = null;
-  @Input() confirmPosition: 'left' | 'right' = 'left';
   @Input() confirmPosition: 'left' | 'right' | 'bottom' = 'left';
   @Output('appConfirmPopup') onConfirm = new EventEmitter<void>();
 
-  ngOnDestroy(): void {
-    this.dialogSub?.unsubscribe();
-  }
-
   @HostListener('click')
-  open(): void {
+  async open(): Promise<void> {
     const popupWidth = 240;
+    const popupHeight = 112;
 
     const { top, left, width, height } =
       this.elementRef.nativeElement.getBoundingClientRect();
@@ -70,30 +63,6 @@ export class ConfirmPopupDirective implements OnDestroy {
       },
     });
 
-    this.dialogSub = this.modalService
-      .open(DeletePostDialogComponent, {
-        overlay: {
-          backgroundColor: 'transparent',
-        },
-        size: {
-          width: popupWidth + 'px',
-          padding: '0',
-        },
-        modal: {
-          top: modalTop,
-          left: modalLeft,
-          enter:
-            'delete-dialog-enter 0.2s cubic-bezier(0.165, 0.840, 0.440, 1.000)',
-          leave: 'fade-out 0.2s ease',
-        },
-        data: {
-          position: this.confirmPosition,
-        },
-      })
-      .subscribe((response: boolean | undefined) => {
-        if (response) {
-          this.onConfirm.emit();
-        }
-      });
+    if (response.data) this.onConfirm.emit();
   }
 }

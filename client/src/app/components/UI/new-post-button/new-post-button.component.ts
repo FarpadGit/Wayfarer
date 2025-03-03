@@ -26,19 +26,18 @@ export class NewPostButtonComponent implements OnDestroy {
 
   private dialogSub: Subscription | null = null;
 
-  open() {
-    this.dialogSub = this.modalService
-      .open(NewPostDialogComponent, {
-        modal: {
-          enter: 'new-post-dialog-enter 0.5s ease',
-          leave: 'new-post-dialog-exit 0.5s ease',
-        },
-      })
-      .subscribe((response: { title: string; body: string } | undefined) => {
-        if (!response) return;
-        const { title, body } = response;
-        this.createPost(title, body);
-      });
+  async open() {
+    const response = await this.modalService.open(NewPostDialogComponent, {
+      modal: {
+        enter: 'new-post-dialog-enter 0.5s ease',
+        leave: 'new-post-dialog-exit 0.5s ease',
+      },
+    });
+
+    if (response.data) {
+      const { title, body } = response.data as { title: string; body: string };
+      this.createPost(title, body);
+    }
   }
 
   createPost(title: string, body: string) {
