@@ -17,7 +17,7 @@
     position: fixed;
     top: 0;
     left: 0;
-    width: calc(100% + 16px);
+    width: 100%;
     height: max(100%, 100vh);
     background: var(--app-backdrop-url), var(--app-worldmap-img-url) center / cover no-repeat;
     background-color: hsl(45.3, 61.6%, 52%);
