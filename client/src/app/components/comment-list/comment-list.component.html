@@ -1,5 +1,5 @@
 @for(comment of comments; track comment.id) {
-    <div class="comment-stack">
+    <div class="comment-stack" @fade-in-out>
         <app-comment [comment]="comment" />
         @if(getChildComments(comment.id).length > 0) {
             <div class="nested-comments-stack" [ngClass]="{ 'hide': areChildrenHidden }" @fade-in-out>
