@@ -129,5 +129,9 @@
     &-body {
         position: relative;
         z-index: 1;
+
+        @media (max-width: 639px) {
+            max-height: 34.375rem;
+        }
     }
 }

@@ -69,6 +69,11 @@ export class CommentComponent {
     return this.comment.isLikedByMe || false;
   }
 
+  get popupLocation() {
+    if (window.matchMedia('(max-width:639px)').matches) return 'bottom';
+    return 'right';
+  }
+
   onCommentReply(message: string) {
     this.postService.createComment(message, this.comment.id);
     this.isReplying = false;

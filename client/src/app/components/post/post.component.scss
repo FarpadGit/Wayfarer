@@ -1,11 +1,12 @@
 .post-container {
     position: relative;
-    width: 1200px;
+    width: 85vw;
+    max-width: 75rem;
     font-family: Manrope;
     word-break: keep-all;
 
     @media (max-width: 639px) {
-        font-size: 0.75rem;        
+        font-size: 10pt;        
     }
 }
 

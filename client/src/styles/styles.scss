@@ -72,6 +72,14 @@ body {
   &:has(.delete-dialog) {
     position: absolute !important;
   }
+
+  &:has(.new-post-dialog) {
+    @media (max-width: 639px) {
+      width: 100vw;
+      height: 100vh;
+      translate: 0 25%;
+    }
+  }
 }
 
 @mixin dialog-dropdown-anim($name, $from: 0%, $to: 50%, $fade: true) {

@@ -4,7 +4,8 @@
     grid-template-rows: 38.5rem;
     grid-template-columns: 1fr 4.5fr;
 
-    @media(max-width: 369px) {
-        grid-template-columns: 1fr;
+    @media(max-width: 767px) {
+        grid-template-columns: 85vw;
+        grid-template-rows: min-content 1fr;
     }
 }

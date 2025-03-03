@@ -23,4 +23,5 @@ import {
 export class PaginatorComponent {
   currentPage: number = 0;
   itemsPerPage: number = 6;
+  maxPaginatorSize: number = 6;
 }

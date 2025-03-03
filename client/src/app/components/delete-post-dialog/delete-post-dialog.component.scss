@@ -9,25 +9,38 @@
     &:before {
         content: '';
         position: absolute;
-        top: 50%;
         width: 0;
         height: 0;
-        transform: translateY(-50%);
-        border-top: 10px solid transparent;
-        border-bottom: 10px solid transparent;
+        border: 10px solid transparent;
     }
 
     &.left {
         &:before {
+            top: 50%;
             left: 100%;
+            transform: translateY(-50%);
+            border-right: none;
             border-left: 10px solid var(--app-glow-color-hover);
         }
     }
 
     &.right {
         &:before {
+            top: 50%;
             left: -10px;
+            transform: translateY(-50%);
+            border-left: none;
             border-right: 10px solid var(--app-glow-color-hover);
+        }
+    }
+
+    &.bottom {
+        &:before {
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-top: none;
+            border-bottom: 10px solid var(--app-glow-color-hover);
         }
     }
 

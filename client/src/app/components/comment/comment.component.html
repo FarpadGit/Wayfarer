@@ -54,7 +54,7 @@
             [ariaLabel]="'Delete'"
             [loading]="isDeleting"
             (appConfirmPopup)="onCommentDelete()"
-            [confirmPosition]="'right'"
+            [confirmPosition]="popupLocation"
           >
             <ng-icon icon name="matDelete"></ng-icon>
           </app-icon-btn>

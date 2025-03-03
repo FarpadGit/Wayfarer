@@ -2,8 +2,8 @@
     margin-left: 0;
     border: 1px solid #63733f;
     margin-bottom: 0.1rem;
-    font-size: 16pt;
-    border-radius: 50px;
+    font-size: 14pt;
+    border-radius: 3.125rem;
     overflow: hidden;
     display: flex;
     justify-content: space-between;
@@ -17,6 +17,7 @@
         overflow: hidden;
         display: inline-flex;
         transform: skewX(-25deg);
+        transition: background-color 0.5s ease;
         border-left: 1px solid var(--app-post-list-text-color);
         flex-grow: 1;
 
@@ -101,5 +102,9 @@
     .pagination-next {
         @extend %pagination-next-previous;
         margin-right: -0.25rem;
+    }
+
+    @media (max-width: 639px) {
+        font-size: small;
     }
 }

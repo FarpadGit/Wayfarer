@@ -2,7 +2,7 @@
     position: relative;
     border: 1px solid transparent;
     border-bottom-color: var(--app-post-list-border-color);
-    padding: 15px;
+    padding: 1rem;
     transition: scale 0.2s linear, filter 0.2s linear, border-color 0.2s linear, background-color 0.2s linear;
     overflow: hidden;
 
@@ -23,6 +23,10 @@
     p {
         width: fit-content;
         padding-right: 4rem;
+
+        @media (max-width: 639px) {
+            padding: 0;
+        }
     }
 
     p {
@@ -65,7 +69,7 @@
     scale: 1.1;
     border-color: black;
     background-color: hsl(50, 82%, 82%);
-    border-radius: 10px;
+    border-radius: 0.625rem;
     z-index: 10;
 }
 

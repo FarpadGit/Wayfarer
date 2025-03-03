@@ -10,7 +10,7 @@ import { ModalService } from 'ngx-modal-ease';
   styleUrl: './delete-post-dialog.component.scss',
 })
 export class DeletePostDialogComponent {
-  @Input() position: 'left' | 'right' = 'left';
+  @Input() position: 'left' | 'right' | 'bottom' = 'left';
   constructor(private modalService: ModalService) {}
 
   onConfirm() {
