@@ -30,7 +30,7 @@
           (onSubmit)="onCommentCreate($event)"
         />
         @if(rootComments != null && rootComments.length > 0) {
-          <div style="margin-top: 1rem" @comment-fade-in-out>
+          <div style="margin-top: 1rem">
             <app-comment-list [comments]="rootComments" />
           </div>
         }
