@@ -41,15 +41,6 @@ import {
       state(bgStates.exiting, style({ opacity: 0, left: '100px' })),
       transition('* => ' + bgStates.exiting, animate('0.5s ease')),
     ]),
-    trigger('comment-fade-in-out', [
-      transition(':enter', [
-        style({ translate: '0 -20%', opacity: 0 }),
-        animate('0.25s ease', style({ translate: '0 0%', opacity: 1 })),
-      ]),
-      transition(':leave', [
-        animate('0.25s ease', style({ translate: '0 -20%', opacity: 0 })),
-      ]),
-    ]),
   ],
 })
 export class PostComponent {
