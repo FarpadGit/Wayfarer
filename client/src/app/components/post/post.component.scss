@@ -25,6 +25,6 @@
     }
 
     & article {
-        white-space: pre-wrap;
+        white-space-collapse: preserve-breaks;
     }
 }
