@@ -2,8 +2,9 @@ import { computed, Injectable, OnDestroy, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { commentType } from '../types';
-import { ApiService } from './api.service';
 import { LoginService, userAccounts } from './login.service';
+import { PostApiService } from './API/post.api.service';
+import { CommentApiService } from './API/comment.api.service';
 
 @Injectable({
   providedIn: 'root',
@@ -11,33 +12,34 @@ import { LoginService, userAccounts } from './login.service';
 export class PostService implements OnDestroy {
   constructor(
     private route: ActivatedRoute,
-    private apiService: ApiService,
+    private postApiService: PostApiService,
+    private commentApiService: CommentApiService,
     private loginService: LoginService
   ) {
     this.routeSub = this.route.params.subscribe((params) => {
       if (params['id'] && this.id !== params['id']) {
         this.id = params['id'];
-        this.getPost(this.id);
+
+        this.getPostFn.execute(this.id).then((post) => {
+          post.comments = this.replaceAuthorNames(post.comments || []);
+          this.localComments.set(post.comments);
+        });
       }
     });
   }
 
   id = '';
 
-  private getPost = (id: string) =>
-    this.apiService.getPostAsync.execute(id).then((post) => {
-      post.comments = this.replaceAuthorNames(post.comments || []);
-      this.localComments.set(post.comments);
-      return post;
-    });
+  private getPostFn = this.postApiService.getPostAsync;
+
   get loading() {
-    return this.apiService.getPostAsync.loading();
+    return this.getPostFn.loading();
   }
   get error() {
-    return this.apiService.getPostAsync.error();
+    return this.getPostFn.error();
   }
   get post() {
-    return this.apiService.getPostAsync.value();
+    return this.getPostFn.value();
   }
   localComments = signal<commentType[]>([]);
 
@@ -77,24 +79,24 @@ export class PostService implements OnDestroy {
 
   createComment(message: string, parentId: string | null = null) {
     const newComment = this.createLocalComment(message, parentId);
-    this.apiService
+    this.commentApiService
       .createComment({ postId: this.id, message, parentId })
       .then((id: string) => (newComment.id = id));
   }
 
   updateComment(id: string, message: string) {
     this.updateLocalComment(id, message);
-    this.apiService.updateComment({ message, id });
+    this.commentApiService.updateComment({ message, id });
   }
 
   deleteComment(id: string) {
     this.deleteLocalComment(id);
-    this.apiService.deleteComment(id);
+    this.commentApiService.deleteComment(id);
   }
 
   toggleCommentLike(id: string, addLike: boolean) {
     this.toggleLocalCommentLike(id, addLike);
-    this.apiService.toggleCommentLike(id);
+    this.commentApiService.toggleCommentLike(id);
   }
 
   private createLocalComment(message: string, parentId: string | null) {
