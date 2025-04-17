@@ -32,17 +32,14 @@ export class BackgroundComponent {
         this.blur = true;
     });
 
-    effect(
-      () => {
-        if (transitionService.navigationState === navStates.waiting) {
-          const newBgImage = this.getRandomBgImage();
-          if (this._backgroundImage === newBgImage)
-            this.transitionService.readyToNavigate();
-          else this._backgroundImage = newBgImage;
-        }
-      },
-      { allowSignalWrites: true }
-    );
+    effect(() => {
+      if (transitionService.navigationState === navStates.waiting) {
+        const newBgImage = this.getRandomBgImage();
+        if (this._backgroundImage === newBgImage)
+          this.transitionService.readyToNavigate();
+        else this._backgroundImage = newBgImage;
+      }
+    });
   }
 
   get bgStates() {
