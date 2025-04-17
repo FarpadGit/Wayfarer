@@ -1,7 +1,7 @@
 // /vercel-func.js
 import { NestFactory, HttpAdapterHost } from '@nestjs/core';
 
-import { AppModule } from '../dist/app.module';
+import { AppModule } from './app.module';
 import {
   FastifyAdapter,
   NestFastifyApplication,
