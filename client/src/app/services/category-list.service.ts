@@ -1,30 +1,28 @@
 import { Injectable } from '@angular/core';
 import { categoryTitleType } from '../types';
-import { ApiService } from './api.service';
 import { userAccounts } from './login.service';
 import { PostListService } from './post-list.service';
+import { CategoryApiService } from './API/category.api.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CategoryListService {
   constructor(
-    private apiService: ApiService,
+    private apiService: CategoryApiService,
     private postListService: PostListService
   ) {}
 
-  private getCategories = () =>
-    this.apiService.getCategoriesAsync
-      .execute()
-      .then((categories) => this.replaceCreatorNames(categories));
+  private getCategoriesFn = this.apiService.getCategoriesAsync;
+
   get loading() {
-    return this.apiService.getCategoriesAsync.loading();
+    return this.getCategoriesFn.loading();
   }
   get error() {
-    return this.apiService.getCategoriesAsync.error();
+    return this.getCategoriesFn.error();
   }
   get allCategories() {
-    return this.apiService.getCategoriesAsync.value() ?? [];
+    return this.getCategoriesFn.value() ?? [];
   }
 
   getCurrentCategory() {
@@ -40,7 +38,9 @@ export class CategoryListService {
   }
 
   async refreshCategories() {
-    await this.getCategories();
+    await this.getCategoriesFn
+      .execute()
+      .then((categories) => this.replaceCreatorNames(categories));
   }
 
   private replaceCreatorNames(categories: categoryTitleType[]) {
