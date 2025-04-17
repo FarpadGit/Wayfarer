@@ -1,12 +1,12 @@
-@for(comment of comments; track comment.id) {
+@for(comment of comments; track comment.id; let i = $index) {
     <div class="comment-stack" @fade-in-out>
         <app-comment [comment]="comment" />
         @if(getChildComments(comment.id).length > 0) {
-            <div class="nested-comments-stack" [ngClass]="{ 'hide': areChildrenHidden }" @fade-in-out>
+            <div class="nested-comments-stack" [ngClass]="{ 'hide': areChildrenHidden[i] }" @fade-in-out>
                 <button
                     class="collapse-line"
                     aria-label="Hide Replies"
-                    (click)="areChildrenHidden = true"
+                    (click)="areChildrenHidden[i] = true"
                 ></button>
                 <div class="nested-comments">
                     <app-comment-list [comments]="getChildComments(comment.id)" />
@@ -14,9 +14,9 @@
             </div>
             <button
                 class="btn"
-                [ngClass]="{ 'hide': !areChildrenHidden }"
+                [ngClass]="{ 'hide': !areChildrenHidden[i] }"
                 [ngStyle]="{ 'margin-top': '1rem' }"
-                (click)="areChildrenHidden = false"
+                (click)="areChildrenHidden[i] = false"
             >
             Mutatsd a megjegyzést
             </button>

@@ -24,7 +24,14 @@ import { animate, style, transition, trigger } from '@angular/animations';
   ],
 })
 export class CommentListComponent {
-  @Input() comments: commentType[] = [];
+  @Input('comments') _comments: commentType[] = [];
+  get comments() {
+    return this._comments;
+  }
+  set comments(value: commentType[]) {
+    this._comments = value;
+    this.areChildrenHidden = this.comments.map(() => false);
+  }
 
   constructor(private postService: PostService) {}
 
@@ -32,5 +39,5 @@ export class CommentListComponent {
     return this.postService.getReplies(id) ?? [];
   }
 
-  areChildrenHidden = false;
+  areChildrenHidden: boolean[] = [];
 }
