@@ -67,7 +67,7 @@ export class PostListComponent {
     else
       this.timeoutToken = setTimeout(() => {
         this.isListClipped = true;
-      }, 200);
+      }, PostItemComponent.highlightAnimationDuration);
   }
 
   startEnterAnimation() {

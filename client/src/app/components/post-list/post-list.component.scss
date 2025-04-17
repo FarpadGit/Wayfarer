@@ -22,10 +22,15 @@
         border: 1px solid var(--app-post-list-border-color);
         z-index: 5;
         overflow: hidden;
+        transition: box-shadow 0.5s ease;
 
         h2, h3 {
             padding: 0.5rem 1rem;
             align-self: center;
+        }
+
+        &.collapsing {
+            box-shadow: 0 0 0 hsla(0, 0%, 0%, 0.33);
         }
     }
 

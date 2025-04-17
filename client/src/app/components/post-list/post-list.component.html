@@ -1,7 +1,7 @@
 <div class="post-list" [@list-fade-in-out]="animationState"
   (@list-fade-in-out.done)="animationState === animStates.finished ? startEnterAnimation() : null"
 >
-  <div class="post-list-header">
+  <div class="post-list-header" [ngClass]="{'collapsing': animationState === animStates.animating}">
     <h2>Posztok</h2>
     <app-new-post-button />
   </div>
@@ -30,7 +30,7 @@
           </div>
         }
       </div>
-      <div class="post-list-footer">
+      <div class="post-list-footer" [ngClass]="{'collapsing': animationState === animStates.animating}">
         <h3>
           <app-paginator #paginator></app-paginator>
         </h3>
