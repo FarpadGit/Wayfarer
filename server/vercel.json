@@ -2,14 +2,21 @@
   "version": 2,
   "builds": [
     {
-      "src": "src/main.ts",
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "public"
+      }
+    },
+    {
+      "src": "src/vercel-main.ts",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "src/main.ts",
+      "dest": "src/vercel-main.ts",
       "methods": ["GET", "POST", "PUT", "DELETE"]
     }
   ]
