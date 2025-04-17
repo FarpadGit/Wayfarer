@@ -4,7 +4,7 @@
   }
   @case ('error') {
     <div class="post-container" [@post-fade-in-out]="animationState">
-      <app-icon-btn [iconClass]="'post-back-btn'" (onClick)="backButtonClicked()">
+      <app-icon-btn data-test-back-btn [iconClass]="'post-back-btn'" (onClick)="backButtonClicked()">
         <ng-icon icon name="matArrowBack"></ng-icon>
         Vissza
       </app-icon-btn>
@@ -16,7 +16,7 @@
   }
   @case ('success') {
     <div class="post-container" [@post-fade-in-out]="animationState">
-      <app-icon-btn [iconClass]="'post-back-btn'" (onClick)="backButtonClicked()">
+      <app-icon-btn data-test-back-btn [iconClass]="'post-back-btn'" (onClick)="backButtonClicked()">
         <ng-icon icon name="matArrowBack"></ng-icon>
           Vissza
       </app-icon-btn>

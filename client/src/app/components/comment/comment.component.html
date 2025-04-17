@@ -16,11 +16,12 @@
     }
     <div class="footer">
       <div>
-        <app-icon-btn
-          [appTooltip]="isLiked ? 'Unlike' : 'Like'"
-          (onClick)="onToggleCommentLike()"
-          [ariaLabel]="isLiked ? 'Unlike' : 'Like'"
-          [iconClass]="'btn-red'"
+        <app-icon-btn 
+        [appTooltip]="isLiked ? 'Unlike' : 'Like'"
+        (onClick)="onToggleCommentLike()"
+        [ariaLabel]="isLiked ? 'Unlike' : 'Like'"
+        [iconClass]="'btn-red'"
+        data-test-like-btn
         >
             <ng-icon icon [name]="isLiked ? 'matFavorite' : 'matFavoriteBorder'"></ng-icon>
             {{comment.likeCount}}
@@ -32,6 +33,7 @@
           (onClick)="isReplying = !isReplying"
           [isActive]="isReplying"
           [ariaLabel]="isReplying ? 'Cancel Reply' : 'Reply'"
+          data-test-reply-btn
         >
             <ng-icon icon name="matReply"></ng-icon>
         </app-icon-btn>
@@ -43,6 +45,7 @@
               (onClick)="isEditing = !isEditing"
               [isActive]="isEditing"
               [ariaLabel]="isEditing ? 'Cancel Edit' : 'Edit'"
+              data-test-edit-btn
           >
             <ng-icon icon name="matEdit"></ng-icon>
           </app-icon-btn>
@@ -55,6 +58,7 @@
             [loading]="isDeleting"
             (appConfirmPopup)="onCommentDelete()"
             [confirmPosition]="popupLocation"
+            data-test-delete-btn
           >
             <ng-icon icon name="matDelete"></ng-icon>
           </app-icon-btn>
@@ -66,9 +70,9 @@
 @if(isReplying) {
   <div class="comment-reply-box">
     <app-comment-form
-    [autoFocus]="true"
-    (onSubmit)="onCommentReply($event)"
-    (onEscape)="isReplying = false"
+      [autoFocus]="true"
+      (onSubmit)="onCommentReply($event)"
+      (onEscape)="isReplying = false"
     />
   </div>
 }

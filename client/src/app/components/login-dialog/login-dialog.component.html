@@ -11,9 +11,9 @@
             }
         </div>
         <div class="dialog-buttons">
-            <button class="btn" (click)="onLoginClick()">Belépek Google fiókkal</button>
-            @if(!isGuestUser){ <button class="btn" (click)="onLogoutClick()">Folytatás vendégként</button> }
-            <button class="btn" (click)="dismiss()">Most nem</button>
+            <button class="btn" data-test-login-btn (click)="onLoginClick()">Belépek Google fiókkal</button>
+            @if(!isGuestUser){ <button class="btn" data-test-guest-btn (click)="onLogoutClick()">Folytatás vendégként</button> }
+            <button class="btn" data-test-cancel-btn (click)="dismiss()">Most nem</button>
         </div>
     </div>
 </div>

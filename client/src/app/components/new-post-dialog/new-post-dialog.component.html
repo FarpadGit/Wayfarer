@@ -22,10 +22,10 @@
         ></textarea>
       </div>
       <div class="dialog-buttons">
-        <button class="btn" (click)="dismiss()" type="button">
+        <button class="btn" data-test-cancel-btn (click)="dismiss()" type="button">
           Mégse
         </button>
-        <button class="btn" [disabled]="!dialogForm.form.valid" type="submit">
+        <button class="btn" data-test-confirm-btn [disabled]="!dialogForm.form.valid" type="submit">
           Létrehoz
         </button>
       </div>

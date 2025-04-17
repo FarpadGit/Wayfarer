@@ -2,7 +2,7 @@
     <p>Biztos, hogy törölni szeretnéd?</p>
     <p>(Ezt a műveletet nem lehet visszavonni)</p>
     <div class="buttons">
-        <button class="btn" (click)="onCancel()">Mégse</button>
-        <button class="btn btn-special" (click)="onConfirm()">Törlés</button>
+        <button class="btn" data-test-cancel-btn (click)="onCancel()">Mégse</button>
+        <button class="btn btn-special" data-test-confirm-btn (click)="onConfirm()">Törlés</button>
     </div>
 </div>
