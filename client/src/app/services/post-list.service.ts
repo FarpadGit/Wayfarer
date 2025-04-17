@@ -1,32 +1,24 @@
 import { Injectable } from '@angular/core';
 import { postTitleType } from '../types';
-import { ApiService } from './api.service';
 import { userAccounts } from './login.service';
+import { PostApiService } from './API/post.api.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PostListService {
-  constructor(private apiService: ApiService) {}
+  constructor(private apiService: PostApiService) {}
 
-  private getPosts = (categoryId: string) =>
-    this.apiService.getPostsAsync.execute(categoryId).then((posts) => {
-      this.currentCategoryId = categoryId;
-      posts.sort(
-        (post1, post2) =>
-          new Date(post2.createdAt).valueOf() -
-          new Date(post1.createdAt).valueOf()
-      );
-      return this.replaceAuthorNames(posts);
-    });
+  private getPostsFn = this.apiService.getPostsAsync;
+
   get reloading() {
-    return this.apiService.getPostsAsync.loading();
+    return this.getPostsFn.loading();
   }
   get error() {
-    return this.apiService.getPostsAsync.error();
+    return this.getPostsFn.error();
   }
   get posts() {
-    return this.apiService.getPostsAsync.value() ?? [];
+    return this.getPostsFn.value() ?? [];
   }
 
   private currentCategoryId: string = '';
@@ -35,7 +27,15 @@ export class PostListService {
   }
 
   async getPostsByCategory(categoryId: string) {
-    await this.getPosts(categoryId);
+    await this.getPostsFn.execute(categoryId).then((posts) => {
+      this.currentCategoryId = categoryId;
+      posts.sort(
+        (post1, post2) =>
+          new Date(post2.createdAt).valueOf() -
+          new Date(post1.createdAt).valueOf()
+      );
+      return this.replaceAuthorNames(posts);
+    });
   }
 
   private refreshPosts() {
