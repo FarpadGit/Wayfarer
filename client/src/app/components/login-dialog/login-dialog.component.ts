@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { LoginService, userAccounts } from '../../services/login.service';
 import { ModalService } from 'ngx-modal-ease';
 
@@ -15,9 +15,6 @@ export class LoginDialogComponent {
     private modalService: ModalService
   ) {}
 
-  @ViewChild('googleSignIn') googleSignInWrapper!: ElementRef<HTMLDivElement>;
-  googleSignInButton: HTMLElement | null = null;
-
   get currentUserName() {
     return this.loginService.currentUserName;
   }
@@ -26,8 +23,9 @@ export class LoginDialogComponent {
   }
 
   async onLoginClick() {
-    if (this.loginService.isCurrentUserSignedIn)
+    if (this.loginService.isCurrentUserSignedIn) {
       await this.loginService.logoutUser();
+    }
     this.loginService.loginUser();
   }
 
