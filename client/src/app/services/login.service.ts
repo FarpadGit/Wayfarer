@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ApiService } from './api.service';
+import { ApiService } from './API/api.service';
 import { AuthConfig, OAuthService } from 'angular-oauth2-oidc';
 
 export const userAccounts = {
