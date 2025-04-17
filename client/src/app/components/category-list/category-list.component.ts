@@ -86,9 +86,7 @@ export class CategoryListComponent {
   get reloading() {
     return this.categoryListService.loading;
   }
-  get error() {
-    return this.categoryListService.error;
-  }
+
   get categories() {
     return this.categoryListService.allCategories;
   }
