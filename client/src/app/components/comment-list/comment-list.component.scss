@@ -1,6 +1,17 @@
 .comment-stack {
     margin: .65rem 0;
 
+    .nested-comments-stack {
+        opacity: 1;
+        translate: unset;
+        transition: opacity 0.25s ease, translate 0.25s ease;
+
+        @starting-style {
+              opacity: 0;
+              translate: 0 -20%;
+        }
+    }
+
     &:last-child {
         margin-bottom: 0;
     }
