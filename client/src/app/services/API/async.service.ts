@@ -4,22 +4,19 @@ import { computed, Injectable, signal } from '@angular/core';
   providedIn: 'root',
 })
 export class AsyncService {
-  public asAsyncFn<T>(func: (...args: any[]) => Promise<any>) {
-    return this.asAsyncInternal<T>(func, false);
-  }
-
-  private asAsyncInternal<T>(
-    func: (...args: any[]) => Promise<any>,
-    initialLoading: boolean = false
-  ) {
-    const _loading = signal<boolean>(initialLoading);
+  public asAsync<T>(func: (...args: any[]) => Promise<any>) {
+    const _loading = signal<boolean>(false);
     const loading = computed(() => _loading());
+
     const _error = signal<any>(null);
     const error = computed(() => _error());
+
     const _value = signal<T | null>(null);
     const value = computed(() => _value());
+
     const execute = async (...params: any[]) => {
       _loading.set(true);
+
       return func(...params)
         .then((data: T) => {
           _value.set(data);
