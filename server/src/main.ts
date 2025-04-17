@@ -13,6 +13,14 @@ async function bootstrap() {
     origin: [process.env.CLIENT_URL || ''],
     credentials: true,
     exposedHeaders: 'userId',
+    methods: 'GET,HEAD,PUT,POST,DELETE,OPTIONS',
+    allowedHeaders: [
+      'Origin',
+      'X-Requested-With',
+      'Content-Type',
+      'Accept',
+      'Authorization',
+    ],
   });
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
