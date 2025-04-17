@@ -20,7 +20,7 @@ export class IconBtnComponent {
   @Input() loading: boolean = false;
   @Input() disabled: boolean = false;
   @Input() ariaLabel: string = '';
-  @Output() onClick = new EventEmitter<null>();
+  @Output() onClick = new EventEmitter<void>();
   @ViewChild('text') text!: HTMLDivElement;
 
   get classes() {
