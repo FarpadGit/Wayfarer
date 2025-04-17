@@ -1,4 +1,4 @@
-<div class="post-item" [ngClass]="{ 'highlight': highlighted }">
+<div class="post-item" [ngClass]="{ 'highlight': highlighted }" [ngStyle]="{'--highlightDuration': highlightDuration + 'ms'}">
     <h3
       (mouseenter)="highlighted = true"
       (mouseleave)="highlighted = false"

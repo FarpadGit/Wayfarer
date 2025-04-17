@@ -1,9 +1,10 @@
 .post-item {
+    --highlightDuration: 200ms;
     position: relative;
     border: 1px solid transparent;
     border-bottom-color: var(--app-post-list-border-color);
     padding: 1rem;
-    transition: scale 0.2s linear, filter 0.2s linear, border-color 0.2s linear, background-color 0.2s linear;
+    transition: scale var(--highlightDuration) linear, filter var(--highlightDuration) linear, border-color var(--highlightDuration) linear, background-color var(--highlightDuration) linear;
     overflow: hidden;
 
     &:before {
@@ -15,7 +16,7 @@
         height: 100%;
         margin-left: 200%;
         background: var(--app-post-highlight-img-url) center 40% / 100% no-repeat;
-        transition: left 0.2s ease, margin-left 0.2s ease;
+        transition: left var(--highlightDuration) ease, margin-left var(--highlightDuration) ease;
         z-index: -1;
     }
 

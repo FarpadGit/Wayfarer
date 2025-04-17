@@ -37,6 +37,11 @@ export class PostItemComponent {
 
   constructor(private loginService: LoginService) {}
 
+  static highlightAnimationDuration = 200;
+  get highlightDuration() {
+    return PostItemComponent.highlightAnimationDuration;
+  }
+
   _highlighted = false;
   get highlighted() {
     return this._highlighted;
