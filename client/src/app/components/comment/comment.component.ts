@@ -66,7 +66,7 @@ export class CommentComponent {
   isEditing = false;
   isDeleting = false;
   get isLiked() {
-    return this.comment.isLikedByMe || false;
+    return this.comment.isLikedByMe;
   }
 
   get popupLocation() {
