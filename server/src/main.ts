@@ -10,7 +10,7 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const adapter = new FastifyAdapter();
   adapter.enableCors({
-    origin: [process.env.CLIENT_URL || ''],
+    origin: [process.env.CLIENT_URL || '', process.env.IMAGE_CLIENT_URL || ''],
     credentials: true,
     exposedHeaders: 'userId',
     methods: 'GET,HEAD,PUT,POST,DELETE,OPTIONS',
@@ -31,6 +31,8 @@ async function bootstrap() {
     secret: process.env.COOKIE_SECRET,
     parseOptions: { sameSite: 'none', secure: true },
   });
+  // for Docker:
+  // await app.listen(process.env.PORT ?? 3001, '0.0.0.0');
   await app.listen(process.env.PORT ?? 3001);
 }
 bootstrap();
