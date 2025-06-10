@@ -48,6 +48,8 @@ export class PostsController {
     @Body() { images }: ImagesBody,
     @Res({ passthrough: true }) res: FastifyReply,
   ) {
+    console.log('recieved Patch with:', postId, req.cookies.userId, images);
+
     const response = await this.postService.updatePost(
       postId,
       req.cookies.userId,
