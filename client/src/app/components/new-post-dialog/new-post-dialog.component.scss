@@ -2,14 +2,15 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    overflow: auto;
     width: 60rem;
     max-width: 75vw;
-    max-height: calc(100% - 64px);
+    max-height: calc(100vh - 64px);
     border-radius: 2rem;
     background: var(--app-post-highlight-img-url) 0 / cover no-repeat;
     color: rgba(0, 0, 0, 0.87);
-    box-shadow: 0 11px 15px -7px rgba(0, 0, 0, 0.2), 0 24px 38px 3px rgba(0, 0, 0, 0.14), 0 9px 46px 8px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 11px 15px -7px rgba(0, 0, 0, 0.2), 0 24px 38px 3px rgba(0, 0, 0, 0.14), 0 9px 46px 8px rgba(0, 0, 0, 0.12), 0 0 10px 0px var(--app-btn-color-hover);
+    scrollbar-width: none;
 
     @media (max-width: 639px) {
         width: 100%;
@@ -20,6 +21,8 @@
 .dialog {
     &-title {
         display: flex;
+        position: sticky;
+        top: 0;
         justify-content: center;
         text-align: center;
         background-size: 150%;
@@ -35,6 +38,7 @@
         padding: 1rem 1.5rem;
         flex: 0 0 auto;
         user-select: none;
+        z-index: 10;
 
         p {
             color: #fefefe;
@@ -85,6 +89,60 @@
 
             &:focus-visible {
                 outline-color: var(--app-btn-color);
+            }
+        }
+
+        .image-row {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 1rem;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: auto;
+            padding-top: 1rem;
+
+            .upload-button-cell {
+                display: flex;
+                flex-direction: column;
+                padding-right: 2rem;
+
+                @media (max-width: 639px) {
+                    padding-right: 0;
+                }
+
+                #imageUpload {
+                    display: none;
+                }
+
+                p {
+                    color: #fefefe;
+                    filter: drop-shadow(2px 2px color-mix(in hsl, var(--app-post-list-header-color), black 50%));
+                    text-align: center;
+                }
+            }            
+
+            .image-block {
+                display: flex;
+                justify-content: center;
+
+                img {
+                    padding-bottom: 1rem;
+                    max-height: 200px;
+                    max-width: 90%;
+                }
+            }
+
+            @media (max-width: 1023px) {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+            }
+            
+            @media (max-width: 767px) {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+            
+            @media (max-width: 639px) {
+                grid-template-columns: repeat(1, minmax(0, 1fr));
             }
         }
     }

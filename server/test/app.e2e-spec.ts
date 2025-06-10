@@ -11,6 +11,7 @@ import { AppModule } from '../src/app.module';
 import { User } from '../src/entities/user.entity';
 import { Category } from '../src/entities/category.entity';
 import { Post } from '../src/entities/post.entity';
+import { Image } from '../src/entities/image.entity';
 import { Like } from '../src/entities/like.entity';
 import { Comment } from '../src/entities/comment.entity';
 import { MockType } from './types';
@@ -19,6 +20,7 @@ import {
   mockCategory,
   mockComment,
   mockGuest,
+  mockImage,
   mockLike,
   mockPost,
   mockUser,
@@ -45,6 +47,7 @@ export let app: NestFastifyApplication;
 export let mockUserRepo: MockType<Repository<User>>;
 export let mockCategoryRepo: MockType<Repository<Category>>;
 export let mockPostRepo: MockType<Repository<Post>>;
+export let mockImageRepo: MockType<Repository<Image>>;
 export let mockCommentRepo: MockType<Repository<Comment>>;
 export let mockLikeRepo: MockType<Repository<Like>>;
 
@@ -90,6 +93,8 @@ describe('AppController (e2e)', () => {
       .useFactory({ factory: repositoryMockFactory })
       .overrideProvider(getRepositoryToken(Post))
       .useFactory({ factory: repositoryMockFactory })
+      .overrideProvider(getRepositoryToken(Image))
+      .useFactory({ factory: repositoryMockFactory })
       .overrideProvider(getRepositoryToken(Comment))
       .useFactory({ factory: repositoryMockFactory })
       .overrideProvider(getRepositoryToken(Like))
@@ -103,6 +108,7 @@ describe('AppController (e2e)', () => {
     mockUserRepo = moduleFixture.get(getRepositoryToken(User));
     mockCategoryRepo = moduleFixture.get(getRepositoryToken(Category));
     mockPostRepo = moduleFixture.get(getRepositoryToken(Post));
+    mockImageRepo = moduleFixture.get(getRepositoryToken(Image));
     mockCommentRepo = moduleFixture.get(getRepositoryToken(Comment));
     mockLikeRepo = moduleFixture.get(getRepositoryToken(Like));
 
@@ -116,6 +122,7 @@ describe('AppController (e2e)', () => {
     mockCategoryRepo.findOne?.mockResolvedValue(mockCategory);
     mockPostRepo.find?.mockResolvedValue([mockPost, mockPost]);
     mockPostRepo.findOne?.mockResolvedValue(mockPost);
+    mockImageRepo.findOne?.mockResolvedValue(mockImage);
     mockCommentRepo.find?.mockResolvedValue([mockComment, mockComment]);
     mockCommentRepo.findOne?.mockResolvedValue(mockComment);
     mockLikeRepo.find?.mockResolvedValue([mockLike]);

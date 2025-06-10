@@ -29,6 +29,16 @@ export const mockPostTitle: postTitleType = {
 export const mockPost: postType = {
   title: 'Fake Post Title',
   body: 'Lorem Ipsum Dolor Sit Amet',
+  images: [
+    {
+      name: 'fakeImage1.jpg',
+      url: 'fakeurl1.com',
+    },
+    {
+      name: 'fakeImage2.jpg',
+      url: 'fakeurl2.com',
+    },
+  ],
   comments: [],
 };
 

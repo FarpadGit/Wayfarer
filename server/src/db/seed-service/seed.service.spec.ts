@@ -2,11 +2,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { SeedService } from './seed.service';
-import { User } from '../../../src/entities/user.entity';
-import { Category } from '../../../src/entities/category.entity';
-import { Post } from '../../../src/entities/post.entity';
-import { Comment } from '../../../src/entities/comment.entity';
-import { Like } from '../../../src/entities/like.entity';
+import { User } from '../../entities/user.entity';
+import { Category } from '../../entities/category.entity';
+import { Post } from '../../entities/post.entity';
+import { Image } from '../../entities/image.entity';
+import { Comment } from '../../entities/comment.entity';
+import { Like } from '../../entities/like.entity';
 import { MockType } from '../../../test/types';
 
 describe('SeedServiceService', () => {
@@ -14,6 +15,7 @@ describe('SeedServiceService', () => {
   let mockUserRepo: MockType<Repository<User>>;
   let mockCategoryRepo: MockType<Repository<Category>>;
   let mockPostRepo: MockType<Repository<Post>>;
+  let mockImageRepo: MockType<Repository<Image>>;
   let mockCommentRepo: MockType<Repository<Comment>>;
   let mockLikeRepo: MockType<Repository<Like>>;
 
@@ -42,6 +44,10 @@ describe('SeedServiceService', () => {
           useFactory: repositoryMockFactory,
         },
         {
+          provide: getRepositoryToken(Image),
+          useFactory: repositoryMockFactory,
+        },
+        {
           provide: getRepositoryToken(Comment),
           useFactory: repositoryMockFactory,
         },
@@ -56,6 +62,7 @@ describe('SeedServiceService', () => {
     mockUserRepo = module.get(getRepositoryToken(User));
     mockCategoryRepo = module.get(getRepositoryToken(Category));
     mockPostRepo = module.get(getRepositoryToken(Post));
+    mockImageRepo = module.get(getRepositoryToken(Image));
     mockCommentRepo = module.get(getRepositoryToken(Comment));
     mockLikeRepo = module.get(getRepositoryToken(Like));
   });
@@ -70,6 +77,7 @@ describe('SeedServiceService', () => {
     expect(mockUserRepo.delete).toHaveBeenCalledTimes(1);
     expect(mockCategoryRepo.delete).toHaveBeenCalledTimes(1);
     expect(mockPostRepo.delete).toHaveBeenCalledTimes(1);
+    expect(mockImageRepo.delete).toHaveBeenCalledTimes(1);
     expect(mockCommentRepo.delete).toHaveBeenCalledTimes(1);
     expect(mockLikeRepo.delete).toHaveBeenCalledTimes(1);
 
@@ -79,6 +87,7 @@ describe('SeedServiceService', () => {
     expect(mockUserRepo.save).toHaveBeenCalled();
     expect(mockCategoryRepo.save).toHaveBeenCalled();
     expect(mockPostRepo.save).toHaveBeenCalled();
+    expect(mockImageRepo.save).not.toHaveBeenCalled();
     expect(mockCommentRepo.save).toHaveBeenCalled();
     expect(mockLikeRepo.save).not.toHaveBeenCalled();
   });

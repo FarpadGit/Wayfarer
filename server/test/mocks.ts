@@ -1,6 +1,7 @@
 import { User } from 'src/entities/user.entity';
 import { Category } from 'src/entities/category.entity';
 import { Post } from 'src/entities/post.entity';
+import { Image } from 'src/entities/image.entity';
 import { Comment } from 'src/entities/comment.entity';
 import { Like } from 'src/entities/like.entity';
 
@@ -49,10 +50,18 @@ export const mockPost: Post = {
   id: 'fakePostID',
   title: 'Fake Post Title',
   body: 'lorem ipsum',
+  images: [],
   uploader: mockUser,
   category: mockCategory,
   comments: [],
   createdAt: new Date(),
+};
+
+export const mockImage: Image = {
+  id: 'fakeImageID',
+  name: 'fakeImage.jpg',
+  url: 'fakeurl.com',
+  post: mockPost,
 };
 
 export const mockComment: Comment = {

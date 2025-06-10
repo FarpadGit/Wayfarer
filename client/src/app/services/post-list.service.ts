@@ -1,15 +1,19 @@
 import { Injectable } from '@angular/core';
-import { postTitleType } from '../types';
+import { postTitleType, postType } from '../types';
 import { userAccounts } from './login.service';
 import { PostApiService } from './API/post.api.service';
+import { ImagesApiService } from './API/images.api.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PostListService {
-  constructor(private apiService: PostApiService) {}
+  constructor(
+    private postApiService: PostApiService,
+    private imagesApiService: ImagesApiService
+  ) {}
 
-  private getPostsFn = this.apiService.getPostsAsync;
+  private getPostsFn = this.postApiService.getPostsAsync;
 
   get reloading() {
     return this.getPostsFn.loading();
@@ -52,14 +56,31 @@ export class PostListService {
     return posts;
   }
 
-  createPost(title: string, body: string, categoryId: string) {
-    this.apiService.createPost({ title, body, categoryId }).then(() => {
-      this.refreshPosts();
-    });
+  createPost(
+    title: string,
+    body: string,
+    images: postType['images'],
+    categoryId: string
+  ) {
+    this.postApiService
+      .createPost({ title, body, noOfImages: images?.length, categoryId })
+      .then((postId: string) => {
+        if (images) {
+          this.imagesApiService.uploadImages(
+            images.map((image) => ({ name: image.name, src: image.url })),
+            postId,
+            this.postApiService.userId
+          );
+        }
+        this.refreshPosts();
+      });
   }
 
   deletePost(id: string) {
-    this.apiService.deletePost(id).then(() => {
+    this.postApiService.deletePost(id).then((res) => {
+      const { images } = res;
+      if (images?.length) this.imagesApiService.deleteImages(images);
+
       this.refreshPosts();
     });
   }

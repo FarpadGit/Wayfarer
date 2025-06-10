@@ -30,7 +30,7 @@ export function assertionsForPosts() {
         });
     });
 
-    it('/posts/:id (DELETE)', async () => {
+    it('/posts/:id (PATCH)', async () => {
       mockPostRepo.findOne?.mockResolvedValueOnce({
         ...mockPost,
         uploader: mockGuest,
@@ -38,15 +38,78 @@ export function assertionsForPosts() {
 
       return app
         .inject({
+          method: 'PATCH',
+          url: '/posts/1',
+          body: {
+            images: [{ name: 'img.jpg', url: 'url.com', postId: '123' }],
+          },
+        })
+        .then((result) => {
+          expect(result.statusCode).toBe(200);
+        });
+    });
+
+    it('/posts/:id (PATCH) (not found)', async () => {
+      mockPostRepo.findOne?.mockResolvedValueOnce(null);
+
+      return app
+        .inject({
+          method: 'PATCH',
+          url: '/posts/1',
+          body: {
+            images: [{ name: 'img.jpg', url: 'url.com', postId: '123' }],
+          },
+        })
+        .then((result) => {
+          expect(result.statusCode).toBe(400);
+        });
+    });
+
+    it('/posts/:id (PATCH) (bad credentials)', async () => {
+      mockPostRepo.findOne?.mockResolvedValueOnce({
+        ...mockPost,
+        uploader: mockAdmin,
+      });
+
+      return app
+        .inject({
+          method: 'PATCH',
+          url: '/posts/1',
+          body: {
+            images: [{ name: 'img.jpg', url: 'url.com', postId: '123' }],
+          },
+        })
+        .then((result) => {
+          const parsedPayload = JSON.parse(result.payload, dateTimeReviver);
+
+          expect(result.statusCode).toBe(401);
+          expect(Object.keys(parsedPayload).includes('message')).toBe(true);
+        });
+    });
+
+    it('/posts/:id (DELETE)', async () => {
+      const _mockPost = {
+        ...mockPost,
+        uploader: mockGuest,
+      };
+      mockPostRepo.findOne?.mockResolvedValueOnce(_mockPost);
+      mockPostRepo.findOne?.mockResolvedValueOnce(_mockPost);
+
+      return app
+        .inject({
           method: 'DELETE',
           url: '/posts/1',
         })
         .then((result) => {
-          expect(result.statusCode).toBe(204);
+          const parsedPayload = JSON.parse(result.payload);
+
+          expect(result.statusCode).toBe(200);
+          expect(parsedPayload.id).toBe('1');
         });
     });
 
     it('/posts/:id (DELETE) (not found)', async () => {
+      mockPostRepo.findOne?.mockResolvedValueOnce(null);
       mockPostRepo.findOne?.mockResolvedValueOnce(null);
 
       return app
@@ -60,10 +123,12 @@ export function assertionsForPosts() {
     });
 
     it('/posts/:id (DELETE) (bad credentials)', async () => {
-      mockPostRepo.findOne?.mockResolvedValueOnce({
+      const _mockPost = {
         ...mockCategory,
         uploader: mockAdmin,
-      });
+      };
+      mockPostRepo.findOne?.mockResolvedValueOnce(_mockPost);
+      mockPostRepo.findOne?.mockResolvedValueOnce(_mockPost);
 
       return app
         .inject({

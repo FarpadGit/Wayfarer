@@ -12,6 +12,7 @@ describe('NewPostButtonComponent', () => {
   const testValues = {
     title: 'Fake New Post Title',
     body: 'Lorem Ipsum Dolor Sit Amet',
+    images: [{ name: 'fakeImage.jpg', url: 'fakeBase64String' }],
     categoryID: 'fakeCategoryID',
   };
 
@@ -23,7 +24,11 @@ describe('NewPostButtonComponent', () => {
     ]);
 
     modalSpy.open.and.resolveTo({
-      data: { title: testValues.title, body: testValues.body },
+      data: {
+        title: testValues.title,
+        body: testValues.body,
+        images: testValues.images,
+      },
       closedOnClickOrEscape: false,
     });
     postListSpy.getCurrentCategory.and.returnValue(testValues.categoryID);
@@ -55,6 +60,7 @@ describe('NewPostButtonComponent', () => {
     expect(postListSpy.createPost).toHaveBeenCalledWith(
       testValues.title,
       testValues.body,
+      testValues.images,
       testValues.categoryID
     );
   });

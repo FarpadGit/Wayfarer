@@ -4,10 +4,19 @@ export type CategoriesBody = {
 export type PostsBody = {
   title?: string;
   body?: string;
+  images?: number;
 };
 export type CommentsBody = {
   message?: string;
   parentId?: string | null;
+};
+export type ImagesBody = {
+  images: {
+    name: string;
+    url: string;
+    thumbnailUrl: string;
+    postId: string;
+  }[];
 };
 export type LoginBody = {
   userToken?: {

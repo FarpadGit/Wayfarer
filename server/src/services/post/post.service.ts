@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { In, Repository, Like as DBLike } from 'typeorm';
 import { UserService } from '../user/user.service';
 import { User } from '../../entities/user.entity';
 import { Category } from '../../entities/category.entity';
 import { Post } from '../../entities/post.entity';
+import { Image } from '../../entities/image.entity';
 import { Like } from '../../entities/like.entity';
-import { postType } from '../../types';
+import { imageType, postType } from '../../types';
+import { randomUUID } from 'crypto';
 
 @Injectable()
 export class PostService {
@@ -15,6 +17,7 @@ export class PostService {
     @InjectRepository(Category)
     private readonly categoryRepo: Repository<Category>,
     @InjectRepository(Post) private readonly postRepo: Repository<Post>,
+    @InjectRepository(Image) private readonly imageRepo: Repository<Image>,
     @InjectRepository(Like) private readonly likeRepo: Repository<Like>,
     private userService: UserService,
   ) {}
@@ -46,7 +49,93 @@ export class PostService {
     newPost.category = await this.categoryRepo.findOneByOrFail({
       id: post.categoryId,
     });
-    await this.postRepo.save(newPost);
+
+    const savedPost = await this.postRepo.save(newPost);
+
+    if (post.NoOfImages > 0) {
+      for (let i = 0; i < post.NoOfImages; i++) {
+        const newImage = new Image();
+        newImage.name = randomUUID() + 'WF_placeholder';
+        newImage.url =
+          'https://placehold.co/600x400?text=Kép%20Feltöltés%20Alatt%20%2F%0A%20Image%20Being%20Uploaded';
+        newImage.thumbnail =
+          'https://placehold.co/300x200?text=Kép%20Feltöltés%20Alatt%20%2F%0A%20Image%20Being%20Uploaded';
+        newImage.post = savedPost;
+        await this.imageRepo.save(newImage);
+      }
+    }
+
+    return savedPost.id;
+  }
+
+  async updatePost(
+    id: string,
+    userId: string | undefined,
+    postData: Partial<postType>,
+    images: (Omit<imageType, 'url'> & {
+      url: string | null;
+      thumbnailUrl: string | null;
+    })[],
+  ) {
+    const uploaderId = await this.getPostAuthorId(id);
+    if (uploaderId == undefined) return null;
+    if (uploaderId !== userId && userId !== this.userService.ADMIN_USER_ID) {
+      return {
+        PrivilegeError: 'Nincs jogosultságod szerkeszteni ezt a posztot!',
+      };
+    }
+
+    // save post edits
+    const post = await this.postRepo.findOneByOrFail({ id });
+    const updatedPost = { ...post, ...postData };
+
+    const savedPost = await this.postRepo.save(updatedPost);
+
+    if (images.length === 0) return savedPost.id;
+
+    // save image edits
+    const placeholdersInDB = await this.imageRepo.find({
+      where: {
+        name: DBLike('%WF_placeholder'),
+        post,
+      },
+    });
+
+    images.forEach(async (image, index) => {
+      const imageInDB = await this.imageRepo.findOne({
+        where: {
+          name: image.name,
+          post,
+        },
+      });
+
+      // if image is newly added
+      if (imageInDB == null) {
+        const placeholderInDB = placeholdersInDB[index];
+
+        if (image.url != null) {
+          const newImage =
+            placeholderInDB == null ? new Image() : placeholderInDB;
+
+          newImage.name = image.name;
+          newImage.url = image.url;
+          newImage.thumbnail = image.thumbnailUrl ?? image.url;
+          newImage.post = savedPost;
+          await this.imageRepo.save(newImage);
+        }
+      } else {
+        // else image is modified/deleted
+        if (image.url == null) await this.imageRepo.remove(imageInDB);
+        else {
+          imageInDB.name = image.name;
+          imageInDB.url = image.url;
+          imageInDB.thumbnail = image.thumbnailUrl ?? image.url;
+          await this.imageRepo.save(imageInDB);
+        }
+      }
+    });
+
+    return savedPost.id;
   }
 
   async getPostAuthorId(postId: string) {
@@ -63,6 +152,7 @@ export class PostService {
       where: { id },
       order: { comments: { createdAt: 'DESC' } },
       relations: [
+        'images',
         'comments',
         'comments.parent',
         'comments.user',
@@ -72,6 +162,7 @@ export class PostService {
         id: true,
         body: true,
         title: true,
+        images: true,
         comments: {
           id: true,
           message: true,
@@ -115,6 +206,21 @@ export class PostService {
         };
       }),
     };
+  }
+
+  async getPostImages(id: string) {
+    const post = await this.postRepo.findOne({
+      where: { id },
+      relations: ['images'],
+      select: {
+        id: true,
+        images: true,
+      },
+    });
+
+    if (post == null) return null;
+
+    return post.images;
   }
 
   async deletePost(id: string, userId: string) {

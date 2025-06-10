@@ -5,8 +5,14 @@ export type categoryType = {
 export type postType = {
   title: string;
   body: string;
+  NoOfImages: number;
   uploaderId: string;
   categoryId: string;
+};
+export type imageType = {
+  name: string;
+  url: string;
+  postId: string;
 };
 export type commentType = {
   id: string;

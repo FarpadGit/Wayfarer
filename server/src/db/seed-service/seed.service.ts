@@ -5,6 +5,7 @@ import { Category } from '../../entities/category.entity';
 import { Comment } from '../../entities/comment.entity';
 import { Like } from '../../entities/like.entity';
 import { Post } from '../../entities/post.entity';
+import { Image } from '../../entities/image.entity';
 import { User } from '../../entities/user.entity';
 
 @Injectable()
@@ -14,6 +15,7 @@ export class SeedService {
     @InjectRepository(Category)
     private readonly categoryRepo: Repository<Category>,
     @InjectRepository(Post) private readonly postRepo: Repository<Post>,
+    @InjectRepository(Image) private readonly imageRepo: Repository<Image>,
     @InjectRepository(Comment)
     private readonly commentRepo: Repository<Comment>,
     @InjectRepository(Like) private readonly likeRepo: Repository<Like>,
@@ -22,6 +24,7 @@ export class SeedService {
   async seed() {
     await this.categoryRepo.delete({});
     await this.postRepo.delete({});
+    await this.imageRepo.delete({});
     await this.commentRepo.delete({});
     await this.likeRepo.delete({});
     await this.userRepo.delete({});

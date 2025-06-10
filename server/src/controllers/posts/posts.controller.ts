@@ -5,12 +5,17 @@ import {
   Get,
   HttpCode,
   Param,
+  Patch,
   Post,
   Req,
   Res,
 } from '@nestjs/common';
 import { FastifyRequest, FastifyReply } from 'fastify';
-import { CommentsBody, isPrivilegeError } from '../controllers.utils';
+import {
+  CommentsBody,
+  ImagesBody,
+  isPrivilegeError,
+} from '../controllers.utils';
 import { PostService } from '../../services/post/post.service';
 import { CommentService } from '../../services/comment/comment.service';
 
@@ -36,13 +41,36 @@ export class PostsController {
     return response;
   }
 
+  @Patch(':postId')
+  async patchPost(
+    @Param('postId') postId: string,
+    @Req() req: FastifyRequest,
+    @Body() { images }: ImagesBody,
+    @Res({ passthrough: true }) res: FastifyReply,
+  ) {
+    const response = await this.postService.updatePost(
+      postId,
+      req.cookies.userId,
+      {},
+      images,
+    );
+
+    if (response == null) return res.badRequest('Ilyen poszt nem létezik!');
+    if (isPrivilegeError(response))
+      return res.unauthorized(response.PrivilegeError);
+
+    return response;
+  }
+
   @Delete(':postId')
-  @HttpCode(204)
+  @HttpCode(200)
   async deletePost(
     @Param('postId') postId: string,
     @Req() req: FastifyRequest,
     @Res({ passthrough: true }) res: FastifyReply,
   ) {
+    const postImages = await this.postService.getPostImages(postId);
+
     const response = await this.postService.deletePost(
       postId,
       req.cookies.userId!,
@@ -52,7 +80,7 @@ export class PostsController {
     if (isPrivilegeError(response))
       return res.unauthorized(response.PrivilegeError);
 
-    return response;
+    return { id: response, images: postImages?.map((img) => img.name) };
   }
 
   @Post(':postId/comments')

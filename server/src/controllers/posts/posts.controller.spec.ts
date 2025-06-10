@@ -10,6 +10,8 @@ describe('PostsController', () => {
 
   const mockPostService = {
     getPostWithComments: jest.fn().mockResolvedValue('mock post return value'),
+    getPostImages: jest.fn().mockResolvedValue([{ name: 'fakeImage.jpg' }]),
+    updatePost: jest.fn().mockResolvedValue(mockPost.id),
     deletePost: jest.fn().mockResolvedValue(mockPost.id),
   };
 
@@ -79,6 +81,80 @@ describe('PostsController', () => {
     });
   });
 
+  describe('update post', () => {
+    const mockResponse = {
+      badRequest: jest.fn().mockReturnValue('badRequest called'),
+      unauthorized: jest.fn().mockReturnValue('unauthorized called'),
+    } as unknown as FastifyReply;
+    const mockImages = [
+      { name: 'fakeImage1.jpg', url: 'fakeurl1.com', postId: 'fakePostID' },
+      { name: 'fakeImage2.jpg', url: 'fakeurl2.com', postId: 'fakePostID' },
+    ];
+
+    it('should update an existing post', async () => {
+      const result = await postsController.patchPost(
+        mockPost.id,
+        mockRequest,
+        { images: mockImages },
+        mockResponse,
+      );
+
+      expect(result).toBe(mockPost.id);
+      expect(mockPostService.updatePost).toHaveBeenCalledWith(
+        mockPost.id,
+        mockRequest.cookies.userId,
+        expect.objectContaining({}),
+        mockImages,
+      );
+      expect(mockResponse.badRequest).not.toHaveBeenCalled();
+      expect(mockResponse.unauthorized).not.toHaveBeenCalled();
+    });
+
+    it("should return error if post didn't exist", async () => {
+      mockPostService.updatePost.mockResolvedValueOnce(null);
+
+      const result = await postsController.patchPost(
+        mockPost.id,
+        mockRequest,
+        { images: mockImages },
+        mockResponse,
+      );
+
+      expect(result).toBe('badRequest called');
+      expect(mockPostService.updatePost).toHaveBeenCalledWith(
+        mockPost.id,
+        mockRequest.cookies.userId,
+        expect.objectContaining({}),
+        mockImages,
+      );
+      expect(mockResponse.badRequest).toHaveBeenCalled();
+      expect(mockResponse.unauthorized).not.toHaveBeenCalled();
+    });
+
+    it('should return error if user is not allowed to update post', async () => {
+      mockPostService.updatePost.mockResolvedValueOnce({
+        PrivilegeError: true,
+      });
+
+      const result = await postsController.patchPost(
+        mockPost.id,
+        mockRequest,
+        { images: mockImages },
+        mockResponse,
+      );
+
+      expect(result).toBe('unauthorized called');
+      expect(mockPostService.updatePost).toHaveBeenCalledWith(
+        mockPost.id,
+        mockRequest.cookies.userId,
+        expect.objectContaining({}),
+        mockImages,
+      );
+      expect(mockResponse.badRequest).not.toHaveBeenCalled();
+      expect(mockResponse.unauthorized).toHaveBeenCalled();
+    });
+  });
+
   describe('delete post', () => {
     const mockResponse = {
       badRequest: jest.fn().mockReturnValue('badRequest called'),
@@ -92,7 +168,9 @@ describe('PostsController', () => {
         mockResponse,
       );
 
-      expect(result).toBe(mockPost.id);
+      expect(result).toEqual(
+        expect.objectContaining({ id: mockPost.id, images: ['fakeImage.jpg'] }),
+      );
       expect(mockPostService.deletePost).toHaveBeenCalledWith(
         mockPost.id,
         mockRequest.cookies.userId,

@@ -2,7 +2,12 @@ import { Injectable } from '@angular/core';
 import { postTitleType, postType } from '../../types';
 import { ApiService } from './api.service';
 
-type postParamsType = { title: string; body: string; categoryId: string };
+type postParamsType = {
+  title: string;
+  body: string;
+  noOfImages?: number;
+  categoryId: string;
+};
 
 @Injectable({
   providedIn: 'root',
@@ -24,10 +29,10 @@ export class PostApiService extends ApiService {
     this.getPost(id)
   );
 
-  createPost({ title, body, categoryId }: postParamsType) {
+  createPost({ title, body, noOfImages, categoryId }: postParamsType) {
     return this.makeRequest(`/categories/${categoryId}/posts`, {
       method: 'POST',
-      data: { title, body },
+      data: { title, body, images: noOfImages },
     });
   }
 

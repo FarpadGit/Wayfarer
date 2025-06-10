@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { Category } from './entities/category.entity';
 import { Post } from './entities/post.entity';
+import { Image } from './entities/image.entity';
 import { Comment } from './entities/comment.entity';
 import { Like } from './entities/like.entity';
 import { User } from './entities/user.entity';
@@ -27,13 +28,13 @@ import { CommentService } from './services/comment/comment.service';
       port: 5432,
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
-      entities: [Category, Post, Comment, Like, User],
+      entities: [Category, Post, Image, Comment, Like, User],
       database: process.env.POSTGRES_DATABASE,
       ssl: process.env.POSTGRES_SSL?.toLowerCase() === 'true',
       // synchronize: true,
       // logging: true,
     }),
-    TypeOrmModule.forFeature([Category, Post, Comment, Like, User]),
+    TypeOrmModule.forFeature([Category, Post, Image, Comment, Like, User]),
   ],
   controllers: [
     AuthController,

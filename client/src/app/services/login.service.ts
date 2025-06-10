@@ -46,7 +46,9 @@ export class LoginService {
   }
 
   async logoutUser() {
-    await this.oAuthService.revokeTokenAndLogout();
+    try {
+      await this.oAuthService.revokeTokenAndLogout();
+    } catch (_) {}
     this.oAuthService.logOut();
   }
 

@@ -5,6 +5,7 @@ import { NewPostDialogComponent } from '../../new-post-dialog/new-post-dialog.co
 import { ModalService } from 'ngx-modal-ease';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { matPostAdd } from '@ng-icons/material-icons/baseline';
+import { postType } from '../../../types';
 
 @Component({
   selector: 'app-new-post-button',
@@ -32,17 +33,22 @@ export class NewPostButtonComponent implements OnDestroy {
         enter: 'new-post-dialog-enter 0.5s ease',
         leave: 'new-post-dialog-exit 0.5s ease',
       },
+      overlay: {
+        backgroundColor: '#010809e5',
+      },
     });
 
     if (response.data) {
-      const { title, body } = response.data as { title: string; body: string };
-      this.createPost(title, body);
+      const newPost = response.data as Omit<postType, 'comments'>;
+      if (newPost.images!.length === 0) newPost.images = undefined;
+      this.createPost(newPost);
     }
   }
 
-  createPost(title: string, body: string) {
+  createPost(newPost: Omit<postType, 'comments'>) {
+    const { title, body, images } = newPost;
     const categoryId = this.postListService.getCurrentCategory();
-    this.postListService.createPost(title, body, categoryId);
+    this.postListService.createPost(title, body, images, categoryId);
   }
 
   ngOnDestroy(): void {

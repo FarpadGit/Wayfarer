@@ -1,14 +1,19 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed, waitForAsync } from '@angular/core/testing';
 
 import { PostListService } from './post-list.service';
 import { PostApiService } from './API/post.api.service';
+import { ImagesApiService } from './API/images.api.service';
 import { mockCategory, mockPostTitle } from '../../test/mocks';
 
 describe('PostListService', () => {
   let service: PostListService;
   let postApiSpy: jasmine.SpyObj<PostApiService>;
+  let imagesApiSpy: jasmine.SpyObj<ImagesApiService>;
   let executeSpy: jasmine.Spy;
   const mockPosts = [mockPostTitle, mockPostTitle];
+  const mockCreatedPostId = 'fakeCreatedPostID';
+  const mockLoggedInUserId = 'fakeLoggedInUserID';
+  const mockDeletedImages = { images: ['fakeImg.jpg'] };
 
   beforeEach(() => {
     postApiSpy = jasmine.createSpyObj(
@@ -21,16 +26,25 @@ describe('PostListService', () => {
           value: () => mockPosts,
           execute: () => Promise.resolve(mockPosts),
         },
+        userId: mockLoggedInUserId,
       }
     );
+    imagesApiSpy = jasmine.createSpyObj('ImagesApiService', [
+      'uploadImages',
+      'deleteImages',
+    ]);
 
-    postApiSpy.createPost.and.resolveTo();
-    postApiSpy.deletePost.and.resolveTo();
-    executeSpy = spyOn(postApiSpy.getPostsAsync, 'execute');
-    executeSpy.and.callThrough();
+    postApiSpy.createPost.and.resolveTo(mockCreatedPostId);
+    postApiSpy.deletePost.and.resolveTo(mockDeletedImages);
+    imagesApiSpy.uploadImages.and.resolveTo();
+    imagesApiSpy.deleteImages.and.resolveTo();
+    executeSpy = spyOn(postApiSpy.getPostsAsync, 'execute').and.callThrough();
 
     TestBed.configureTestingModule({
-      providers: [{ provide: PostApiService, useValue: postApiSpy }],
+      providers: [
+        { provide: PostApiService, useValue: postApiSpy },
+        { provide: ImagesApiService, useValue: imagesApiSpy },
+      ],
     });
 
     service = TestBed.inject(PostListService);
@@ -62,10 +76,17 @@ describe('PostListService', () => {
     expect(service.getCurrentCategory()).toBe(testID);
   });
 
-  it('should create new post and refetch all posts', (done) => {
+  it('should create new post and refetch all posts', waitForAsync(() => {
     const testTitle = 'Fake New Post Title';
     const testBody = 'Lorem Ipsum Dolor Sit Amet';
-    service.createPost(testTitle, testBody, mockCategory.id);
+    const testImages = [
+      {
+        name: 'fakeImg.jpg',
+        url: 'fakeurl.com',
+      },
+    ];
+
+    service.createPost(testTitle, testBody, testImages, mockCategory.id);
 
     setTimeout(() => {
       expect(postApiSpy.createPost).toHaveBeenCalledWith({
@@ -73,18 +94,29 @@ describe('PostListService', () => {
         body: testBody,
         categoryId: mockCategory.id,
       });
+      expect(imagesApiSpy.uploadImages).toHaveBeenCalledWith(
+        [
+          {
+            name: 'fakeImg.jpg',
+            src: 'fakeurl.com',
+          },
+        ],
+        mockCreatedPostId,
+        mockLoggedInUserId
+      );
       expect(executeSpy).toHaveBeenCalled();
-      done();
     }, 0);
-  });
+  }));
 
-  it('should delete post and refetch all posts', (done) => {
+  it('should delete post and refetch all posts', waitForAsync(() => {
     service.deletePost(mockPostTitle.id);
 
     setTimeout(() => {
       expect(postApiSpy.deletePost).toHaveBeenCalledWith(mockPostTitle.id);
+      expect(imagesApiSpy.deleteImages).toHaveBeenCalledWith(
+        mockDeletedImages.images
+      );
       expect(executeSpy).toHaveBeenCalled();
-      done();
     }, 0);
-  });
+  }));
 });

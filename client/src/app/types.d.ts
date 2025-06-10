@@ -22,6 +22,11 @@ export type postTitleType = {
 export type postType = {
   title: string;
   body: string;
+  images?: {
+    name: string;
+    url: string;
+    thumbnail?: string;
+  }[];
   comments: commentType[];
 };
 

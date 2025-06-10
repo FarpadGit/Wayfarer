@@ -9,6 +9,7 @@ import {
 import { User } from './user.entity';
 import { Category } from './category.entity';
 import { Comment } from './comment.entity';
+import { Image } from './image.entity';
 
 @Entity({ name: 'Post' })
 export class Post {
@@ -20,6 +21,9 @@ export class Post {
 
   @Column()
   body!: string;
+
+  @OneToMany(() => Image, (image) => image.post)
+  images!: Image[];
 
   @ManyToOne(() => User, (user) => user.posts)
   uploader!: User;

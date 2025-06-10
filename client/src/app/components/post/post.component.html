@@ -23,6 +23,15 @@
       <div class="post-body">
         <h1>{{post?.title}}</h1>
         <article [innerHTML]="(post?.body || '') | linky:{ sanitizeHtml: true }"></article>
+        @if (post?.images?.length) {
+          <div class="image-section">
+            @for (img of post?.images; track $index) {
+              <a [href]="img.url" target="_blank" rel="noopener noreferrer">
+                <img [src]="img.thumbnail" [alt]="'attachment image: ' + img.name">
+              </a>
+            }
+          </div>
+        }
       </div>
       <section>
         <app-comment-form

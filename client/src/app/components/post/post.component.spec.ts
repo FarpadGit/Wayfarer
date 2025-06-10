@@ -73,9 +73,13 @@ xdescribe('PostComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should display title, body and comment input form on successful fetch', () => {
+  it('should display title, body, image attachments and comment input form on successful fetch', () => {
     const titleElement = rootDiv.querySelector('h1');
     const bodyElement = rootDiv.querySelector('article');
+    const imageSectionElement = rootDiv.querySelector('.image-section');
+    const images = Array.from(
+      imageSectionElement?.querySelectorAll('img') || []
+    );
     const commentFormElement = fixture.debugElement.query(
       (e) => e.name === 'app-comment-form'
     );
@@ -84,6 +88,10 @@ xdescribe('PostComponent', () => {
     expect(component.post).toEqual(mockPost);
     expect(titleElement?.innerText.includes(mockPost.title)).toBeTrue();
     expect(bodyElement?.innerText.includes(mockPost.body)).toBeTrue();
+    expect(images.length).toBe(mockPost.images!.length);
+    for (let i = 0; i < images.length; i++) {
+      expect(images[i].src.endsWith(mockPost.images![i].url)).toBeTrue();
+    }
     expect(commentFormElement).toBeTruthy();
   });
 

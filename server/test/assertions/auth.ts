@@ -102,7 +102,7 @@ export function assertionsForAuthentication() {
       return app
         .inject({
           method: 'DELETE',
-          url: '/categories/:id',
+          url: '/categories/1',
           cookies: { userId: userIdCookie },
         })
         .then((result) => {
@@ -119,11 +119,14 @@ export function assertionsForAuthentication() {
       return app
         .inject({
           method: 'DELETE',
-          url: '/posts/:id',
+          url: '/posts/1',
           cookies: { userId: userIdCookie },
         })
         .then((result) => {
-          expect(result.statusCode).toBe(204);
+          const parsedPayload = JSON.parse(result.payload);
+
+          expect(result.statusCode).toBe(200);
+          expect(parsedPayload.id).toBe('1');
         });
     });
 
@@ -136,7 +139,7 @@ export function assertionsForAuthentication() {
       return app
         .inject({
           method: 'PUT',
-          url: '/comments/:id',
+          url: '/comments/1',
           body: { message: 'Updated Message' },
           cookies: { userId: userIdCookie },
         })
@@ -154,7 +157,7 @@ export function assertionsForAuthentication() {
       return app
         .inject({
           method: 'DELETE',
-          url: '/comments/:id',
+          url: '/comments/1',
           cookies: { userId: userIdCookie },
         })
         .then((result) => {
@@ -187,7 +190,7 @@ export function assertionsForAuthentication() {
       return app
         .inject({
           method: 'DELETE',
-          url: '/categories/:id',
+          url: '/categories/1',
           cookies: { userId: userIdCookie },
         })
         .then((result) => {
@@ -204,11 +207,14 @@ export function assertionsForAuthentication() {
       return app
         .inject({
           method: 'DELETE',
-          url: '/posts/:id',
+          url: '/posts/1',
           cookies: { userId: userIdCookie },
         })
         .then((result) => {
-          expect(result.statusCode).toBe(204);
+          const parsedPayload = JSON.parse(result.payload);
+
+          expect(result.statusCode).toBe(200);
+          expect(parsedPayload.id).toBe('1');
         });
     });
 
@@ -221,7 +227,7 @@ export function assertionsForAuthentication() {
       return app
         .inject({
           method: 'PUT',
-          url: '/comments/:id',
+          url: '/comments/1',
           body: { message: 'Updated Message' },
           cookies: { userId: userIdCookie },
         })
@@ -239,7 +245,7 @@ export function assertionsForAuthentication() {
       return app
         .inject({
           method: 'DELETE',
-          url: '/comments/:id',
+          url: '/comments/1',
           cookies: { userId: userIdCookie },
         })
         .then((result) => {

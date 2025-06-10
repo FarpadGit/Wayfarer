@@ -79,7 +79,7 @@ export class CategoriesController {
   async createPost(
     @Param('categoryId') categoryId: string,
     @Req() req: FastifyRequest,
-    @Body() { title, body }: PostsBody,
+    @Body() { title, body, images }: PostsBody,
     @Res({ passthrough: true }) res: FastifyReply,
   ) {
     if (title === '' || title == undefined) {
@@ -93,6 +93,7 @@ export class CategoriesController {
     return await this.postService.createPost({
       title,
       body,
+      NoOfImages: images ?? 0,
       categoryId,
       uploaderId: req.cookies.userId!,
     });

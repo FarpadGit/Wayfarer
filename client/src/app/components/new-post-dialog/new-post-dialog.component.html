@@ -14,12 +14,34 @@
         />
         <textarea
           required
-          rows="8"
+          rows="12"
           id="body"
           name="body"
           placeholder="Törzs"
           [(ngModel)]="newPost.body"
         ></textarea>
+        <div class="image-row">
+          <div class="upload-button-cell">
+            <input id="imageUpload" #imageUpload type="file" multiple [accept]="fileAccept" (change)="handleImageUpload($event)" />
+            <button class="btn" data-test-upload-btn (click)="imageUpload.click()" type="button">
+              Kép feltöltése
+            </button>
+            <p>(Max {{maxNumberOfImages}} db)</p>
+          </div>
+          @for (image of newPost.images; track $index) {
+            <span class="image-block">
+              <img [src]="image.url" alt="uploaded image" />
+              <!-- [appTooltip]="'Törlés'" -->
+              <app-icon-btn
+                [iconClass]="'btn-red btn-large'"
+                [ariaLabel]="'Delete'"
+                (onClick)="handleImageDelete($index)"
+              >
+                <ng-icon icon name="matRemoveCircle"></ng-icon>
+              </app-icon-btn>
+            </span>
+          }
+        </div>
       </div>
       <div class="dialog-buttons">
         <button class="btn" data-test-cancel-btn (click)="dismiss()" type="button">

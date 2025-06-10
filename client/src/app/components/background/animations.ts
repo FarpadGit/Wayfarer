@@ -30,7 +30,7 @@ export const dropDownAnimations = trigger('drop-down', [
     group([
       sequence([
         animate(
-          '0.5s ' + AnimationService.easingFunction,
+          '0.5s ' + AnimationService.easingFunctionBouncy,
           style({
             height: 'calc(100vh + var(--offset-top))',
             width: '100vw',
@@ -41,7 +41,18 @@ export const dropDownAnimations = trigger('drop-down', [
           })
         ),
         animate(
-          '1s ' + AnimationService.easingFunction,
+          '1s ' + AnimationService.easingFunctionBouncy,
+          style({
+            height: '105vh',
+            width: '100vw',
+            'margin-left': '0px',
+            'margin-right': '0px',
+            'border-radius': '0px',
+            'background-position': 'bottom',
+          })
+        ),
+        animate(
+          '0.1s linear',
           style({
             height: '100vh',
             width: '100vw',

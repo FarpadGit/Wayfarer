@@ -8,6 +8,11 @@ import axios, { AxiosRequestConfig } from 'axios';
 export class ApiService {
   constructor(protected asyncService: AsyncService) {}
 
+  private _userId: string = '';
+  get userId() {
+    return this._userId;
+  }
+
   private callAxios = axios.create({
     baseURL: import.meta.env['NG_APP_SERVER_URL'],
     withCredentials: true,
@@ -15,7 +20,10 @@ export class ApiService {
 
   protected async makeRequest(url: string, options?: AxiosRequestConfig<any>) {
     return this.callAxios(url, options)
-      .then((res) => res.data)
+      .then((res) => {
+        this._userId = res.headers['userid'];
+        return res.data;
+      })
       .catch((error) =>
         Promise.reject(
           error?.response?.data?.message ??
