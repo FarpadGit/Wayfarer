@@ -70,6 +70,7 @@ export class PostsController {
     @Res({ passthrough: true }) res: FastifyReply,
   ) {
     const postImages = await this.postService.getPostImages(postId);
+    const imageNames = postImages?.map((img) => img.name);
 
     const response = await this.postService.deletePost(
       postId,
@@ -80,7 +81,7 @@ export class PostsController {
     if (isPrivilegeError(response))
       return res.unauthorized(response.PrivilegeError);
 
-    return { id: response, images: postImages?.map((img) => img.name) };
+    return { id: response, images: imageNames };
   }
 
   @Post(':postId/comments')
