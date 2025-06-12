@@ -56,18 +56,13 @@ export class PostListService {
     return posts;
   }
 
-  createPost(
-    title: string,
-    body: string,
-    images: postType['images'],
-    categoryId: string
-  ) {
+  createPost(title: string, body: string, files: File[], categoryId: string) {
     this.postApiService
-      .createPost({ title, body, noOfImages: images?.length, categoryId })
+      .createPost({ title, body, noOfImages: files.length, categoryId })
       .then((postId: string) => {
-        if (images) {
+        if (files) {
           this.imagesApiService.uploadImages(
-            images.map((image) => ({ name: image.name, src: image.url })),
+            files,
             postId,
             this.postApiService.userId
           );

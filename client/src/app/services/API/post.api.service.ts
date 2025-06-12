@@ -5,7 +5,7 @@ import { ApiService } from './api.service';
 type postParamsType = {
   title: string;
   body: string;
-  noOfImages?: number;
+  noOfImages: number;
   categoryId: string;
 };
 

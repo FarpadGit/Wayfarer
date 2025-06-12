@@ -1,7 +1,10 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { PostListService } from '../../../services/post-list.service';
-import { NewPostDialogComponent } from '../../new-post-dialog/new-post-dialog.component';
+import {
+  NewPostDialogComponent,
+  newPostType,
+} from '../../new-post-dialog/new-post-dialog.component';
 import { ModalService } from 'ngx-modal-ease';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { matPostAdd } from '@ng-icons/material-icons/baseline';
@@ -39,16 +42,14 @@ export class NewPostButtonComponent implements OnDestroy {
     });
 
     if (response.data) {
-      const newPost = response.data as Omit<postType, 'comments'>;
-      if (newPost.images!.length === 0) newPost.images = undefined;
-      this.createPost(newPost);
+      this.createPost(response.data as newPostType);
     }
   }
 
-  createPost(newPost: Omit<postType, 'comments'>) {
-    const { title, body, images } = newPost;
+  createPost(newPost: newPostType) {
+    const { title, body, files } = newPost;
     const categoryId = this.postListService.getCurrentCategory();
-    this.postListService.createPost(title, body, images, categoryId);
+    this.postListService.createPost(title, body, files, categoryId);
   }
 
   ngOnDestroy(): void {

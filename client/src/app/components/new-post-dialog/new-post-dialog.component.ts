@@ -6,6 +6,10 @@ import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { matRemoveCircle } from '@ng-icons/material-icons/baseline';
 import { postType } from '../../types';
 
+export type newPostType = Omit<Required<postType>, 'comments'> & {
+  files: File[];
+};
+
 @Component({
   selector: 'app-new-post-dialog',
   standalone: true,
@@ -20,10 +24,11 @@ export class NewPostDialogComponent implements AfterViewInit {
   @ViewChild('titleInput') titleInput: ElementRef<HTMLInputElement> | null =
     null;
 
-  newPost: Omit<Required<postType>, 'comments'> = {
+  newPost: newPostType = {
     title: '',
     body: '',
     images: [],
+    files: [],
   };
   acceptedTypes = ['jpg', 'jpeg', 'png'];
   get fileAccept() {
@@ -46,7 +51,7 @@ export class NewPostDialogComponent implements AfterViewInit {
       if (this.areFileTypesValid(files[i].name, this.acceptedTypes)) {
         newImages.push({
           name: files[i].name,
-          url: 'LOADING',
+          url: 'https://placehold.co/300x200/1d5a50/white?text=LOADING%2E%2E%2E',
           thumbnail: 'LOADING',
         });
         imagePromises.push(this.readFile(files[i]).catch(() => 'ERROR'));
@@ -58,6 +63,10 @@ export class NewPostDialogComponent implements AfterViewInit {
     imagePromises.forEach(async (promise, index) => {
       this.newPost.images[imgCount + index].url = await promise;
     });
+
+    for (let i = 0; i < files.length; i++) {
+      this.newPost.files.push(files[i]);
+    }
   }
 
   areFileTypesValid(name: string, types: string[]) {
@@ -99,6 +108,7 @@ export class NewPostDialogComponent implements AfterViewInit {
 
   handleImageDelete(index: number) {
     this.newPost.images = this.newPost.images.filter((_, i) => i !== index);
+    this.newPost.files = this.newPost.files.filter((_, i) => i !== index);
   }
 
   ngAfterViewInit(): void {

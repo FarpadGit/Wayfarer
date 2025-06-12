@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import axios, { AxiosRequestConfig } from 'axios';
+import { put as BlobPut } from '@vercel/blob';
 import { LoginService, userAccounts } from '../login.service';
 
 @Injectable({
@@ -37,13 +38,21 @@ export class ImagesApiService {
     });
   }
 
-  async uploadImages(
-    images: { name: string; src: string }[],
-    postId: string,
-    userId: string
-  ) {
+  async uploadImages(images: File[], postId: string, userId: string) {
+    let blobFiles: { url: string; name: string }[] = [];
+
+    for (let i = 0; i < images.length; i++) {
+      const name = crypto.randomUUID() + '_' + images[i].name;
+      const blobResponse = await BlobPut(name, images[i], {
+        access: 'public',
+        multipart: true,
+        token: import.meta.env['NG_APP_BLOB_READ_WRITE_TOKEN'],
+      });
+      blobFiles.push({ url: blobResponse.url, name });
+    }
+
     const payload = {
-      files: images,
+      files: blobFiles,
       uploader_id: userId,
       uploader_name: this.loginService.currentUserName,
       post_id: postId,
@@ -51,11 +60,13 @@ export class ImagesApiService {
         this.loginService.currentUserEmail === userAccounts.GUEST.email,
     };
 
+    const encryptedPayload = await this.AESEncode(JSON.stringify(payload));
+
     return this.postImages({
       method: 'POST',
       data: {
         origin: 'WF',
-        ac: await this.AESEncode(JSON.stringify(payload)),
+        ac: encryptedPayload,
       },
     });
   }
