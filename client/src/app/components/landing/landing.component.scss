@@ -1,7 +1,7 @@
 .grid-layout {
     display: grid;
     gap: 3rem;
-    grid-template-rows: 38.5rem;
+    grid-template-rows: max(1fr, 38.5rem);
     grid-template-columns: 1fr 4.5fr;
 
     @media(max-width: 767px) {
