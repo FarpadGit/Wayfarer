@@ -78,8 +78,6 @@ export class PostService {
     })[],
   ) {
     const uploaderId = await this.getPostAuthorId(id);
-    console.log('uploader ID', uploaderId);
-
     if (uploaderId == undefined) return null;
     if (uploaderId !== userId && userId !== this.userService.ADMIN_USER_ID) {
       return {
@@ -103,6 +101,7 @@ export class PostService {
       },
     });
     console.log('placeholders:', placeholdersInDB);
+    console.log('payload:', images);
 
     images.forEach(async (image, index) => {
       const imageInDB = await this.imageRepo.findOne({
@@ -111,6 +110,7 @@ export class PostService {
           post,
         },
       });
+      console.log('imageInDB', imageInDB);
 
       // if image is newly added
       if (imageInDB == null) {
@@ -136,6 +136,7 @@ export class PostService {
           imageInDB.url = image.url;
           imageInDB.thumbnail = image.thumbnailUrl ?? image.url;
           await this.imageRepo.save(imageInDB);
+          console.log('saving modified image ', imageInDB);
         }
       }
     });
