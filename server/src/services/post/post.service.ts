@@ -100,22 +100,20 @@ export class PostService {
         post,
       },
     });
-    console.log('placeholders:', placeholdersInDB);
-    console.log('payload:', images);
 
-    images.forEach(async (image, index) => {
+    let index = -1;
+    for (const image of images) {
+      index++;
       const imageInDB = await this.imageRepo.findOne({
         where: {
           name: image.name,
           post,
         },
       });
-      console.log('imageInDB', imageInDB);
 
       // if image is newly added
       if (imageInDB == null) {
         const placeholderInDB = placeholdersInDB[index];
-        console.log('placeholder' + index, placeholderInDB);
 
         if (image.url != null) {
           const newImage =
@@ -126,7 +124,6 @@ export class PostService {
           newImage.thumbnail = image.thumbnailUrl ?? image.url;
           newImage.post = savedPost;
           await this.imageRepo.save(newImage);
-          console.log('saving new image ', newImage);
         }
       } else {
         // else image is modified/deleted
@@ -136,10 +133,9 @@ export class PostService {
           imageInDB.url = image.url;
           imageInDB.thumbnail = image.thumbnailUrl ?? image.url;
           await this.imageRepo.save(imageInDB);
-          console.log('saving modified image ', imageInDB);
         }
       }
-    });
+    }
 
     return savedPost.id;
   }
