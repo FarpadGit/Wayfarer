@@ -1,5 +1,5 @@
 export async function postImagesToImageServer(payload: string) {
-  fetch(`${process.env.IMAGE_SERVER_URL!}/api/images`, {
+  const response = await fetch(`${process.env.IMAGE_SERVER_URL!}/api/images`, {
     headers: { 'Content-Type': 'Application/JSON' },
     body: JSON.stringify({
       origin: 'WF',
@@ -7,10 +7,14 @@ export async function postImagesToImageServer(payload: string) {
     }),
     method: 'POST',
   });
+  console.log(
+    `POST Response from ${process.env.IMAGE_SERVER_URL!}/api/images: `,
+    response,
+  );
 }
 
 export async function deleteImageFromImageServer(images: string[]) {
-  fetch(`${process.env.IMAGE_SERVER_URL!}/api/images`, {
+  const response = await fetch(`${process.env.IMAGE_SERVER_URL!}/api/images`, {
     headers: { 'Content-Type': 'Application/JSON' },
     body: JSON.stringify({
       origin: 'WF',
@@ -18,6 +22,10 @@ export async function deleteImageFromImageServer(images: string[]) {
     }),
     method: 'DELETE',
   });
+  console.log(
+    `DELETE Response from ${process.env.IMAGE_SERVER_URL!}/api/images: `,
+    response,
+  );
 }
 
 async function AESEncode(data: string) {
