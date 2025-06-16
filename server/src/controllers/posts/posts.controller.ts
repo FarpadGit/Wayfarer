@@ -48,6 +48,8 @@ export class PostsController {
     @Body() { images }: ImageServerBody,
     @Res({ passthrough: true }) res: FastifyReply,
   ) {
+    console.log('recieved images: ', images);
+
     const response = await this.postService.updatePost(
       postId,
       req.cookies.userId,
