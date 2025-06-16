@@ -3,6 +3,7 @@
   [iconClass]="'btn btn-black column p-0' + (loading ? ' spinner-large' : '')"
   [ariaLabel]="'Create New Post'"
   [loading]="loading"
+  [disabled]="loading"
   (click)="open()"
 >
   <ng-icon icon name="matPostAdd" class="icon"></ng-icon>
