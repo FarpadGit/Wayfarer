@@ -16,9 +16,9 @@ export const dropDownAnimations = trigger('drop-down', [
     bgStates.entering,
     style({
       position: 'fixed',
-      height: '100vh',
-      width: '100vw',
-      'margin-left': '0px',
+      height: '105vh',
+      width: '105vw',
+      'margin-left': '-2.5vw',
       'margin-right': '0px',
       'border-radius': '0px',
       'background-position': 'bottom',
@@ -30,33 +30,22 @@ export const dropDownAnimations = trigger('drop-down', [
     group([
       sequence([
         animate(
-          '0.5s ' + AnimationService.easingFunctionBouncy,
+          '0.5s ' + AnimationService.easingFunction,
           style({
             height: 'calc(100vh + var(--offset-top))',
-            width: '100vw',
-            'margin-left': '0px',
+            width: '105vw',
+            'margin-left': '-2.5vw',
             'margin-right': '0px',
             'border-radius': '0px',
             'background-position': 'var(--background-offset)',
           })
         ),
         animate(
-          '1s ' + AnimationService.easingFunctionBouncy,
+          '1s ' + AnimationService.easingFunction,
           style({
             height: '105vh',
-            width: '100vw',
-            'margin-left': '0px',
-            'margin-right': '0px',
-            'border-radius': '0px',
-            'background-position': 'bottom',
-          })
-        ),
-        animate(
-          '0.1s linear',
-          style({
-            height: '100vh',
-            width: '100vw',
-            'margin-left': '0px',
+            width: '105vw',
+            'margin-left': '-2.5vw',
             'margin-right': '0px',
             'border-radius': '0px',
             'background-position': 'bottom',
@@ -65,6 +54,17 @@ export const dropDownAnimations = trigger('drop-down', [
       ]),
       query('@slide-up', animateChild()),
     ]),
+  ]),
+  transition(bgStates.entering + ' => ' + bgStates.entered, [
+    animate(
+      '1s ease-out',
+      style({
+        height: '100vh',
+        width: '100vw',
+        'margin-left': '0vw',
+        'margin-right': '0px',
+      })
+    ),
   ]),
 ]);
 

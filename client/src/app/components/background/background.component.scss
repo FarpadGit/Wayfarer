@@ -1,11 +1,11 @@
 .background-image {
     --offset-top: -76vh;
-    --background-offset: bottom;
+    --background-offset: bottom center;
     overflow: hidden;
     position: relative;
     width: 80vw;
     height: calc(100vh + var(--offset-top));
-    background: var(--app-banner-img-url) var(--background-offset) / 100vw 110vh no-repeat;
+    background: var(--app-banner-img-url) var(--background-offset) / 105vw 105vh no-repeat;
     margin-left: 10vw;
     margin-right: 10vw;
     scale: 1;

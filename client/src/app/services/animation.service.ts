@@ -15,7 +15,6 @@ export enum bgStates {
 })
 export class AnimationService implements OnDestroy {
   static easingFunction = 'cubic-bezier(0.87, 0, 0.13, 1)';
-  static easingFunctionBouncy = 'cubic-bezier(0.87, -0.2, 0.13, 1.2)';
 
   constructor(private router: Router) {
     this.urlSub = this.router.events.subscribe((e) => {
