@@ -37,6 +37,8 @@ export class ImagesController {
       await import('../../services/image/imageServer.utils')
     ).postImagesToImageServer;
     await postImagesToImageServer(payload);
+
+    return true;
   }
 
   @Delete()
@@ -58,5 +60,7 @@ export class ImagesController {
       await import('../../services/image/imageServer.utils')
     ).deleteImageFromImageServer;
     await deleteImageFromImageServer([imageName]);
+
+    return true;
   }
 }
