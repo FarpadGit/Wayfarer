@@ -78,6 +78,8 @@ export class PostService {
     })[],
   ) {
     const uploaderId = await this.getPostAuthorId(id);
+    console.log('uploader ID', uploaderId);
+
     if (uploaderId == undefined) return null;
     if (uploaderId !== userId && userId !== this.userService.ADMIN_USER_ID) {
       return {
@@ -100,6 +102,7 @@ export class PostService {
         post,
       },
     });
+    console.log('placeholders:', placeholdersInDB);
 
     images.forEach(async (image, index) => {
       const imageInDB = await this.imageRepo.findOne({
@@ -112,6 +115,7 @@ export class PostService {
       // if image is newly added
       if (imageInDB == null) {
         const placeholderInDB = placeholdersInDB[index];
+        console.log('placeholder' + index, placeholderInDB);
 
         if (image.url != null) {
           const newImage =
