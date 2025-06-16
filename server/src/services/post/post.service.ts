@@ -122,6 +122,7 @@ export class PostService {
           newImage.thumbnail = image.thumbnailUrl ?? image.url;
           newImage.post = savedPost;
           await this.imageRepo.save(newImage);
+          console.log('saving new image ', newImage);
         }
       } else {
         // else image is modified/deleted
