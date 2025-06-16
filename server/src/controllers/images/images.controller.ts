@@ -36,7 +36,7 @@ export class ImagesController {
     const postImagesToImageServer = (
       await import('../../services/image/imageServer.utils')
     ).postImagesToImageServer;
-    return await postImagesToImageServer(payload);
+    await postImagesToImageServer(payload);
   }
 
   @Delete()
