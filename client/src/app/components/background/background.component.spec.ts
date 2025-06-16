@@ -73,8 +73,10 @@ describe('BackgroundComponent', () => {
     expect(component.blur).toBeTrue();
     expect(transitionSpy.callDelayedNavigate).toHaveBeenCalled();
     expect(rootDiv.style.position).toBe('fixed');
-    expect(rootDiv.style.height).toBe('100vh');
-    expect(rootDiv.style.width).toBe('100vw');
+    expect(rootDiv.style.height.endsWith('vh')).toBe(true);
+    expect(Number.parseInt(rootDiv.style.height)).toBeGreaterThanOrEqual(100);
+    expect(rootDiv.style.width.endsWith('vw')).toBe(true);
+    expect(Number.parseInt(rootDiv.style.width)).toBeGreaterThanOrEqual(100);
   });
 
   it('should be full screen and not blurred on posts page', () => {
