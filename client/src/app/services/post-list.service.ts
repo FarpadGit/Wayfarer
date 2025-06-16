@@ -56,19 +56,26 @@ export class PostListService {
     return posts;
   }
 
-  createPost(title: string, body: string, files: File[], categoryId: string) {
-    this.postApiService
-      .createPost({ title, body, noOfImages: files.length, categoryId })
-      .then((postId: string) => {
-        if (files.length > 0) {
-          this.imagesApiService.uploadImages(
-            files,
-            postId,
-            this.postApiService.userId
-          );
-        }
-        this.refreshPosts();
-      });
+  async createPost(
+    title: string,
+    body: string,
+    files: File[],
+    categoryId: string
+  ) {
+    const postId = await this.postApiService.createPost({
+      title,
+      body,
+      noOfImages: files.length,
+      categoryId,
+    });
+    if (files.length > 0) {
+      this.imagesApiService.uploadImages(
+        files,
+        postId,
+        this.postApiService.userId
+      );
+    }
+    this.refreshPosts();
   }
 
   deletePost(id: string) {

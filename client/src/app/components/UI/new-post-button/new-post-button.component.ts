@@ -52,7 +52,7 @@ export class NewPostButtonComponent implements OnDestroy {
   async createPost(newPost: newPostType) {
     const { title, body, files } = newPost;
     const categoryId = this.postListService.getCurrentCategory();
-    this.postListService.createPost(title, body, files, categoryId);
+    await this.postListService.createPost(title, body, files, categoryId);
   }
 
   ngOnDestroy(): void {
