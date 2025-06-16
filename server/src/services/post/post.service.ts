@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository, Like as DBLike } from 'typeorm';
 import { UserService } from '../user/user.service';
-import { User } from '../../entities/user.entity';
-import { Category } from '../../entities/category.entity';
-import { Post } from '../../entities/post.entity';
-import { Image } from '../../entities/image.entity';
-import { Like } from '../../entities/like.entity';
+import { User } from '../../db/entities/user.entity';
+import { Category } from '../../db/entities/category.entity';
+import { Post } from '../../db/entities/post.entity';
+import { Image } from '../../db/entities/image.entity';
+import { Like } from '../../db/entities/like.entity';
 import { imageType, postType } from '../../types';
 import { randomUUID } from 'crypto';
 
@@ -52,8 +52,8 @@ export class PostService {
 
     const savedPost = await this.postRepo.save(newPost);
 
-    if (post.NoOfImages > 0) {
-      for (let i = 0; i < post.NoOfImages; i++) {
+    if (post.noOfImages > 0) {
+      for (let i = 0; i < post.noOfImages; i++) {
         const newImage = new Image();
         newImage.name = randomUUID() + 'WF_placeholder';
         newImage.url =

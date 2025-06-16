@@ -13,7 +13,7 @@ import {
 import { FastifyRequest, FastifyReply } from 'fastify';
 import {
   CommentsBody,
-  ImagesBody,
+  ImageServerBody,
   isPrivilegeError,
 } from '../controllers.utils';
 import { PostService } from '../../services/post/post.service';
@@ -45,7 +45,7 @@ export class PostsController {
   async patchPost(
     @Param('postId') postId: string,
     @Req() req: FastifyRequest,
-    @Body() { images }: ImagesBody,
+    @Body() { images }: ImageServerBody,
     @Res({ passthrough: true }) res: FastifyReply,
   ) {
     const response = await this.postService.updatePost(
@@ -63,15 +63,12 @@ export class PostsController {
   }
 
   @Delete(':postId')
-  @HttpCode(200)
+  @HttpCode(204)
   async deletePost(
     @Param('postId') postId: string,
     @Req() req: FastifyRequest,
     @Res({ passthrough: true }) res: FastifyReply,
   ) {
-    const postImages = await this.postService.getPostImages(postId);
-    const imageNames = postImages?.map((img) => img.name);
-
     const response = await this.postService.deletePost(
       postId,
       req.cookies.userId!,
@@ -81,7 +78,7 @@ export class PostsController {
     if (isPrivilegeError(response))
       return res.unauthorized(response.PrivilegeError);
 
-    return { id: response, images: imageNames };
+    return { id: response };
   }
 
   @Post(':postId/comments')

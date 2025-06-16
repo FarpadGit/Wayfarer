@@ -202,6 +202,7 @@ describe('CategoriesController', () => {
       expect(mockPostService.createPost).toHaveBeenCalledWith({
         title: newPostTitle,
         body: newPostBody,
+        noOfImages: 0,
         categoryId: mockCategory.id,
         uploaderId: mockRequest.cookies.userId,
       });

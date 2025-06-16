@@ -12,7 +12,7 @@ describe('NewPostButtonComponent', () => {
   const testValues = {
     title: 'Fake New Post Title',
     body: 'Lorem Ipsum Dolor Sit Amet',
-    images: [{ name: 'fakeImage.jpg', url: 'fakeBase64String' }],
+    files: [new File([], 'fakeImg1.jpg')],
     categoryID: 'fakeCategoryID',
   };
 
@@ -27,7 +27,7 @@ describe('NewPostButtonComponent', () => {
       data: {
         title: testValues.title,
         body: testValues.body,
-        images: testValues.images,
+        files: testValues.files,
       },
       closedOnClickOrEscape: false,
     });
@@ -60,7 +60,7 @@ describe('NewPostButtonComponent', () => {
     expect(postListSpy.createPost).toHaveBeenCalledWith(
       testValues.title,
       testValues.body,
-      testValues.images,
+      testValues.files,
       testValues.categoryID
     );
   });

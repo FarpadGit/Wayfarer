@@ -2,8 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserService } from '../user/user.service';
-import { User } from '../../entities/user.entity';
-import { Category } from '../../entities/category.entity';
+import { PostService } from '../post/post.service';
+import { User } from '../../db/entities/user.entity';
+import { Category } from '../../db/entities/category.entity';
 import { categoryType } from '../../types';
 
 @Injectable()
@@ -12,6 +13,7 @@ export class CategoryService {
     @InjectRepository(User) private readonly userRepo: Repository<User>,
     @InjectRepository(Category)
     private readonly categoryRepo: Repository<Category>,
+    private postService: PostService,
     private userService: UserService,
   ) {}
 
@@ -54,8 +56,20 @@ export class CategoryService {
       return { PrivilegeError: 'Nincs jogosultságod törölni ezt a járást!' };
     }
 
-    const category = await this.categoryRepo.findOneByOrFail({ id });
+    const category = await this.categoryRepo.findOneOrFail({
+      where: { id },
+      relations: ['posts'],
+    });
 
+    // deleting posts manually will trigger their attachment image deletion workflow as well
+    // deleting just the category will also delete everything inside it but will not send a request to the image server to remove their records as well
+    category.posts.forEach(
+      async (post) =>
+        await this.postService.deletePost(
+          post.id,
+          this.userService.ADMIN_USER_ID,
+        ),
+    );
     await this.categoryRepo.remove(category);
 
     return id;

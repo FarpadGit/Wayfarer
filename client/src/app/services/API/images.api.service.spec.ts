@@ -4,6 +4,7 @@ import { ImagesApiService } from './images.api.service';
 import { LoginService, userAccounts } from '../login.service';
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
+import * as VercelBlob from '@vercel/blob';
 
 describe('ImagesApiService', () => {
   let service: ImagesApiService;
@@ -16,24 +17,27 @@ describe('ImagesApiService', () => {
 
   beforeEach(() => {
     mockAxios
-      .onPost(import.meta.env['NG_APP_IMAGE_SERVER_URL'], {
+      .onPost('/images', {
         asymmetricMatch: () => ({
-          origin: 'WF',
-          ac: jasmine.any(String),
+          files: jasmine.any(Array<Object>),
+          uploaderId: jasmine.any(String),
+          uploaderName: jasmine.any(String),
+          postId: jasmine.any(String),
+          temporary: jasmine.any(Boolean),
         }),
       })
       .reply(200, 'post endpoint called')
-      .onDelete(import.meta.env['NG_APP_IMAGE_SERVER_URL'], {
+      .onDelete('/images', {
         data: {
           asymmetricMatch: () => ({
-            origin: 'WF',
-            ac: jasmine.any(String),
+            imageName: jasmine.any(String),
           }),
         },
       })
       .reply(204, 'delete endpoint called');
 
     loginSpy = jasmine.createSpyObj('LoginService', [], {
+      currentUserName: userAccounts.GUEST.display,
       currentUserEmail: userAccounts.GUEST.email,
     });
 
@@ -42,18 +46,19 @@ describe('ImagesApiService', () => {
     });
 
     service = TestBed.inject(ImagesApiService);
+
+    spyOn(service, 'uploadToBlobStorage').and.resolveTo({
+      url: 'fakeBlobUrl',
+    } as VercelBlob.PutBlobResult);
   });
 
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should upload images to the image backend', async () => {
+  it('should upload images to Vercel Blob and notify the backend', async () => {
     const result = await service.uploadImages(
-      [
-        { name: 'fakeImage1.jpg', src: 'fakeBase64String1' },
-        { name: 'fakeImage2.jpg', src: 'fakeBase64String2' },
-      ],
+      [new File([], 'fakeImage1.jpg'), new File([], 'fakeImage2.jpg')],
       'fakePostID',
       'fakeUserID'
     );
@@ -61,8 +66,8 @@ describe('ImagesApiService', () => {
     expect(result).toBe('post endpoint called');
   });
 
-  it('should delete images from the image backend', async () => {
-    const result = await service.deleteImages(['fakeImage1ID', 'fakeImage2ID']);
+  it('should notify the backend to delete images', async () => {
+    const result = await service.deleteImages('fakeImage1.jpg');
 
     expect(result).toBe('delete endpoint called');
   });

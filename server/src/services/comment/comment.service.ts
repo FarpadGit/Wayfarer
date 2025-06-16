@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserService } from '../user/user.service';
-import { User } from '../../entities/user.entity';
-import { Post } from '../../entities/post.entity';
-import { Comment } from '../../entities/comment.entity';
-import { Like } from '../../entities/like.entity';
+import { User } from '../../db/entities/user.entity';
+import { Post } from '../../db/entities/post.entity';
+import { Comment } from '../../db/entities/comment.entity';
+import { Like } from '../../db/entities/like.entity';
 import { commentType } from '../../types';
 
 @Injectable()

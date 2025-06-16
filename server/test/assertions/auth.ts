@@ -123,10 +123,7 @@ export function assertionsForAuthentication() {
           cookies: { userId: userIdCookie },
         })
         .then((result) => {
-          const parsedPayload = JSON.parse(result.payload);
-
-          expect(result.statusCode).toBe(200);
-          expect(parsedPayload.id).toBe('1');
+          expect(result.statusCode).toBe(204);
         });
     });
 
@@ -211,10 +208,7 @@ export function assertionsForAuthentication() {
           cookies: { userId: userIdCookie },
         })
         .then((result) => {
-          const parsedPayload = JSON.parse(result.payload);
-
-          expect(result.statusCode).toBe(200);
-          expect(parsedPayload.id).toBe('1');
+          expect(result.statusCode).toBe(204);
         });
     });
 

@@ -8,12 +8,12 @@ import { Repository } from 'typeorm';
 import fastifyCookie from '@fastify/cookie';
 import sensible from '@fastify/sensible';
 import { AppModule } from '../src/app.module';
-import { User } from '../src/entities/user.entity';
-import { Category } from '../src/entities/category.entity';
-import { Post } from '../src/entities/post.entity';
-import { Image } from '../src/entities/image.entity';
-import { Like } from '../src/entities/like.entity';
-import { Comment } from '../src/entities/comment.entity';
+import { User } from '../src/db/entities/user.entity';
+import { Category } from '../src/db/entities/category.entity';
+import { Post } from '../src/db/entities/post.entity';
+import { Image } from '../src/db/entities/image.entity';
+import { Like } from '../src/db/entities/like.entity';
+import { Comment } from '../src/db/entities/comment.entity';
 import { MockType } from './types';
 import {
   mockAdmin,
@@ -27,6 +27,7 @@ import {
 } from './mocks';
 import { assertionsForCategories } from './assertions/categories';
 import { assertionsForPosts } from './assertions/posts';
+import { assertionsForImages } from './assertions/images';
 import { assertionsForComments } from './assertions/comments';
 import { assertionsForAuthentication } from './assertions/auth';
 
@@ -50,6 +51,10 @@ export let mockPostRepo: MockType<Repository<Post>>;
 export let mockImageRepo: MockType<Repository<Image>>;
 export let mockCommentRepo: MockType<Repository<Comment>>;
 export let mockLikeRepo: MockType<Repository<Like>>;
+export let mockImageServerUtils: {
+  postImagesToImageServer: (payload: string) => Promise<void>;
+  deleteImageFromImageServer: (images: string[]) => Promise<void>;
+};
 
 describe('AppController (e2e)', () => {
   // mocking out TypeORM query and mutation functions
@@ -58,6 +63,9 @@ describe('AppController (e2e)', () => {
     () => ({
       find: jest.fn((entity) => entity),
       findOne: jest.fn((entity) => entity),
+      findOneOrFail: jest.fn(function (entity) {
+        return this.findOne(entity);
+      }),
       findOneByOrFail: jest.fn(function (entity) {
         return this.findOne(entity);
       }),
@@ -69,7 +77,7 @@ describe('AppController (e2e)', () => {
   );
 
   // userService reads the database on constructor initialization, before its results are mocked,
-  // so it gets a custom mock factory that is the same as the generic one, but FindOne is overridden
+  // so it gets a custom mock factory that is the same as the generic one but FindOne is overridden.
   // the other mock response set ups can wait until after that.
   const userRepositoryMockFactory = () => {
     const _factory = repositoryMockFactory();
@@ -82,6 +90,19 @@ describe('AppController (e2e)', () => {
     });
     return _factory;
   };
+
+  beforeAll(async () => {
+    jest.mock('../src/services/image/imageServer.utils', () => {
+      return {
+        postImagesToImageServer: jest.fn(),
+        deleteImageFromImageServer: jest.fn(),
+      };
+    });
+
+    mockImageServerUtils = await import(
+      '../src/services/image/imageServer.utils'
+    );
+  });
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -138,6 +159,7 @@ describe('AppController (e2e)', () => {
 
   assertionsForCategories();
   assertionsForPosts();
+  assertionsForImages();
   assertionsForComments();
   assertionsForAuthentication();
 

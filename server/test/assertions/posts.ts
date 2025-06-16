@@ -41,7 +41,14 @@ export function assertionsForPosts() {
           method: 'PATCH',
           url: '/posts/1',
           body: {
-            images: [{ name: 'img.jpg', url: 'url.com', postId: '123' }],
+            images: [
+              {
+                name: 'img.jpg',
+                url: 'url.com',
+                thumbnailUrl: 'url.com',
+                postId: '123',
+              },
+            ],
           },
         })
         .then((result) => {
@@ -57,7 +64,14 @@ export function assertionsForPosts() {
           method: 'PATCH',
           url: '/posts/1',
           body: {
-            images: [{ name: 'img.jpg', url: 'url.com', postId: '123' }],
+            images: [
+              {
+                name: 'img.jpg',
+                url: 'url.com',
+                thumbnailUrl: 'url.com',
+                postId: '123',
+              },
+            ],
           },
         })
         .then((result) => {
@@ -76,7 +90,14 @@ export function assertionsForPosts() {
           method: 'PATCH',
           url: '/posts/1',
           body: {
-            images: [{ name: 'img.jpg', url: 'url.com', postId: '123' }],
+            images: [
+              {
+                name: 'img.jpg',
+                url: 'url.com',
+                thumbnailUrl: 'url.com',
+                postId: '123',
+              },
+            ],
           },
         })
         .then((result) => {
@@ -101,10 +122,7 @@ export function assertionsForPosts() {
           url: '/posts/1',
         })
         .then((result) => {
-          const parsedPayload = JSON.parse(result.payload);
-
-          expect(result.statusCode).toBe(200);
-          expect(parsedPayload.id).toBe('1');
+          expect(result.statusCode).toBe(204);
         });
     });
 

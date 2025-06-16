@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Category } from '../../entities/category.entity';
-import { Comment } from '../../entities/comment.entity';
-import { Like } from '../../entities/like.entity';
-import { Post } from '../../entities/post.entity';
-import { Image } from '../../entities/image.entity';
-import { User } from '../../entities/user.entity';
+import { Category } from '../entities/category.entity';
+import { Comment } from '../entities/comment.entity';
+import { Like } from '../entities/like.entity';
+import { Post } from '../entities/post.entity';
+import { Image } from '../entities/image.entity';
+import { User } from '../entities/user.entity';
 
 @Injectable()
 export class SeedService {

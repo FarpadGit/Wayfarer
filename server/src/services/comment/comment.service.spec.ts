@@ -3,10 +3,10 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CommentService } from './comment.service';
 import { UserService } from '../user/user.service';
-import { User } from '../../../src/entities/user.entity';
-import { Post } from '../../../src/entities/post.entity';
-import { Comment } from '../../../src/entities/comment.entity';
-import { Like } from '../../../src/entities/like.entity';
+import { User } from '../../db/entities/user.entity';
+import { Post } from '../../db/entities/post.entity';
+import { Comment } from '../../db/entities/comment.entity';
+import { Like } from '../../db/entities/like.entity';
 import { MockType } from '../../../test/types';
 import { mockComment, mockPost, mockUser, mockLike } from '../../../test/mocks';
 

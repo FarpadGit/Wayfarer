@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { PostsController } from './posts.controller';
-import { PostService } from '../../../src/services/post/post.service';
-import { CommentService } from '../../../src/services/comment/comment.service';
+import { PostService } from '../../services/post/post.service';
+import { CommentService } from '../../services/comment/comment.service';
 import { mockComment, mockPost } from '../../../test/mocks';
 
 describe('PostsController', () => {
@@ -87,8 +87,18 @@ describe('PostsController', () => {
       unauthorized: jest.fn().mockReturnValue('unauthorized called'),
     } as unknown as FastifyReply;
     const mockImages = [
-      { name: 'fakeImage1.jpg', url: 'fakeurl1.com', postId: 'fakePostID' },
-      { name: 'fakeImage2.jpg', url: 'fakeurl2.com', postId: 'fakePostID' },
+      {
+        name: 'fakeImage1.jpg',
+        url: 'fakeurl1.com',
+        thumbnailUrl: 'fakeurl1.com',
+        postId: 'fakePostID',
+      },
+      {
+        name: 'fakeImage2.jpg',
+        url: 'fakeurl2.com',
+        thumbnailUrl: 'fakeurl1.com',
+        postId: 'fakePostID',
+      },
     ];
 
     it('should update an existing post', async () => {
@@ -168,9 +178,7 @@ describe('PostsController', () => {
         mockResponse,
       );
 
-      expect(result).toEqual(
-        expect.objectContaining({ id: mockPost.id, images: ['fakeImage.jpg'] }),
-      );
+      expect(result).toEqual({ id: mockPost.id });
       expect(mockPostService.deletePost).toHaveBeenCalledWith(
         mockPost.id,
         mockRequest.cookies.userId,

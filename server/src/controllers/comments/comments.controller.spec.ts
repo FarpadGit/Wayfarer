@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { CommentsController } from './comments.controller';
-import { CommentService } from '../../../src/services/comment/comment.service';
+import { CommentService } from '../../services/comment/comment.service';
 import { mockComment } from '../../../test/mocks';
 
 describe('CommentsController', () => {

@@ -6,11 +6,20 @@ export type PostsBody = {
   body?: string;
   images?: number;
 };
+export type ImagesBody = {
+  files: {
+    name: string;
+    url: string;
+  }[];
+  uploaderName: string;
+  postId: string;
+  temporary: boolean;
+};
 export type CommentsBody = {
   message?: string;
   parentId?: string | null;
 };
-export type ImagesBody = {
+export type ImageServerBody = {
   images: {
     name: string;
     url: string;

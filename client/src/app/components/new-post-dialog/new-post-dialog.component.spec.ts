@@ -36,6 +36,7 @@ describe('NewPostDialogComponent', () => {
         { name: 'fakeImg1.jpg', url: 'fakeBase64String1' },
         { name: 'fakeImg2.jpg', url: 'fakeBase64String2' },
       ],
+      files: [new File([], 'fakeImg1.jpg'), new File([], 'fakeImg2.jpg')],
     };
     fixture.detectChanges();
     await fixture.whenStable();
@@ -57,6 +58,7 @@ describe('NewPostDialogComponent', () => {
       title: 'Fake New Post',
       body: 'Lorem Ipsum',
       images: [],
+      files: [],
     };
     const submitButton = rootDiv.querySelector(
       '[data-test-confirm-btn]'

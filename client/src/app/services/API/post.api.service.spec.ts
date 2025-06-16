@@ -91,6 +91,7 @@ describe('PostApiService', () => {
     const response = await service.createPost({
       title: 'Fake New Post Title',
       body: 'Lorem Ipsum Dolor Sit Amet',
+      noOfImages: 0,
       categoryId: mockCategory.id,
     });
 

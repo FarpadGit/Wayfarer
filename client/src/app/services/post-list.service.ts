@@ -72,10 +72,7 @@ export class PostListService {
   }
 
   deletePost(id: string) {
-    this.postApiService.deletePost(id).then((res) => {
-      const { images } = res;
-      if (images?.length) this.imagesApiService.deleteImages(images);
-
+    this.postApiService.deletePost(id).then(() => {
       this.refreshPosts();
     });
   }

@@ -2,12 +2,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { SeedService } from './seed.service';
-import { User } from '../../entities/user.entity';
-import { Category } from '../../entities/category.entity';
-import { Post } from '../../entities/post.entity';
-import { Image } from '../../entities/image.entity';
-import { Comment } from '../../entities/comment.entity';
-import { Like } from '../../entities/like.entity';
+import { User } from '../entities/user.entity';
+import { Category } from '../entities/category.entity';
+import { Post } from '../entities/post.entity';
+import { Image } from '../entities/image.entity';
+import { Comment } from '../entities/comment.entity';
+import { Like } from '../entities/like.entity';
 import { MockType } from '../../../test/types';
 
 describe('SeedServiceService', () => {

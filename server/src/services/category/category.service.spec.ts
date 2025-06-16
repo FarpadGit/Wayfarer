@@ -3,11 +3,12 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CategoryService } from './category.service';
 import { UserService } from '../user/user.service';
-import { User } from '../../../src/entities/user.entity';
-import { Category } from '../../../src/entities/category.entity';
-import { categoryType } from '../../../src/types';
+import { User } from '../../db/entities/user.entity';
+import { Category } from '../../db/entities/category.entity';
+import { categoryType } from '../../types';
 import { mockCategory, mockUser } from '../../../test/mocks';
 import { MockType } from '../../../test/types';
+import { PostService } from '../post/post.service';
 
 describe('CategoryService', () => {
   let categoryService: CategoryService;
@@ -18,10 +19,15 @@ describe('CategoryService', () => {
     ADMIN_USER_ID: 'fakeAdminUserID',
   };
 
+  const mockPostService = {
+    deletePost: jest.fn(),
+  };
+
   const repositoryMockFactory: () => MockType<Repository<any>> = jest.fn(
     () => ({
       find: jest.fn((entity) => entity),
       findOne: jest.fn((entity) => entity),
+      findOneOrFail: jest.fn((entity) => entity),
       findOneByOrFail: jest.fn((entity) => entity),
       save: jest.fn((entity) => entity),
       remove: jest.fn((entity) => entity),
@@ -32,6 +38,7 @@ describe('CategoryService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CategoryService,
+        PostService,
         UserService,
         {
           provide: getRepositoryToken(User),
@@ -45,6 +52,8 @@ describe('CategoryService', () => {
     })
       .overrideProvider(UserService)
       .useValue(mockUserService)
+      .overrideProvider(PostService)
+      .useValue(mockPostService)
       .compile();
 
     categoryService = module.get<CategoryService>(CategoryService);
@@ -54,7 +63,7 @@ describe('CategoryService', () => {
     mockUserRepo.findOneByOrFail?.mockResolvedValue(mockUser);
     mockCategoryRepo.find?.mockResolvedValue([mockCategory, mockCategory]);
     mockCategoryRepo.findOne?.mockResolvedValue(mockCategory);
-    mockCategoryRepo.findOneByOrFail?.mockResolvedValue(mockCategory);
+    mockCategoryRepo.findOneOrFail?.mockResolvedValue(mockCategory);
   });
 
   it('should be defined', () => {

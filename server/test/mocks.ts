@@ -1,9 +1,9 @@
-import { User } from 'src/entities/user.entity';
-import { Category } from 'src/entities/category.entity';
-import { Post } from 'src/entities/post.entity';
-import { Image } from 'src/entities/image.entity';
-import { Comment } from 'src/entities/comment.entity';
-import { Like } from 'src/entities/like.entity';
+import { User } from 'src/db/entities/user.entity';
+import { Category } from 'src/db/entities/category.entity';
+import { Post } from 'src/db/entities/post.entity';
+import { Image } from 'src/db/entities/image.entity';
+import { Comment } from 'src/db/entities/comment.entity';
+import { Like } from 'src/db/entities/like.entity';
 
 export const mockUser: User = {
   id: 'fakeUserID',
@@ -61,6 +61,7 @@ export const mockImage: Image = {
   id: 'fakeImageID',
   name: 'fakeImage.jpg',
   url: 'fakeurl.com',
+  thumbnail: 'fakeurl.com',
   post: mockPost,
 };
 

@@ -13,7 +13,6 @@ describe('PostListService', () => {
   const mockPosts = [mockPostTitle, mockPostTitle];
   const mockCreatedPostId = 'fakeCreatedPostID';
   const mockLoggedInUserId = 'fakeLoggedInUserID';
-  const mockDeletedImages = { images: ['fakeImg.jpg'] };
 
   beforeEach(() => {
     postApiSpy = jasmine.createSpyObj(
@@ -35,7 +34,7 @@ describe('PostListService', () => {
     ]);
 
     postApiSpy.createPost.and.resolveTo(mockCreatedPostId);
-    postApiSpy.deletePost.and.resolveTo(mockDeletedImages);
+    postApiSpy.deletePost.and.resolveTo(null);
     imagesApiSpy.uploadImages.and.resolveTo();
     imagesApiSpy.deleteImages.and.resolveTo();
     executeSpy = spyOn(postApiSpy.getPostsAsync, 'execute').and.callThrough();
@@ -79,28 +78,19 @@ describe('PostListService', () => {
   it('should create new post and refetch all posts', waitForAsync(() => {
     const testTitle = 'Fake New Post Title';
     const testBody = 'Lorem Ipsum Dolor Sit Amet';
-    const testImages = [
-      {
-        name: 'fakeImg.jpg',
-        url: 'fakeurl.com',
-      },
-    ];
+    const testFiles = [new File([], 'fakeImg1.jpg')];
 
-    service.createPost(testTitle, testBody, testImages, mockCategory.id);
+    service.createPost(testTitle, testBody, testFiles, mockCategory.id);
 
     setTimeout(() => {
       expect(postApiSpy.createPost).toHaveBeenCalledWith({
         title: testTitle,
         body: testBody,
+        noOfImages: 1,
         categoryId: mockCategory.id,
       });
       expect(imagesApiSpy.uploadImages).toHaveBeenCalledWith(
-        [
-          {
-            name: 'fakeImg.jpg',
-            src: 'fakeurl.com',
-          },
-        ],
+        [new File([], 'fakeImg1.jpg')],
         mockCreatedPostId,
         mockLoggedInUserId
       );
@@ -113,9 +103,6 @@ describe('PostListService', () => {
 
     setTimeout(() => {
       expect(postApiSpy.deletePost).toHaveBeenCalledWith(mockPostTitle.id);
-      expect(imagesApiSpy.deleteImages).toHaveBeenCalledWith(
-        mockDeletedImages.images
-      );
       expect(executeSpy).toHaveBeenCalled();
     }, 0);
   }));

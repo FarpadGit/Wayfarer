@@ -5,7 +5,7 @@ export type categoryType = {
 export type postType = {
   title: string;
   body: string;
-  NoOfImages: number;
+  noOfImages: number;
   uploaderId: string;
   categoryId: string;
 };

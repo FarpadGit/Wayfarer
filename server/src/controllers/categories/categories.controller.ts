@@ -93,7 +93,7 @@ export class CategoriesController {
     return await this.postService.createPost({
       title,
       body,
-      NoOfImages: images ?? 0,
+      noOfImages: images ?? 0,
       categoryId,
       uploaderId: req.cookies.userId!,
     });

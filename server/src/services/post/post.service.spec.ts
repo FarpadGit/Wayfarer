@@ -3,11 +3,11 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PostService } from './post.service';
 import { UserService } from '../user/user.service';
-import { User } from '../../../src/entities/user.entity';
-import { Category } from '../../../src/entities/category.entity';
-import { Post } from '../../../src/entities/post.entity';
-import { Image } from '../../../src/entities/image.entity';
-import { Like } from '../../../src/entities/like.entity';
+import { User } from '../../db/entities/user.entity';
+import { Category } from '../../db/entities/category.entity';
+import { Post } from '../../db/entities/post.entity';
+import { Image } from '../../db/entities/image.entity';
+import { Like } from '../../db/entities/like.entity';
 import { MockType } from '../../../test/types';
 import {
   mockCategory,
@@ -111,6 +111,7 @@ describe('PostService', () => {
       body: 'lorem ipsum',
       categoryId: mockCategory.id,
       uploaderId: mockUser.id,
+      noOfImages: 0,
     });
 
     expect(mockPostRepo.save).toHaveBeenCalledWith({
@@ -130,7 +131,12 @@ describe('PostService', () => {
 
   describe('update post', () => {
     const mockNewImages = [
-      { name: mockImage.name, url: mockImage.url, postId: mockPost.id },
+      {
+        name: mockImage.name,
+        url: mockImage.url,
+        thumbnailUrl: mockImage.thumbnail,
+        postId: mockPost.id,
+      },
     ];
 
     it('should update a post with new images', async () => {
@@ -144,9 +150,8 @@ describe('PostService', () => {
       expect(mockPostRepo.save).toHaveBeenCalledWith(mockPost);
       expect(mockImageRepo.save).toHaveBeenCalledTimes(mockNewImages.length);
       expect(mockImageRepo.save).toHaveBeenCalledWith({
-        name: mockImage.name,
-        url: mockImage.url,
-        post: mockPost,
+        ...mockImage,
+        id: undefined,
       });
       expect(result).toBe(mockPost.id);
     });
@@ -222,9 +227,8 @@ describe('PostService', () => {
 
       expect(mockPostRepo.save).toHaveBeenCalledWith({ ...mockPost });
       expect(mockImageRepo.save).toHaveBeenCalledWith({
-        name: mockImage.name,
-        url: mockImage.url,
-        post: mockPost,
+        ...mockImage,
+        id: undefined,
       });
       expect(result).toBe(mockPost.id);
     });
