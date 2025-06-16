@@ -60,7 +60,7 @@ export class PostListService {
     this.postApiService
       .createPost({ title, body, noOfImages: files.length, categoryId })
       .then((postId: string) => {
-        if (files) {
+        if (files.length > 0) {
           this.imagesApiService.uploadImages(
             files,
             postId,
