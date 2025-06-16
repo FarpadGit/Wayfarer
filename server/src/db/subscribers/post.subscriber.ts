@@ -25,6 +25,6 @@ export class PostSubscriber implements EntitySubscriberInterface<Post> {
     )?.images;
 
     const imageNames = images?.map((image) => image.name) ?? [];
-    deleteImageFromImageServer(imageNames);
+    if (imageNames.length > 0) deleteImageFromImageServer(imageNames);
   }
 }
