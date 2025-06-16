@@ -8,12 +8,12 @@ import {
 import { ModalService } from 'ngx-modal-ease';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { matPostAdd } from '@ng-icons/material-icons/baseline';
-import { postType } from '../../../types';
+import { IconBtnComponent } from '../icon-btn/icon-btn.component';
 
 @Component({
   selector: 'app-new-post-button',
   standalone: true,
-  imports: [NgIconComponent],
+  imports: [IconBtnComponent, NgIconComponent],
   templateUrl: './new-post-button.component.html',
   styleUrl: './new-post-button.component.scss',
   viewProviders: [
@@ -28,6 +28,7 @@ export class NewPostButtonComponent implements OnDestroy {
     private postListService: PostListService
   ) {}
 
+  loading: boolean = false;
   private dialogSub: Subscription | null = null;
 
   async open() {
@@ -42,7 +43,9 @@ export class NewPostButtonComponent implements OnDestroy {
     });
 
     if (response.data) {
+      this.loading = true;
       this.createPost(response.data as newPostType);
+      this.loading = false;
     }
   }
 

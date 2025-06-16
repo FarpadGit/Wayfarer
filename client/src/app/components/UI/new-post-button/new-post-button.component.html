@@ -1,4 +1,10 @@
-<button class="btn post-btn" (click)="open()">
-  <ng-icon name="matPostAdd" class="icon"></ng-icon>
+<app-icon-btn
+  class="btn post-btn"
+  [iconClass]="'btn btn-black column p-0'"
+  [ariaLabel]="'Create New Post'"
+  [loading]="loading"
+  (onClick)="open()"
+>
+  <ng-icon icon name="matPostAdd" class="icon"></ng-icon>
   Új poszt
-</button>
+</app-icon-btn>

@@ -41,6 +41,14 @@
     }
 }
 
+.column {
+    flex-direction: column;
+}
+
+.p-0 {
+    padding: 0;
+}
+
 .spinner {
     width: 1.125rem;
     padding: 0.25rem;
