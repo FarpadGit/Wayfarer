@@ -44,12 +44,12 @@ export class NewPostButtonComponent implements OnDestroy {
 
     if (response.data) {
       this.loading = true;
-      this.createPost(response.data as newPostType);
+      await this.createPost(response.data as newPostType);
       this.loading = false;
     }
   }
 
-  createPost(newPost: newPostType) {
+  async createPost(newPost: newPostType) {
     const { title, body, files } = newPost;
     const categoryId = this.postListService.getCurrentCategory();
     this.postListService.createPost(title, body, files, categoryId);

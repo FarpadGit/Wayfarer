@@ -1,6 +1,6 @@
 <app-icon-btn
   class="btn post-btn"
-  [iconClass]="'btn btn-black column p-0'"
+  [iconClass]="'btn btn-black column p-0' + (loading ? ' spinner-large' : '')"
   [ariaLabel]="'Create New Post'"
   [loading]="loading"
   (click)="open()"

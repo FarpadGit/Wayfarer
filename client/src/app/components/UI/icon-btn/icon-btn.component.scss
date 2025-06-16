@@ -63,4 +63,8 @@
     animation: spinner 1s infinite linear;
   
     @keyframes spinner { to{ transform: rotate(1turn) } }
+
+    &-large .spinner {
+        width: 1.75rem;
+    }
   }   
