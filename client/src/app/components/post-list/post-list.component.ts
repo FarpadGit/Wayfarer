@@ -60,6 +60,11 @@ export class PostListComponent {
   get posts() {
     return this.postListService.posts;
   }
+  isPostDeleting(postId: string) {
+    return this.postUnderDeletion.includes(postId);
+  }
+
+  postUnderDeletion: string[] = [];
 
   onHightlightChanged(highlighted: boolean) {
     clearTimeout(this.timeoutToken);
@@ -89,6 +94,7 @@ export class PostListComponent {
   }
 
   deletePost(id: string) {
+    this.postUnderDeletion.push(id);
     this.postListService.deletePost(id);
     this.paginator!.currentPage = 0;
   }

@@ -19,6 +19,7 @@
               [title]="post.title"
               [uploader]="post.uploader"
               [uploadedSince]="post.createdAt"
+              [isDeleting]="isPostDeleting(post.id)"
               (onClick)="onPostItemClicked($event)"
               (onDeleteClick)="deletePost($event)"
               (onHighlightChanged)="onHightlightChanged($event)"

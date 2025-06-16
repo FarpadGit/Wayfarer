@@ -31,6 +31,7 @@ export class PostItemComponent {
   @Input() title: string = '';
   @Input() uploader: userType = { email: '', name: '' };
   @Input() uploadedSince: string = '';
+  @Input() isDeleting: boolean = false;
   @Output() onClick = new EventEmitter<string>();
   @Output() onDeleteClick = new EventEmitter<string>();
   @Output() onHighlightChanged = new EventEmitter<boolean>();
@@ -50,7 +51,7 @@ export class PostItemComponent {
     this._highlighted = value;
     this.onHighlightChanged.emit(value);
   }
-  isDeleting = false;
+
   get authorLoggedIn() {
     return (
       this.loginService.currentUserEmail === this.uploader.email ||
