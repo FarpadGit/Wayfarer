@@ -14,9 +14,10 @@ export class CategoryListService {
   ) {}
 
   private getCategoriesFn = this.apiService.getCategoriesAsync;
+  private forcedLoading = false;
 
   get loading() {
-    return this.getCategoriesFn.loading();
+    return this.forcedLoading || this.getCategoriesFn.loading();
   }
   get error() {
     return this.getCategoriesFn.error();
@@ -54,14 +55,18 @@ export class CategoryListService {
   }
 
   createCategory(title: string) {
+    this.forcedLoading = true;
     this.apiService.createCategory(title).then(() => {
       this.refreshCategories();
+      this.forcedLoading = false;
     });
   }
 
   deleteCategory(id: string) {
+    this.forcedLoading = true;
     this.apiService.deleteCategory(id).then(() => {
       this.refreshCategories();
+      this.forcedLoading = false;
     });
   }
 }
