@@ -10,6 +10,7 @@
     max-height: calc(100% - 64px);
     background-color: rgb(104, 149, 182);
     color: rgba(0, 0, 0, 0.87);
+    box-shadow: 0 0 10px 2px var(--app-btn-color-hover);
     z-index: 1;
 
     img {

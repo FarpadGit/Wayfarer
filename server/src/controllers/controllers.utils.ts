@@ -11,6 +11,7 @@ export type ImagesBody = {
     name: string;
     url: string;
   }[];
+  folder: string;
   uploaderName: string;
   postId: string;
   temporary: boolean;

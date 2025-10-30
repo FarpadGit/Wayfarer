@@ -18,7 +18,7 @@ export class ImagesController {
   @Post()
   async sendImages(
     @Req() req: FastifyRequest,
-    @Body() { files, uploaderName, postId, temporary }: ImagesBody,
+    @Body() { files, folder, uploaderName, postId, temporary }: ImagesBody,
     @Res({ passthrough: true }) res: FastifyReply,
   ) {
     if (!files || files.length == 0 || !uploaderName || !postId)
@@ -26,6 +26,7 @@ export class ImagesController {
 
     const payload = JSON.stringify({
       files,
+      folder,
       uploader_id: req.cookies.userId!,
       uploader_name: uploaderName,
       post_id: postId,

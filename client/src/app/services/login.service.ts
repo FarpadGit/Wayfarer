@@ -56,6 +56,10 @@ export class LoginService {
     return this.oAuthService.getIdentityClaims() !== null;
   }
 
+  get isCurrentUserAdmin() {
+    return this.currentUserEmail === import.meta.env['NG_APP_ADMIN_EMAIL'];
+  }
+
   get currentUserName() {
     return (
       this.oAuthService.getIdentityClaims()?.['name'] ??

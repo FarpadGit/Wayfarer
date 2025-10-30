@@ -3,6 +3,8 @@ import { put as BlobPut } from '@vercel/blob';
 import { LoginService, userAccounts } from '../login.service';
 import { ApiService } from './api.service';
 
+const IMAGEKIT_FOLDER = '/wayfarer-uploads';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -37,11 +39,11 @@ export class ImagesApiService extends ApiService {
       method: 'POST',
       data: {
         files: blobFiles,
+        folder: this.loginService.isCurrentUserAdmin ? '/' : IMAGEKIT_FOLDER,
         uploaderId: userId,
         uploaderName: this.loginService.currentUserName,
         postId,
-        temporary:
-          this.loginService.currentUserEmail === userAccounts.GUEST.email,
+        temporary: !this.loginService.isCurrentUserSignedIn,
       },
     });
   }

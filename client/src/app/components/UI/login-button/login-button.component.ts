@@ -31,6 +31,9 @@ export class LoginButtonComponent {
         enter: 'login-dialog-enter 0.5s ease-out',
         leave: 'login-dialog-exit 0.5s ease-out',
       },
+      overlay: {
+        backgroundColor: '#010809e5',
+      },
     });
   }
 }
