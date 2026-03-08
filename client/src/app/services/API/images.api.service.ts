@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { put as BlobPut } from '@vercel/blob';
-import { LoginService, userAccounts } from '../login.service';
+import { LoginService } from '../login.service';
 import { ApiService } from './api.service';
 
 const IMAGEKIT_FOLDER = '/wayfarer-uploads';
