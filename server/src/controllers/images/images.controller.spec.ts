@@ -14,6 +14,7 @@ describe('ImagesController', () => {
   let mockImageServerUtils: {
     postImagesToImageServer: (payload: string) => Promise<void>;
     deleteImageFromImageServer: (images: string[]) => Promise<void>;
+    pingServer: () => Promise<void>;
   };
 
   const mockRequest = {
@@ -21,12 +22,11 @@ describe('ImagesController', () => {
   } as unknown as FastifyRequest;
 
   beforeAll(async () => {
-    jest.mock('../../services/image/imageServer.utils', () => {
-      return {
-        postImagesToImageServer: jest.fn(),
-        deleteImageFromImageServer: jest.fn(),
-      };
-    });
+    jest.mock('../../services/image/imageServer.utils', () => ({
+      postImagesToImageServer: jest.fn(),
+      deleteImageFromImageServer: jest.fn(),
+      pingServer: jest.fn(),
+    }));
 
     mockImageServerUtils = await import(
       '../../services/image/imageServer.utils'
@@ -49,6 +49,12 @@ describe('ImagesController', () => {
     expect(imagesController).toBeDefined();
   });
 
+  it('should ping the image server on startup', async () => {
+    await imagesController.pingServer();
+
+    expect(mockImageServerUtils.pingServer).toHaveBeenCalled();
+  });
+
   describe('create image', () => {
     const mockResponse = {
       badRequest: jest.fn().mockReturnValue('badRequest called'),
@@ -61,6 +67,7 @@ describe('ImagesController', () => {
         mockRequest,
         {
           files: newImageFiles,
+          folder: '',
           uploaderName: newImageUploader,
           postId: mockPost.id,
           temporary: true,
@@ -79,7 +86,13 @@ describe('ImagesController', () => {
     it('should return error if image parameters were wrong', async () => {
       const result = await imagesController.sendImages(
         mockRequest,
-        { files: [], uploaderName: '', postId: '', temporary: true },
+        {
+          files: [],
+          folder: '',
+          uploaderName: '',
+          postId: '',
+          temporary: true,
+        },
         mockResponse,
       );
 

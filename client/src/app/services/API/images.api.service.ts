@@ -47,4 +47,8 @@ export class ImagesApiService extends ApiService {
       },
     });
   }
+
+  async pingServer() {
+    return await this.makeRequest('/images/ping');
+  }
 }

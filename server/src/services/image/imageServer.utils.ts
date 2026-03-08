@@ -28,6 +28,10 @@ export async function deleteImageFromImageServer(images: string[]) {
   );
 }
 
+export async function pingServer() {
+  await fetch(`${process.env.IMAGE_SERVER_URL!}/ping`);
+}
+
 async function AESEncode(data: string) {
   const secretKey: string = process.env.IMAGE_SERVER_AES_KEY!;
   const binaryData = new TextEncoder().encode(data);

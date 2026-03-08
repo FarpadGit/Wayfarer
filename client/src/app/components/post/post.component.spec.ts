@@ -10,11 +10,7 @@ import { LoginService } from '../../services/login.service';
 import { setSpyProperty } from '../../../test/test.utils';
 import { mockComment, mockPost } from '../../../test/mocks';
 
-// There's a bug in @ngx-env/builder:karma v19.0.4 (the tests' builder), where overriding parts of the testing module doesn't work
-// (PostComponent provides its own instance of PostService instead of a global singleton and needs to be replaced with overrideComponent)
-// temporarily disabling test group until fix
-// (if you need to run these tests comment out the overrideComponent part here and the "providers: [PostService]" in the .ts file, for isolated tests that's fine)
-xdescribe('PostComponent', () => {
+describe('PostComponent', () => {
   let component: PostComponent;
   let fixture: ComponentFixture<PostComponent>;
   let postSpy: jasmine.SpyObj<PostService>;
@@ -36,7 +32,7 @@ xdescribe('PostComponent', () => {
         error: null,
         post: mockPost,
         rootComments: [],
-      }
+      },
     );
     transitionSpy = jasmine.createSpyObj('TransitionService', [
       'callDelayedNavigate',
@@ -44,7 +40,7 @@ xdescribe('PostComponent', () => {
     animationSpy = jasmine.createSpyObj(
       'AnimationService',
       ['startExitAnimation'],
-      { bgAnimationState: bgStates.none }
+      { bgAnimationState: bgStates.none },
     );
 
     await TestBed.configureTestingModule({
@@ -78,19 +74,25 @@ xdescribe('PostComponent', () => {
     const bodyElement = rootDiv.querySelector('article');
     const imageSectionElement = rootDiv.querySelector('.image-section');
     const images = Array.from(
-      imageSectionElement?.querySelectorAll('img') || []
+      imageSectionElement?.querySelectorAll('img') || [],
     );
     const commentFormElement = fixture.debugElement.query(
-      (e) => e.name === 'app-comment-form'
+      (e) => e.name === 'app-comment-form',
     );
 
     expect(component.loadingState).toBe('success');
     expect(component.post).toEqual(mockPost);
-    expect(titleElement?.innerText.includes(mockPost.title)).toBeTrue();
-    expect(bodyElement?.innerText.includes(mockPost.body)).toBeTrue();
+    expect(titleElement?.innerText.includes(mockPost.title))
+      .withContext('title mismatch')
+      .toBeTrue();
+    expect(bodyElement?.innerText.includes(mockPost.body))
+      .withContext('body mismatch')
+      .toBeTrue();
     expect(images.length).toBe(mockPost.images!.length);
     for (let i = 0; i < images.length; i++) {
-      expect(images[i].src.endsWith(mockPost.images![i].url)).toBeTrue();
+      expect(images[i].src.endsWith(mockPost.images![i].thumbnail!))
+        .withContext('image mismatch')
+        .toBeTrue();
     }
     expect(commentFormElement).toBeTruthy();
   });
@@ -100,10 +102,10 @@ xdescribe('PostComponent', () => {
     postSpy.localComments.and.returnValue(mockRootComments);
     fixture.detectChanges();
     const commentList = fixture.debugElement.query(
-      (e) => e.name === 'app-comment-list'
+      (e) => e.name === 'app-comment-list',
     );
     const comments = fixture.debugElement.queryAll(
-      (e) => e.name === 'app-comment'
+      (e) => e.name === 'app-comment',
     );
 
     expect(component.comments).toEqual(mockRootComments);
@@ -127,7 +129,7 @@ xdescribe('PostComponent', () => {
   it('should create new comment if comment form is submitted with text', () => {
     const newCommentText = 'Fake New Comment';
     const commentFormComponent = fixture.debugElement.query(
-      (e) => e.name === 'app-comment-form'
+      (e) => e.name === 'app-comment-form',
     ).componentInstance as CommentFormComponent;
     commentFormComponent.message = newCommentText;
     commentFormComponent.handleSubmit();
@@ -148,7 +150,7 @@ xdescribe('PostComponent', () => {
     setSpyProperty(postSpy, 'error', 'Some Error');
     fixture.detectChanges();
     const errorElement = fixture.debugElement.query(
-      (e) => e.classes['error-msg'] === true
+      (e) => e.classes['error-msg'] === true,
     );
 
     expect(component.loadingState).toBe('error');

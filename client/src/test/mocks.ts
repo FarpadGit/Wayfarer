@@ -33,10 +33,12 @@ export const mockPost: postType = {
     {
       name: 'fakeImage1.jpg',
       url: 'fakeurl1.com',
+      thumbnail: 'fakethumbnailurl1.com',
     },
     {
       name: 'fakeImage2.jpg',
       url: 'fakeurl2.com',
+      thumbnail: 'fakethumbnailurl2.com',
     },
   ],
   comments: [],

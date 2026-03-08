@@ -34,7 +34,9 @@ describe('ImagesApiService', () => {
           }),
         },
       })
-      .reply(204, 'delete endpoint called');
+      .reply(204, 'delete endpoint called')
+      .onGet('/images/ping')
+      .reply(200, 'ping endpoint called');
 
     loginSpy = jasmine.createSpyObj('LoginService', [], {
       currentUserName: userAccounts.GUEST.display,
@@ -60,7 +62,7 @@ describe('ImagesApiService', () => {
     const result = await service.uploadImages(
       [new File([], 'fakeImage1.jpg'), new File([], 'fakeImage2.jpg')],
       'fakePostID',
-      'fakeUserID'
+      'fakeUserID',
     );
 
     expect(result).toBe('post endpoint called');
@@ -70,5 +72,11 @@ describe('ImagesApiService', () => {
     const result = await service.deleteImages('fakeImage1.jpg');
 
     expect(result).toBe('delete endpoint called');
+  });
+
+  it('should notify the backend to wake up (ping) the image server', async () => {
+    const result = await service.pingServer();
+
+    expect(result).toBe('ping endpoint called');
   });
 });

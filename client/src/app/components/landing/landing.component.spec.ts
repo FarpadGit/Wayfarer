@@ -4,6 +4,7 @@ import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { LandingComponent } from './landing.component';
 import { CategoryListService } from '../../services/category-list.service';
 import { PostListService } from '../../services/post-list.service';
+import { ImagesApiService } from '../../services/API/images.api.service';
 import { setSpyProperty } from '../../../test/test.utils';
 
 describe('LandingComponent', () => {
@@ -11,17 +12,19 @@ describe('LandingComponent', () => {
   let fixture: ComponentFixture<LandingComponent>;
   let categoryListSpy: jasmine.SpyObj<CategoryListService>;
   let postListSpy: jasmine.SpyObj<PostListService>;
+  let imageSpy: jasmine.SpyObj<ImagesApiService>;
 
   beforeEach(async () => {
     categoryListSpy = jasmine.createSpyObj(
       'CategoryListService',
       ['refreshCategories', 'selectFirstCategory'],
-      { error: null, allCategories: [] }
+      { error: null, allCategories: [] },
     );
     postListSpy = jasmine.createSpyObj('PostListService', [], {
       error: null,
       posts: [],
     });
+    imageSpy = jasmine.createSpyObj('ImagesApiService', ['pingServer']);
 
     categoryListSpy.refreshCategories.and.resolveTo();
     categoryListSpy.selectFirstCategory.and.resolveTo();
@@ -31,6 +34,7 @@ describe('LandingComponent', () => {
       providers: [
         { provide: CategoryListService, useValue: categoryListSpy },
         { provide: PostListService, useValue: postListSpy },
+        { provide: ImagesApiService, useValue: imageSpy },
         provideNoopAnimations(),
       ],
     }).compileComponents();
@@ -38,13 +42,17 @@ describe('LandingComponent', () => {
     fixture = TestBed.createComponent(LandingComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-    // wait for Promise.then to finish in ngOnInit
+    // wait for Promises to finish in ngOnInit
     await fixture.whenStable();
     fixture.detectChanges();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should wake up (ping) the image server on startup', () => {
+    expect(imageSpy.pingServer).toHaveBeenCalled();
   });
 
   it('should retrieve all categories on init', () => {
@@ -55,14 +63,14 @@ describe('LandingComponent', () => {
 
   it('should display category list and post list on successful fetch', () => {
     const categoryList = fixture.debugElement.query(
-      (e) => e.name === 'app-category-list'
+      (e) => e.name === 'app-category-list',
     );
     const postList = fixture.debugElement.query(
-      (e) => e.name === 'app-post-list'
+      (e) => e.name === 'app-post-list',
     );
     const loader = fixture.debugElement.query((e) => e.name === 'app-loader');
     const errorElement = fixture.debugElement.query(
-      (e) => e.classes['error-msg'] === true
+      (e) => e.classes['error-msg'] === true,
     );
 
     expect(categoryList).toBeTruthy();
@@ -75,14 +83,14 @@ describe('LandingComponent', () => {
     component.loaded = false;
     fixture.detectChanges();
     const categoryList = fixture.debugElement.query(
-      (e) => e.name === 'app-category-list'
+      (e) => e.name === 'app-category-list',
     );
     const postList = fixture.debugElement.query(
-      (e) => e.name === 'app-post-list'
+      (e) => e.name === 'app-post-list',
     );
     const loader = fixture.debugElement.query((e) => e.name === 'app-loader');
     const errorElement = fixture.debugElement.query(
-      (e) => e.classes['error-msg'] === true
+      (e) => e.classes['error-msg'] === true,
     );
 
     expect(component.loadingState).toBe('loading');
@@ -96,14 +104,14 @@ describe('LandingComponent', () => {
     setSpyProperty(categoryListSpy, 'error', 'Some Error');
     fixture.detectChanges();
     const categoryList = fixture.debugElement.query(
-      (e) => e.name === 'app-category-list'
+      (e) => e.name === 'app-category-list',
     );
     const postList = fixture.debugElement.query(
-      (e) => e.name === 'app-post-list'
+      (e) => e.name === 'app-post-list',
     );
     const loader = fixture.debugElement.query((e) => e.name === 'app-loader');
     const errorElement = fixture.debugElement.query(
-      (e) => e.classes['error-msg'] === true
+      (e) => e.classes['error-msg'] === true,
     );
 
     expect(component.loadingState).toBe('error');

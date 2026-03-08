@@ -38,7 +38,7 @@
     "@angular/cli": "^19.2.6",
     "@angular/compiler-cli": "^19.2.6",
     "@angular/localize": "^19.2.6",
-    "@ngx-env/builder": "^19.0.4",
+    "@ngx-env/builder": "^19.1.0",
     "@types/jasmine": "~5.1.0",
     "axios-mock-adapter": "^2.1.0",
     "jasmine-core": "~5.1.0",

@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   HttpCode,
   Post,
   Req,
@@ -63,5 +64,14 @@ export class ImagesController {
     await deleteImageFromImageServer([imageName]);
 
     return true;
+  }
+
+  @Get('/ping')
+  async pingServer() {
+    const pingServer = (await import('../../services/image/imageServer.utils'))
+      .pingServer;
+    try {
+      await pingServer();
+    } catch (_) {}
   }
 }
