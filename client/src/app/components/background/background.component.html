@@ -3,7 +3,9 @@
       (@drop-down.done)="animationState === bgStates.entering ? navigate() : null"
   >
   <img
-    [src]="'../../../assets/bgs/' + backgroundImage"
+    [ngSrc]="'../../../assets/bgs/' + backgroundImage"
+    fill
+    priority
     alt=""
     (load)="onImgLoad()"
     [ngClass]="{ 'hide': !onPostPage }"

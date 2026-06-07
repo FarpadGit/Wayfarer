@@ -1,4 +1,5 @@
-import { Component, effect } from '@angular/core';
+import { Component, effect, OnInit } from '@angular/core';
+import { NgOptimizedImage } from '@angular/common';
 import { CommonModule } from '@angular/common';
 import {
   TransitionService,
@@ -11,15 +12,15 @@ import { dropDownAnimations, slideUpAnimations } from './animations';
 @Component({
   selector: 'app-background',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, NgOptimizedImage],
   templateUrl: './background.component.html',
   styleUrl: './background.component.scss',
   animations: [dropDownAnimations, slideUpAnimations],
 })
-export class BackgroundComponent {
+export class BackgroundComponent implements OnInit {
   constructor(
     private transitionService: TransitionService,
-    private animationService: AnimationService
+    private animationService: AnimationService,
   ) {
     effect(() => {
       if (animationService.bgAnimationState === bgStates.none)
@@ -30,16 +31,21 @@ export class BackgroundComponent {
         this.blur = false;
       if (animationService.bgAnimationState === bgStates.exiting)
         this.blur = true;
+      if (transitionService.blur === true) this.blur = true;
     });
 
     effect(() => {
       if (transitionService.navigationState === navStates.waiting) {
         const newBgImage = this.getRandomBgImage();
-        if (this._backgroundImage === newBgImage)
-          this.transitionService.readyToNavigate();
-        else this._backgroundImage = newBgImage;
+        if (this.bgImageSrc === newBgImage) this.onImgLoad();
+        else this.bgImageSrc = newBgImage;
       }
     });
+  }
+
+  ngOnInit(): void {
+    if (this.onPostPage && this.bgImageSrc === '')
+      this.bgImageSrc = this.getRandomBgImage();
   }
 
   get bgStates() {
@@ -47,7 +53,7 @@ export class BackgroundComponent {
   }
 
   get onPostPage() {
-    return this.transitionService.currentUrl.includes('/post');
+    return this.transitionService.currentUrl.includes('/posts');
   }
 
   get animationState() {
@@ -56,9 +62,9 @@ export class BackgroundComponent {
 
   blur = false;
 
-  private _backgroundImage = this.getRandomBgImage();
+  private bgImageSrc = '';
   get backgroundImage() {
-    return this._backgroundImage;
+    return this.bgImageSrc;
   }
 
   private getRandomBgImage() {

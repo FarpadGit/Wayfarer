@@ -23,7 +23,7 @@ export const dropDownAnimations = trigger('drop-down', [
       'border-radius': '0px',
       'background-position': 'bottom',
       offset: 1,
-    })
+    }),
   ),
   transition('* => ' + bgStates.entering, [
     style({ position: 'fixed' }),
@@ -38,7 +38,7 @@ export const dropDownAnimations = trigger('drop-down', [
             'margin-right': '0px',
             'border-radius': '0px',
             'background-position': 'var(--background-offset)',
-          })
+          }),
         ),
         animate(
           '1s ' + AnimationService.easingFunction,
@@ -49,7 +49,7 @@ export const dropDownAnimations = trigger('drop-down', [
             'margin-right': '0px',
             'border-radius': '0px',
             'background-position': 'bottom',
-          })
+          }),
         ),
       ]),
       query('@slide-up', animateChild()),
@@ -63,12 +63,28 @@ export const dropDownAnimations = trigger('drop-down', [
         width: '100vw',
         'margin-left': '0vw',
         'margin-right': '0px',
-      })
+      }),
     ),
+  ]),
+  transition(bgStates.none + ' => ' + bgStates.entered, [
+    group([
+      animate(
+        '1s ease',
+        style({
+          height: '100vh',
+          width: '100vw',
+          'margin-left': '0vw',
+          'margin-right': '0px',
+        }),
+      ),
+      query('@slide-up', animateChild()),
+    ]),
   ]),
 ]);
 
 export const slideUpAnimations = trigger('slide-up', [
   state(bgStates.entering, style({ opacity: 0, bottom: '300%' })),
+  state(bgStates.entered, style({ opacity: 0 })),
   transition('* => ' + bgStates.entering, [animate('1.5s ease')]),
+  transition('* => ' + bgStates.entered, [animate('0.5s ease')]),
 ]);

@@ -37,6 +37,7 @@ export class AnimationService implements OnDestroy {
 
   startCollapseAnimation = () => (this.bgAnimationState = bgStates.collapsing);
   startEnterAnimation = () => (this.bgAnimationState = bgStates.entering);
+  forceEnteredAnimation = () => (this.bgAnimationState = bgStates.entered);
   startExitAnimation = () => (this.bgAnimationState = bgStates.exiting);
   endAnimation = () => {
     if (this.bgAnimationState === bgStates.entering)

@@ -41,7 +41,9 @@
   --app-post-highlight-img-url: url("../assets/Landscape.jpg");
   --app-worldmap-img-url: url("../assets/WorldMap.png");
   --app-globe-img-url: url("../assets/globe.jpg");
-  --app-banner-img-url: url("../assets/ForestEntry1.jpg");
+  --app-banner-img-desktop-url: url("../assets/ForestEntry1.jpg");
+  --app-banner-img-mobile-url: url("../assets/ForestEntry2.jpg");
+  --app-banner-img-url: var(--app-banner-img-desktop-url);
   --app-login-drawer-height: 30vh;
 }
 

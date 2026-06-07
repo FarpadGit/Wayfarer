@@ -1,18 +1,19 @@
 import { Component } from '@angular/core';
+import { NgOptimizedImage } from '@angular/common';
 import { LoginService, userAccounts } from '../../services/login.service';
 import { ModalService } from 'ngx-modal-ease';
 
 @Component({
   selector: 'app-login-dialog',
   standalone: true,
-  imports: [],
+  imports: [NgOptimizedImage],
   templateUrl: './login-dialog.component.html',
   styleUrl: './login-dialog.component.scss',
 })
 export class LoginDialogComponent {
   constructor(
     private loginService: LoginService,
-    private modalService: ModalService
+    private modalService: ModalService,
   ) {}
 
   get currentUserName() {

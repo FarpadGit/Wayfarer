@@ -1,4 +1,5 @@
 import { Injectable, signal } from '@angular/core';
+import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 
 export enum navStates {
@@ -11,7 +12,10 @@ export enum navStates {
   providedIn: 'root',
 })
 export class TransitionService {
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private location: Location,
+  ) {}
 
   firstTime = true;
   private navigationStateSignal = signal<navStates>(navStates.none);
@@ -33,7 +37,7 @@ export class TransitionService {
   private redirectUrl = '';
 
   get currentUrl() {
-    return this.router.url;
+    return this.location.path();
   }
 
   setNavigate(redirectUrl: string) {
@@ -49,7 +53,7 @@ export class TransitionService {
   callDelayedNavigate(
     delay: number,
     redirectUrl?: string,
-    force: boolean = false
+    force: boolean = false,
   ) {
     setTimeout(() => {
       this.callNavigate(redirectUrl, force);
