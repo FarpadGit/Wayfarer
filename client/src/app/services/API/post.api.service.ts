@@ -17,15 +17,15 @@ export class PostApiService extends ApiService {
   }
 
   getPostsAsync = this.asyncService.asAsync<postTitleType[]>(
-    (categoryId: string) => this.getPosts(categoryId)
+    (categoryId: string) => this.getPosts(categoryId),
   );
 
-  getPost(id: string) {
-    return this.makeRequest(`/posts/${id}`);
+  getPost(slug: string) {
+    return this.makeRequest(`/posts/${slug}`);
   }
 
-  getPostAsync = this.asyncService.asAsync<postType>((id: string) =>
-    this.getPost(id)
+  getPostAsync = this.asyncService.asAsync<postType>((slug: string) =>
+    this.getPost(slug),
   );
 
   createPost({ title, body, noOfImages, categoryId }: postParamsType) {
@@ -36,7 +36,7 @@ export class PostApiService extends ApiService {
   }
 
   createPostAsync = this.asyncService.asAsync((post: postParamsType) =>
-    this.createPost(post)
+    this.createPost(post),
   );
 
   deletePost(id: string) {
@@ -46,6 +46,6 @@ export class PostApiService extends ApiService {
   }
 
   deletePostAsync = this.asyncService.asAsync((id: string) =>
-    this.deletePost(id)
+    this.deletePost(id),
   );
 }

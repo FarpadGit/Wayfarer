@@ -20,7 +20,7 @@ describe('PostService', () => {
   let postApiSpy: jasmine.SpyObj<PostApiService>;
   let commentApiSpy: jasmine.SpyObj<CommentApiService>;
   let loginSpy: jasmine.SpyObj<LoginService>;
-  const mockPostWithComments = {
+  const mockPostWithComments: postType = {
     ...mockPost,
     comments: [
       { ...mockComment, id: 'MockComment1ID', parentId: null },
@@ -35,7 +35,7 @@ describe('PostService', () => {
 
   beforeEach(async () => {
     routeSpy = jasmine.createSpyObj('ActivatedRoute', [], {
-      params: of({ id: mockPostTitle.id }),
+      params: of({ slug: mockPostTitle.slug }),
     });
     postApiSpy = jasmine.createSpyObj('PostApiService', [], {
       getPostAsync: {
@@ -77,8 +77,8 @@ describe('PostService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should load post and comments if ActivatedRoute has corresponding "id" parameter', () => {
-    expect(service.id).toBeTruthy();
+  it('should load post and comments if ActivatedRoute has corresponding "slug" parameter', () => {
+    expect(service.slug).toBeTruthy();
     expect(service.localComments().length).toBe(7);
   });
 
@@ -96,7 +96,7 @@ describe('PostService', () => {
 
   it('should get all root comments', () => {
     const rootcomments = mockPostWithComments.comments.filter(
-      (comment) => comment.parentId == null
+      (comment) => comment.parentId == null,
     );
 
     expect(service.rootComments).toEqual(rootcomments);
@@ -105,7 +105,7 @@ describe('PostService', () => {
   it('should get all replies to comment', () => {
     const testCommentID = 'MockComment1ID';
     const replies = mockPostWithComments.comments.filter(
-      (comment) => comment.parentId === testCommentID
+      (comment) => comment.parentId === testCommentID,
     )!;
 
     expect(service.getReplies(testCommentID)).toEqual(replies);
@@ -153,7 +153,7 @@ describe('PostService', () => {
 
     expect(service.localComments()).toEqual([mockComment]);
     expect(commentApiSpy.deleteComment).toHaveBeenCalledWith(
-      mockComment_child.id
+      mockComment_child.id,
     );
   });
 
@@ -171,7 +171,7 @@ describe('PostService', () => {
       mockComment_child,
     ]);
     expect(commentApiSpy.toggleCommentLike).toHaveBeenCalledWith(
-      mockComment.id
+      mockComment.id,
     );
   });
 
@@ -189,7 +189,7 @@ describe('PostService', () => {
       },
     ]);
     expect(commentApiSpy.toggleCommentLike).toHaveBeenCalledWith(
-      mockComment_child.id
+      mockComment_child.id,
     );
   });
 });

@@ -26,7 +26,7 @@ describe('PostItemComponent', () => {
 
     fixture = TestBed.createComponent(PostItemComponent);
     component = fixture.componentInstance;
-    component.id = mockPostTitle.id;
+    component.slug = mockPostTitle.id;
     component.title = mockPostTitle.title;
     component.uploader = mockPostTitle.uploader;
     component.uploadedSince = mockPostTitle.createdAt;
@@ -42,12 +42,12 @@ describe('PostItemComponent', () => {
     const titleElement = rootDiv.querySelector('a');
     const detailsElement = rootDiv.querySelector('p');
     const formattedUploadDate = component.getUploadedSinceText(
-      component.uploadedSince
+      component.uploadedSince,
     );
 
     expect(titleElement?.innerText.includes(component.title)).toBeTrue();
     expect(
-      detailsElement?.innerText.includes(component.uploader.name)
+      detailsElement?.innerText.includes(component.uploader.name),
     ).toBeTrue();
     expect(detailsElement?.innerText.includes(formattedUploadDate)).toBeTrue();
   });
@@ -61,9 +61,9 @@ describe('PostItemComponent', () => {
     expect(iconButtonElement).not.toBeNull();
   });
 
-  it('should emit component ID when title is clicked', (done) => {
+  it('should emit component slug when title is clicked', (done) => {
     component.onClick.subscribe((e: string) => {
-      expect(e).toBe(component.id);
+      expect(e).toBe(component.slug);
       done();
     });
 

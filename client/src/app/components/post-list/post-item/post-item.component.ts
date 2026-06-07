@@ -27,6 +27,7 @@ import { tablerEraser } from '@ng-icons/tabler-icons';
 })
 export class PostItemComponent {
   @Input() id: string = '';
+  @Input() slug: string = '';
   @Input() title: string = '';
   @Input() uploader: userType = { email: '', name: '' };
   @Input() uploadedSince: string = '';
@@ -61,7 +62,7 @@ export class PostItemComponent {
 
   PostItemClicked(e: Event) {
     e.preventDefault();
-    this.onClick.emit(this.id);
+    this.onClick.emit(this.slug);
   }
 
   DeleteButtonClicked() {

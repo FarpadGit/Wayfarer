@@ -26,14 +26,14 @@ export class PostsController {
     private commentService: CommentService,
   ) {}
 
-  @Get(':postId')
+  @Get(':postSlug')
   async getPost(
-    @Param('postId') postId: string,
+    @Param('postSlug') postSlug: string,
     @Req() req: FastifyRequest,
     @Res({ passthrough: true }) res: FastifyReply,
   ) {
     const response = await this.postService.getPostWithComments(
-      postId,
+      postSlug,
       req.cookies.userId!,
     );
 

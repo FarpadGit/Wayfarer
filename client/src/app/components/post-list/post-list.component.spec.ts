@@ -39,11 +39,12 @@ describe('PostListComponent', () => {
       {
         firstTime: true,
         blur: false,
-      }
+      },
     );
     animationSpy = jasmine.createSpyObj('AnimationService', [
       'startEnterAnimation',
       'startCollapseAnimation',
+      'forceEnteredAnimation',
     ]);
     loginSpy = jasmine.createSpyObj('LoginService', [], {
       currentUserEmail: '',
@@ -98,7 +99,7 @@ describe('PostListComponent', () => {
     fixture.detectChanges();
 
     expect(transitionSpy.setNavigate).toHaveBeenCalledWith(
-      jasmine.stringContaining(postListSpy.posts[0].id)
+      jasmine.stringContaining(postListSpy.posts[0].slug),
     );
     expect(animationSpy.startCollapseAnimation).toHaveBeenCalled();
     expect(component.animationState).toBe(animStates.animating);
@@ -115,6 +116,7 @@ describe('PostListComponent', () => {
     fixture.detectChanges();
 
     expect(transitionSpy_blur?.set).toHaveBeenCalledWith(true);
+    expect(animationSpy.forceEnteredAnimation).toHaveBeenCalled();
     expect(transitionSpy.callDelayedNavigate).toHaveBeenCalled();
   });
 
@@ -122,7 +124,7 @@ describe('PostListComponent', () => {
     setSpyProperty(
       loginSpy,
       'currentUserEmail',
-      postListSpy.posts[0].uploader.email
+      postListSpy.posts[0].uploader.email,
     );
     fixture.detectChanges();
 
@@ -135,7 +137,7 @@ describe('PostListComponent', () => {
 
     acceptDeleteConfirmDialogAnd(() => {
       expect(postListSpy.deletePost).toHaveBeenCalledWith(
-        postListSpy.posts[0].id
+        postListSpy.posts[0].id,
       );
       expect(component.paginator?.currentPage).toBe(0);
       done();

@@ -42,7 +42,7 @@ describe('PostsController', () => {
     expect(postsController).toBeDefined();
   });
 
-  describe('get post', () => {
+  describe('get post by slug', () => {
     const mockResponse = {
       badRequest: jest.fn().mockReturnValue('badRequest called'),
       notFound: jest.fn().mockReturnValue('notFound called'),
@@ -50,14 +50,14 @@ describe('PostsController', () => {
 
     it('should get an existing post', async () => {
       const result = await postsController.getPost(
-        mockPost.id,
+        mockPost.slug,
         mockRequest,
         mockResponse,
       );
 
       expect(result).toBe('mock post return value');
       expect(mockPostService.getPostWithComments).toHaveBeenCalledWith(
-        mockPost.id,
+        mockPost.slug,
         mockRequest.cookies.userId,
       );
       expect(mockResponse.badRequest).not.toHaveBeenCalled();
@@ -67,14 +67,14 @@ describe('PostsController', () => {
       mockPostService.getPostWithComments.mockResolvedValueOnce(null);
 
       const result = await postsController.getPost(
-        mockPost.id,
+        mockPost.slug,
         mockRequest,
         mockResponse,
       );
 
       expect(result).toBe('notFound called');
       expect(mockPostService.getPostWithComments).toHaveBeenCalledWith(
-        mockPost.id,
+        mockPost.slug,
         mockRequest.cookies.userId,
       );
       expect(mockResponse.notFound).toHaveBeenCalled();

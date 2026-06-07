@@ -1,4 +1,9 @@
-import { app, dateTimeReviver, mockCategoryRepo } from '../app.e2e-spec';
+import {
+  app,
+  dateTimeReviver,
+  mockCategoryRepo,
+  mockPostRepo,
+} from '../app.e2e-spec';
 import { mockAdmin, mockCategory, mockGuest, mockPost } from '../mocks';
 
 export function assertionsForCategories() {
@@ -120,6 +125,8 @@ export function assertionsForCategories() {
     });
 
     it('/categories/:id/posts (POST)', async () => {
+      mockPostRepo.findOne?.mockResolvedValueOnce(null);
+
       return app
         .inject({
           method: 'POST',

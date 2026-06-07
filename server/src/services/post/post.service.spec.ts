@@ -105,6 +105,7 @@ describe('PostService', () => {
   });
 
   it('should create a new post', async () => {
+    mockPostRepo.findOne?.mockResolvedValueOnce(null);
     const result = await postService.createPost({
       title: 'New Post Title',
       body: 'lorem ipsum',
@@ -116,6 +117,7 @@ describe('PostService', () => {
     expect(mockPostRepo.save).toHaveBeenCalledWith({
       title: 'New Post Title',
       body: 'lorem ipsum',
+      slug: 'new-post-title',
       category: mockCategory,
       uploader: mockUser,
     });

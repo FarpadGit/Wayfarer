@@ -49,6 +49,7 @@ export const mockCategory: Category = {
 export const mockPost: Post = {
   id: 'fakePostID',
   title: 'Fake Post Title',
+  slug: 'fake-post-title',
   body: 'lorem ipsum',
   images: [],
   uploader: mockUser,

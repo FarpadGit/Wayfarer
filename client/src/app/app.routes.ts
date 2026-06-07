@@ -4,6 +4,6 @@ import { LandingComponent } from './components/landing/landing.component';
 
 export const routes: Routes = [
   { path: '', component: LandingComponent },
-  { path: 'posts/:id', component: PostComponent },
+  { path: 'posts/:slug', component: PostComponent },
   { path: '**', redirectTo: '' },
 ];

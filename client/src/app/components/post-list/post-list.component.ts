@@ -38,7 +38,7 @@ export class PostListComponent {
   constructor(
     private postListService: PostListService,
     private transitionService: TransitionService,
-    private animationService: AnimationService
+    private animationService: AnimationService,
   ) {}
 
   @ViewChild('paginator') paginator: PaginatorComponent | null = null;
@@ -80,10 +80,10 @@ export class PostListComponent {
       this.animationService.startEnterAnimation();
   }
 
-  onPostItemClicked(id: string) {
-    this.transitionService.setNavigate(`/posts/${id}`);
+  onPostItemClicked(slug: string) {
+    this.transitionService.setNavigate(`/posts/${slug}`);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     if (this.transitionService.firstTime) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
       this.animationService.startCollapseAnimation();
       this.animationState = animStates.animating;
       this.transitionService.firstTime = false;

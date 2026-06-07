@@ -28,6 +28,7 @@ export class PostService {
       select: {
         id: true,
         title: true,
+        slug: true,
         createdAt: true,
         category: { id: true },
         uploader: {
@@ -41,6 +42,7 @@ export class PostService {
   async createPost(post: postType) {
     const newPost = new Post();
     newPost.title = post.title;
+    newPost.slug = await this.generateSlug(post.title);
     newPost.body = post.body;
     newPost.uploader = await this.userRepo.findOneByOrFail({
       id: post.uploaderId,
@@ -65,6 +67,35 @@ export class PostService {
     }
 
     return savedPost.id;
+  }
+
+  private async generateSlug(text: string) {
+    const maxLength = 50;
+    // replace whitespaces, comma+spaces and simple commas with dashes
+    let slug = text.toLowerCase().replace(/,*\s+/g, '-').replace(',', '-');
+    // replace multiple dashes with a single one
+    while (slug.includes('--')) slug = slug.replace('--', '-');
+    // remove accents and other diacritical marks from text
+    slug = slug.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    // remove every other character that isn't lowercase alphabet, numbers or dash
+    slug = slug.replace(/[^a-z0-9\-]*/g, '');
+    // truncate text to maxLength
+    if (slug.length > maxLength) slug = slug.slice(0, maxLength);
+
+    let conflictingPost = await this.postRepo.findOne({ where: { slug } });
+    let i = 1;
+    while (conflictingPost !== null) {
+      const originalSlug = slug;
+      i++;
+      const suffix = '-vol-' + i;
+      // try adding an ever increasing suffix to slug if one already exists,
+      // while keeping the text not longer then maxLength
+      if (slug.length + suffix.length > maxLength)
+        slug = originalSlug.slice(0, maxLength - suffix.length);
+      slug = slug + suffix;
+      conflictingPost = await this.postRepo.findOne({ where: { slug } });
+    }
+    return slug;
   }
 
   async updatePost(
@@ -148,9 +179,9 @@ export class PostService {
     return post?.uploader.id;
   }
 
-  async getPostWithComments(id: string, userId: string) {
+  async getPostWithComments(slug: string, userId: string) {
     const post = await this.postRepo.findOne({
-      where: { id },
+      where: { slug },
       order: { comments: { createdAt: 'DESC' } },
       relations: [
         'images',

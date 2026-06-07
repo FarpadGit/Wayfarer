@@ -13,6 +13,7 @@ type categoryTitleType = {
 
 type postTitleType = {
   id: string;
+  slug: string;
   title: string;
   createdAt: string;
   uploader: userType;
@@ -20,6 +21,7 @@ type postTitleType = {
 };
 
 type postType = {
+  id: string;
   title: string;
   body: string;
   images?: {

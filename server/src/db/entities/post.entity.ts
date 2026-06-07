@@ -19,6 +19,9 @@ export class Post {
   @Column()
   title!: string;
 
+  @Column({ unique: true })
+  slug!: string;
+
   @Column()
   body!: string;
 

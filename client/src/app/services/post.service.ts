@@ -13,13 +13,13 @@ export class PostService implements OnDestroy {
     private route: ActivatedRoute,
     private postApiService: PostApiService,
     private commentApiService: CommentApiService,
-    private loginService: LoginService
+    private loginService: LoginService,
   ) {
     this.routeSub = this.route.params.subscribe((params) => {
-      if (params['id'] && this.id !== params['id']) {
-        this.id = params['id'];
+      if (params['slug'] && this.slug !== params['slug']) {
+        this.slug = params['slug'];
 
-        this.getPostFn.execute(this.id).then((post) => {
+        this.getPostFn.execute(this.slug).then((post) => {
           post.comments = this.replaceAuthorNames(post.comments || []);
           this.localComments.set(post.comments);
         });
@@ -27,7 +27,7 @@ export class PostService implements OnDestroy {
     });
   }
 
-  id = '';
+  slug = '';
 
   private getPostFn = this.postApiService.getPostAsync;
 
@@ -79,7 +79,7 @@ export class PostService implements OnDestroy {
   createComment(message: string, parentId: string | null = null) {
     const newComment = this.createLocalComment(message, parentId);
     this.commentApiService
-      .createComment({ postId: this.id, message, parentId })
+      .createComment({ postId: this.post!.id, message, parentId })
       .then((id: string) => (newComment.id = id));
   }
 
@@ -122,13 +122,13 @@ export class PostService implements OnDestroy {
       prev.map((comment) => {
         if (comment.id === id) return { ...comment, message };
         else return comment;
-      })
+      }),
     );
   }
 
   private deleteLocalComment(id: string) {
     this.localComments.update((prev) =>
-      prev.filter((comment) => comment.id !== id)
+      prev.filter((comment) => comment.id !== id),
     );
   }
 
@@ -141,7 +141,7 @@ export class PostService implements OnDestroy {
           likeCount: comment.likeCount + (addLike ? 1 : -1),
           isLikedByMe: addLike == true,
         };
-      })
+      }),
     );
   }
 }

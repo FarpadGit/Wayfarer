@@ -11,7 +11,8 @@ export const mockCategory: categoryTitleType = {
 };
 
 export const mockPostTitle: postTitleType = {
-  id: 'fakePostTitleID',
+  id: 'fakePostID',
+  slug: 'fake-post-title',
   title: 'Fake Post Title',
   categoryId: '',
   createdAt: new Date().toString(),
@@ -19,6 +20,7 @@ export const mockPostTitle: postTitleType = {
 };
 
 export const mockPost: postType = {
+  id: 'fakePostID',
   title: 'Fake Post Title',
   body: 'Lorem Ipsum Dolor Sit Amet',
   images: [

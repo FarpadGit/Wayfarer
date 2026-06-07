@@ -16,6 +16,7 @@
           <app-post-item 
               [@items-enter-leave]="{value: '', params: { 'delay-in': 50 + i * 200, 'delay-out': i * 200, i: i }}"
               [id]="post.id"
+              [slug]="post.slug"
               [title]="post.title"
               [uploader]="post.uploader"
               [uploadedSince]="post.createdAt"
