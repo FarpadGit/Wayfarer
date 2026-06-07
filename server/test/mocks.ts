@@ -1,9 +1,9 @@
-import { User } from 'src/db/entities/user.entity';
-import { Category } from 'src/db/entities/category.entity';
-import { Post } from 'src/db/entities/post.entity';
-import { Image } from 'src/db/entities/image.entity';
-import { Comment } from 'src/db/entities/comment.entity';
-import { Like } from 'src/db/entities/like.entity';
+import { User } from '../src/db/entities/user.entity';
+import { Category } from '../src/db/entities/category.entity';
+import { Post } from '../src/db/entities/post.entity';
+import { Image } from '../src/db/entities/image.entity';
+import { Comment } from '../src/db/entities/comment.entity';
+import { Like } from '../src/db/entities/like.entity';
 
 export const mockUser: User = {
   id: 'fakeUserID',

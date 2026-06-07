@@ -4,7 +4,6 @@ import { Repository } from 'typeorm';
 import { Image } from '../../db/entities/image.entity';
 import { UserService } from '../user/user.service';
 import { ImageService } from './image.service';
-import { MockType } from '../../../test/types';
 import { mockGuest, mockImage, mockUser } from '../../../test/mocks';
 
 describe('ImageService', () => {

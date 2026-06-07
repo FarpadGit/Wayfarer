@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { categoryTitleType } from '../types';
 import { userAccounts } from './login.service';
 import { PostListService } from './post-list.service';
 import { CategoryApiService } from './API/category.api.service';
@@ -10,7 +9,7 @@ import { CategoryApiService } from './API/category.api.service';
 export class CategoryListService {
   constructor(
     private apiService: CategoryApiService,
-    private postListService: PostListService
+    private postListService: PostListService,
   ) {}
 
   private getCategoriesFn = this.apiService.getCategoriesAsync;

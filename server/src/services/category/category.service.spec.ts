@@ -5,9 +5,7 @@ import { CategoryService } from './category.service';
 import { UserService } from '../user/user.service';
 import { User } from '../../db/entities/user.entity';
 import { Category } from '../../db/entities/category.entity';
-import { categoryType } from '../../types';
 import { mockCategory, mockUser } from '../../../test/mocks';
-import { MockType } from '../../../test/types';
 import { PostService } from '../post/post.service';
 
 describe('CategoryService', () => {

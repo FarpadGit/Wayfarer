@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { categoryTitleType } from '../../types';
 import { ApiService } from './api.service';
 
 @Injectable({
@@ -11,7 +10,7 @@ export class CategoryApiService extends ApiService {
   }
 
   getCategoriesAsync = this.asyncService.asAsync<categoryTitleType[]>(() =>
-    this.getCategories()
+    this.getCategories(),
   );
 
   createCategory(title: string) {
@@ -22,7 +21,7 @@ export class CategoryApiService extends ApiService {
   }
 
   createCategoryAsync = this.asyncService.asAsync((title: string) =>
-    this.createCategory(title)
+    this.createCategory(title),
   );
 
   deleteCategory(id: string) {
@@ -32,6 +31,6 @@ export class CategoryApiService extends ApiService {
   }
 
   deleteCategoryAsync = this.asyncService.asAsync((id: string) =>
-    this.deleteCategory(id)
+    this.deleteCategory(id),
   );
 }

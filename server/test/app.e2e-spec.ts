@@ -14,7 +14,6 @@ import { Post } from '../src/db/entities/post.entity';
 import { Image } from '../src/db/entities/image.entity';
 import { Like } from '../src/db/entities/like.entity';
 import { Comment } from '../src/db/entities/comment.entity';
-import { MockType } from './types';
 import {
   mockAdmin,
   mockCategory,

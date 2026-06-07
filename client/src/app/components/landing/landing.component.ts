@@ -34,7 +34,8 @@ export class LandingComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     await this.categoryListService.refreshCategories();
-    await this.categoryListService.selectFirstCategory();
+    if (this.categoryListService.getCurrentCategory() === '')
+      await this.categoryListService.selectFirstCategory();
     await this.imageService.pingServer();
     this.loaded = true;
   }

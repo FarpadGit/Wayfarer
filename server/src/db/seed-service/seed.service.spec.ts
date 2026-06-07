@@ -8,7 +8,6 @@ import { Post } from '../entities/post.entity';
 import { Image } from '../entities/image.entity';
 import { Comment } from '../entities/comment.entity';
 import { Like } from '../entities/like.entity';
-import { MockType } from '../../../test/types';
 
 describe('SeedServiceService', () => {
   let seedService: SeedService;

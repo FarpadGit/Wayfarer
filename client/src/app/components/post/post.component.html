@@ -25,7 +25,7 @@
         <article [innerHTML]="(post?.body || '') | linky:{ sanitizeHtml: true }"></article>
         @if (post?.images?.length) {
           <div class="image-section">
-            @for (img of post?.images; track $index) {
+            @for (img of post!.images; track $index) {
               <a [href]="img.url" target="_blank" rel="noopener noreferrer">
                 <img [src]="img.thumbnail" [alt]="'attachment image: ' + img.name">
               </a>
@@ -35,7 +35,7 @@
       </div>
       <section>
         <app-comment-form
-          [autoFocus]="true"
+          [autoFocus]="false"
           (onSubmit)="onCommentCreate($event)"
         />
         @if(rootComments != null && rootComments.length > 0) {

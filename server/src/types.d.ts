@@ -1,27 +1,27 @@
-export type categoryType = {
+type categoryType = {
   title: string;
   creatorId: string;
 };
-export type postType = {
+type postType = {
   title: string;
   body: string;
   noOfImages: number;
   uploaderId: string;
   categoryId: string;
 };
-export type imageType = {
+type imageType = {
   name: string;
   url: string;
   postId: string;
 };
-export type commentType = {
+type commentType = {
   id: string;
   message: string;
   parentId?: string | null;
   postId: string;
   userId: string;
 };
-export type userType = {
+type userType = {
   email: string;
   name: string;
   sub: string;

@@ -7,7 +7,6 @@ import { User } from '../../db/entities/user.entity';
 import { Post } from '../../db/entities/post.entity';
 import { Comment } from '../../db/entities/comment.entity';
 import { Like } from '../../db/entities/like.entity';
-import { MockType } from '../../../test/types';
 import { mockComment, mockPost, mockUser, mockLike } from '../../../test/mocks';
 
 describe('CommentService', () => {

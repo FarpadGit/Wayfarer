@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { postTitleType, postType } from '../types';
 import { userAccounts } from './login.service';
 import { PostApiService } from './API/post.api.service';
 import { ImagesApiService } from './API/images.api.service';
@@ -10,7 +9,7 @@ import { ImagesApiService } from './API/images.api.service';
 export class PostListService {
   constructor(
     private postApiService: PostApiService,
-    private imagesApiService: ImagesApiService
+    private imagesApiService: ImagesApiService,
   ) {}
 
   private getPostsFn = this.postApiService.getPostsAsync;
@@ -36,7 +35,7 @@ export class PostListService {
       posts.sort(
         (post1, post2) =>
           new Date(post2.createdAt).valueOf() -
-          new Date(post1.createdAt).valueOf()
+          new Date(post1.createdAt).valueOf(),
       );
       return this.replaceAuthorNames(posts);
     });
@@ -60,7 +59,7 @@ export class PostListService {
     title: string,
     body: string,
     files: File[],
-    categoryId: string
+    categoryId: string,
   ) {
     const postId = await this.postApiService.createPost({
       title,
@@ -72,7 +71,7 @@ export class PostListService {
       this.imagesApiService.uploadImages(
         files,
         postId,
-        this.postApiService.userId
+        this.postApiService.userId,
       );
     }
     this.refreshPosts();

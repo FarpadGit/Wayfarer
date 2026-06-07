@@ -4,7 +4,6 @@ import { IconBtnComponent } from '../UI/icon-btn/icon-btn.component';
 import { ModalService } from 'ngx-modal-ease';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { matRemoveCircle } from '@ng-icons/material-icons/baseline';
-import { postType } from '../../types';
 
 export type newPostType = Omit<Required<postType>, 'comments'> & {
   files: File[];

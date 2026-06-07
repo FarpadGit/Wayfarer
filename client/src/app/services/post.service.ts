@@ -1,7 +1,6 @@
 import { computed, Injectable, OnDestroy, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { commentType } from '../types';
 import { LoginService, userAccounts } from './login.service';
 import { PostApiService } from './API/post.api.service';
 import { CommentApiService } from './API/comment.api.service';

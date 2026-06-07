@@ -17,7 +17,7 @@ describe('LandingComponent', () => {
   beforeEach(async () => {
     categoryListSpy = jasmine.createSpyObj(
       'CategoryListService',
-      ['refreshCategories', 'selectFirstCategory'],
+      ['refreshCategories', 'getCurrentCategory', 'selectFirstCategory'],
       { error: null, allCategories: [] },
     );
     postListSpy = jasmine.createSpyObj('PostListService', [], {
@@ -28,6 +28,7 @@ describe('LandingComponent', () => {
 
     categoryListSpy.refreshCategories.and.resolveTo();
     categoryListSpy.selectFirstCategory.and.resolveTo();
+    categoryListSpy.getCurrentCategory.and.returnValue('');
 
     await TestBed.configureTestingModule({
       imports: [LandingComponent],
@@ -41,8 +42,8 @@ describe('LandingComponent', () => {
 
     fixture = TestBed.createComponent(LandingComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
     // wait for Promises to finish in ngOnInit
+    await component.ngOnInit();
     await fixture.whenStable();
     fixture.detectChanges();
   });

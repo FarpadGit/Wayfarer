@@ -1,17 +1,17 @@
 /* Mainly types of data recieved from the server as a response */
-export type userType = {
+type userType = {
   email: string;
   name: string;
 };
 
-export type categoryTitleType = {
+type categoryTitleType = {
   id: string;
   title: string;
   createdAt: string;
   creator: userType;
 };
 
-export type postTitleType = {
+type postTitleType = {
   id: string;
   title: string;
   createdAt: string;
@@ -19,7 +19,7 @@ export type postTitleType = {
   categoryId: string;
 };
 
-export type postType = {
+type postType = {
   title: string;
   body: string;
   images?: {
@@ -30,7 +30,7 @@ export type postType = {
   comments: commentType[];
 };
 
-export type commentType = {
+type commentType = {
   id: string;
   isLikedByMe: boolean;
   likeCount: number;

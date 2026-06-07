@@ -6,7 +6,6 @@ import { TooltipDirective } from '../../UI/tooltip/tooltip.directive';
 import { ConfirmPopupDirective } from '../../delete-post-dialog/confirm-popup.directive';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { tablerEraser } from '@ng-icons/tabler-icons';
-import { userType } from '../../../types';
 
 @Component({
   selector: 'app-post-item',

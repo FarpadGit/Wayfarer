@@ -1,5 +1,4 @@
 import { Component, Input } from '@angular/core';
-import { commentType } from '../../types';
 import { PostService } from '../../services/post.service';
 import { LoginService } from '../../services/login.service';
 import { CommentFormComponent } from '../UI/comment-form/comment-form.component';
@@ -42,7 +41,7 @@ export class CommentComponent {
 
   constructor(
     private postService: PostService,
-    private loginService: LoginService
+    private loginService: LoginService,
   ) {}
 
   private dateFormatter = new Intl.DateTimeFormat(undefined, {

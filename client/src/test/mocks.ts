@@ -1,11 +1,3 @@
-import {
-  categoryTitleType,
-  commentType,
-  postTitleType,
-  postType,
-  userType,
-} from '../app/types';
-
 export const mockUser: userType = {
   name: 'Fake User',
   email: 'user@email.com',

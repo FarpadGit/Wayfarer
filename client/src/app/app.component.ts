@@ -40,7 +40,7 @@ import {
 export class AppComponent {
   constructor(
     private animationService: AnimationService,
-    private transitionService: TransitionService
+    private transitionService: TransitionService,
   ) {}
 
   get bgStates() {

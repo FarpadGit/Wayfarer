@@ -61,7 +61,7 @@ describe('NewPostDialogComponent', () => {
       files: [],
     };
     const submitButton = rootDiv.querySelector(
-      '[data-test-confirm-btn]'
+      '[data-test-confirm-btn]',
     ) as HTMLButtonElement;
     submitButton.click();
     fixture.detectChanges();
@@ -71,7 +71,7 @@ describe('NewPostDialogComponent', () => {
 
   it('should close modal on cancel button press', () => {
     const cancelButton = rootDiv.querySelector(
-      '[data-test-cancel-btn]'
+      '[data-test-cancel-btn]',
     ) as HTMLButtonElement;
     cancelButton.click();
     fixture.detectChanges();

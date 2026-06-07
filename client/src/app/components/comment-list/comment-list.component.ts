@@ -1,6 +1,5 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { commentType } from '../../types';
 import { PostService } from '../../services/post.service';
 import { CommentComponent } from '../comment/comment.component';
 import { animate, style, transition, trigger } from '@angular/animations';

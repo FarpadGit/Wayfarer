@@ -6,7 +6,6 @@ import { User } from '../../db/entities/user.entity';
 import { Post } from '../../db/entities/post.entity';
 import { Comment } from '../../db/entities/comment.entity';
 import { Like } from '../../db/entities/like.entity';
-import { commentType } from '../../types';
 
 @Injectable()
 export class CommentService {

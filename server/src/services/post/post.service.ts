@@ -7,7 +7,6 @@ import { Category } from '../../db/entities/category.entity';
 import { Post } from '../../db/entities/post.entity';
 import { Image } from '../../db/entities/image.entity';
 import { Like } from '../../db/entities/like.entity';
-import { imageType, postType } from '../../types';
 import { randomUUID } from 'crypto';
 
 @Injectable()

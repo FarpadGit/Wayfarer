@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { postTitleType, postType } from '../../types';
 import { ApiService } from './api.service';
 
 type postParamsType = {
