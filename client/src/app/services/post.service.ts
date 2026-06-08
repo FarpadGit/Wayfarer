@@ -76,6 +76,28 @@ export class PostService implements OnDestroy {
     return this.commentsByParentId()[parentId];
   }
 
+  isAuthorLoggedIn() {
+    return (
+      this.loginService.currentUserEmail === this.post?.uploaderEmail ||
+      this.loginService.currentUserEmail ===
+        import.meta.env['NG_APP_ADMIN_EMAIL']
+    );
+  }
+
+  async updatePost(id: string, newPost: { title?: string; body?: string }) {
+    const updatePostFn = this.postApiService.updatePostAsync;
+    return updatePostFn
+      .execute({
+        postId: id,
+        ...newPost,
+      })
+      .then((res) => {
+        this.getPostFn.execute(res);
+        return res as string;
+      })
+      .catch((_) => null);
+  }
+
   createComment(message: string, parentId: string | null = null) {
     const newComment = this.createLocalComment(message, parentId);
     this.commentApiService

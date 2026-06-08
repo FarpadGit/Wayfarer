@@ -26,7 +26,13 @@ describe('PostComponent', () => {
   beforeEach(async () => {
     postSpy = jasmine.createSpyObj(
       'PostService',
-      ['localComments', 'createComment', 'getReplies'],
+      [
+        'updatePost',
+        'localComments',
+        'createComment',
+        'getReplies',
+        'isAuthorLoggedIn',
+      ],
       {
         loading: false,
         error: null,
@@ -35,6 +41,7 @@ describe('PostComponent', () => {
       },
     );
     transitionSpy = jasmine.createSpyObj('TransitionService', [
+      'callNavigate',
       'callDelayedNavigate',
     ]);
     animationSpy = jasmine.createSpyObj(
@@ -124,6 +131,44 @@ describe('PostComponent', () => {
 
     expect(animationSpy.startExitAnimation).toHaveBeenCalled();
     expect(transitionSpy.callDelayedNavigate).toHaveBeenCalled();
+  });
+
+  it('should display an edit button if author is logged in', () => {
+    postSpy.isAuthorLoggedIn.and.returnValue(true);
+    fixture.detectChanges();
+    const editButton = rootDiv.querySelector('[data-test-edit-btn]');
+
+    expect(editButton).toBeTruthy();
+  });
+
+  it('should replace post title and article with edit elements and also display a cancel button if edit button is clicked', () => {
+    postSpy.isAuthorLoggedIn.and.returnValue(true);
+    fixture.detectChanges();
+    const editButton = rootDiv
+      .querySelector('[data-test-edit-btn]')
+      ?.querySelector('button');
+    editButton?.click();
+    fixture.detectChanges();
+    const titleInput = rootDiv.querySelector('input.title-edit');
+    const bodyTextarea = rootDiv.querySelector('textarea.body-edit');
+    const cancelButton = rootDiv.querySelector('[data-test-cancel-btn]');
+
+    expect(titleInput).toBeTruthy();
+    expect(bodyTextarea).toBeTruthy();
+    expect(cancelButton).toBeTruthy();
+  });
+
+  it('should update post contents and reload post page with new slug', async () => {
+    const newSlug = 'mockNewSlug';
+    component.isEditMode = true;
+    postSpy.updatePost.and.resolveTo(newSlug);
+    await component.onPostEdit();
+
+    expect(postSpy.updatePost).toHaveBeenCalled();
+    expect(transitionSpy.callNavigate).toHaveBeenCalledWith(
+      '/posts/' + newSlug,
+      true,
+    );
   });
 
   it('should create new comment if comment form is submitted with text', () => {

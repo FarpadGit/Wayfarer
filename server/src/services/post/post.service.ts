@@ -116,12 +116,17 @@ export class PostService {
     }
 
     // save post edits
+    for (let key in postData) {
+      if (postData[key] === undefined) delete postData[key];
+    }
     const post = await this.postRepo.findOneByOrFail({ id });
     const updatedPost = { ...post, ...postData };
+    if (postData['title'] && postData.title !== post.title)
+      updatedPost.slug = await this.generateSlug(updatedPost.title);
 
     const savedPost = await this.postRepo.save(updatedPost);
 
-    if (images.length === 0) return savedPost.id;
+    if (images.length === 0) return savedPost.slug;
 
     // save image edits
     const placeholdersInDB = await this.imageRepo.find({
@@ -167,7 +172,7 @@ export class PostService {
       }
     }
 
-    return savedPost.id;
+    return savedPost.slug;
   }
 
   async getPostAuthorId(postId: string) {
@@ -184,6 +189,7 @@ export class PostService {
       where: { slug },
       order: { comments: { createdAt: 'DESC' } },
       relations: [
+        'uploader',
         'images',
         'comments',
         'comments.parent',
@@ -206,6 +212,9 @@ export class PostService {
             name: true,
           },
           likes: true,
+        },
+        uploader: {
+          email: true,
         },
       },
     });
@@ -237,6 +246,8 @@ export class PostService {
             commentlikeCount.find((i) => i.id === comment.id)?._count || 0,
         };
       }),
+      uploaderEmail: post.uploader.email,
+      uploader: undefined,
     };
   }
 

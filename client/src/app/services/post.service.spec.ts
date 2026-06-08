@@ -13,6 +13,7 @@ import {
   mockPostTitle,
   mockUser,
 } from '../../test/mocks';
+import { setSpyProperty } from '../../test/test.utils';
 
 describe('PostService', () => {
   let service: PostService;
@@ -43,6 +44,11 @@ describe('PostService', () => {
         error: () => null,
         value: () => mockPostWithComments,
         execute: () => Promise.resolve(mockPostWithComments),
+      },
+      updatePostAsync: {
+        execute: jasmine
+          .createSpy('executeSpy')
+          .and.resolveTo(mockPostTitle.slug),
       },
     });
     commentApiSpy = jasmine.createSpyObj('CommentApiService', [
@@ -109,6 +115,32 @@ describe('PostService', () => {
     )!;
 
     expect(service.getReplies(testCommentID)).toEqual(replies);
+  });
+
+  it('should return true if post author is logged in', () => {
+    setSpyProperty(loginSpy, 'currentUserEmail', mockUser.email);
+
+    expect(service.isAuthorLoggedIn()).toBeTrue();
+  });
+
+  it('should return false if post author is not logged in', () => {
+    setSpyProperty(loginSpy, 'currentUserEmail', 'DifferentUser@mail.com');
+
+    expect(service.isAuthorLoggedIn()).toBeFalse();
+  });
+
+  it('should update post', async () => {
+    const updatedPost = {
+      title: 'Updated Post Title',
+      body: 'updated lorem ipsum',
+    };
+    const response = await service.updatePost(mockPost.id, updatedPost);
+
+    expect(postApiSpy.updatePostAsync.execute).toHaveBeenCalledWith({
+      postId: mockPost.id,
+      ...updatedPost,
+    });
+    expect(response).toBe(mockPostTitle.slug);
   });
 
   it('should create new local comment, send creation request to server and replace local comment ID with returned ID', (done) => {

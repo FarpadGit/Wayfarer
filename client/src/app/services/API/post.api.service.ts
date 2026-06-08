@@ -1,11 +1,16 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from './api.service';
 
-type postParamsType = {
+type newPostParamsType = {
   title: string;
   body: string;
   noOfImages: number;
   categoryId: string;
+};
+type editPostParamsType = {
+  postId: string;
+  title?: string;
+  body?: string;
 };
 
 @Injectable({
@@ -28,15 +33,26 @@ export class PostApiService extends ApiService {
     this.getPost(slug),
   );
 
-  createPost({ title, body, noOfImages, categoryId }: postParamsType) {
+  createPost({ title, body, noOfImages, categoryId }: newPostParamsType) {
     return this.makeRequest(`/categories/${categoryId}/posts`, {
       method: 'POST',
       data: { title, body, images: noOfImages },
     });
   }
 
-  createPostAsync = this.asyncService.asAsync((post: postParamsType) =>
+  createPostAsync = this.asyncService.asAsync((post: newPostParamsType) =>
     this.createPost(post),
+  );
+
+  updatePost({ title, body, postId }: editPostParamsType) {
+    return this.makeRequest(`/posts/${postId}`, {
+      method: 'PATCH',
+      data: { title, body, images: [] },
+    });
+  }
+
+  updatePostAsync = this.asyncService.asAsync((post: editPostParamsType) =>
+    this.updatePost(post),
   );
 
   deletePost(id: string) {

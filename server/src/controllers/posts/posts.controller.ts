@@ -13,7 +13,7 @@ import {
 import { FastifyRequest, FastifyReply } from 'fastify';
 import {
   CommentsBody,
-  ImageServerBody,
+  PostEditBody,
   isPrivilegeError,
 } from '../controllers.utils';
 import { PostService } from '../../services/post/post.service';
@@ -45,13 +45,13 @@ export class PostsController {
   async patchPost(
     @Param('postId') postId: string,
     @Req() req: FastifyRequest,
-    @Body() { images }: ImageServerBody,
+    @Body() { title, body, images }: PostEditBody,
     @Res({ passthrough: true }) res: FastifyReply,
   ) {
     const response = await this.postService.updatePost(
       postId,
       req.cookies.userId,
-      {},
+      { title, body },
       images,
     );
 

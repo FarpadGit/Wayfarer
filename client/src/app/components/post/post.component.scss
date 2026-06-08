@@ -10,6 +10,18 @@
     }
 }
 
+.commands {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+
+    div {
+        display: flex;
+        gap: 0.25rem;
+    }
+}
+
 .post-body {
     margin-bottom: 2rem;
     padding: 0.75rem 1.5rem 1.5rem;
@@ -26,6 +38,40 @@
 
     & article {
         white-space-collapse: preserve-breaks;
+    }
+
+    input.title-edit {
+        width: 100%;
+        margin-bottom: 1rem;
+        border: none;
+        border-bottom: 1px solid black;
+        background-color: transparent;
+        font-size: 2rem;
+        font-weight: bold;
+        font-family: Manrope;
+        outline: 2px solid transparent;
+        transition: outline 0.5s;
+
+        &:focus-visible {
+            outline-color: var(--app-btn-color);
+        }
+    }
+
+    textarea.body-edit {
+        width: 100%;
+        border: none;
+        background-color: transparent;
+        resize: none;
+        font-size: 1rem;
+        line-height: 1.4;
+        font-family: Manrope;
+        text-align: justify;
+        outline: 2px solid transparent;
+        transition: outline 0.5s;
+
+        &:focus-visible {
+            outline-color: var(--app-btn-color);
+        }
     }
 
     .image-section {
@@ -63,4 +109,12 @@
             }
         }
     }
+}
+
+.save-error-msg {
+    color: var(--app-danger-color-hover);
+    font-weight: bold;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 0.25rem;
+    border-radius: 0.5rem;
 }

@@ -29,6 +29,13 @@ describe('PostApiService', () => {
         }),
       })
       .reply(200, 'create endpoint called')
+      .onPatch(`/posts/${mockPostTitle.id}`, {
+        asymmetricMatch: () => ({
+          title: jasmine.any(String),
+          body: jasmine.any(String),
+        }),
+      })
+      .reply(200, mockPostTitle.slug)
       .onDelete(`/posts/${mockPostTitle.id}`)
       .reply(204, 'delete endpoint called');
 
@@ -100,6 +107,28 @@ describe('PostApiService', () => {
 
   it('should return an object with utilities to create new post asynchronously', async () => {
     const response = service.createPostAsync;
+
+    expect(asyncSpy.asAsync).toHaveBeenCalled();
+    expect(response).toEqual({
+      loading: jasmine.any(Function),
+      error: jasmine.any(Function),
+      value: jasmine.any(Function),
+      execute: jasmine.any(Function),
+    });
+  });
+
+  it('should update a post', async () => {
+    const response = await service.updatePost({
+      title: 'Fake New Post Title',
+      body: 'Lorem Ipsum Dolor Sit Amet',
+      postId: mockPost.id,
+    });
+
+    expect(response).toEqual(mockPostTitle.slug);
+  });
+
+  it('should return an object with utilities to create new post asynchronously', async () => {
+    const response = service.updatePostAsync;
 
     expect(asyncSpy.asAsync).toHaveBeenCalled();
     expect(response).toEqual({

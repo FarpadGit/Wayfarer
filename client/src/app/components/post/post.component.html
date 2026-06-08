@@ -15,12 +15,36 @@
   }
   @case ('success') {
     <div class="post-container" [@post-fade-in-out]="animationState">
-        <app-icon-btn data-test-back-btn [variant]="['responsive-large']" (onClick)="backButtonClicked()">
+      <div class="commands">
+        <app-icon-btn data-test-back-btn [variant]="['responsive-large']" [disabled]="isEditLoading" (onClick)="backButtonClicked()">
           <ng-icon icon name="matArrowBack"></ng-icon>Vissza
         </app-icon-btn>
+        @if(hasEditError) {
+          <span class="save-error-msg">Valamilyen hiba lépett fel a szerver oldalon, mentés sikertelen</span>
+        }
+        @if(authorLoggedIn) {
+          <div>
+            <app-icon-btn data-test-edit-btn [disabled]="isEditLoading" (onClick)="onPostEdit()">
+              <ng-icon icon [name]="isEditMode ? 'matSaveAll' : 'matEditNote'"></ng-icon>
+              {{!isEditMode ? 'Szerkesztés': !isEditLoading ? 'Változások Mentése' : 'Új poszt betöltése...'}}
+            </app-icon-btn>
+            @if (isEditMode) {
+              <app-icon-btn data-test-cancel-btn [variant]="['orange']" [disabled]="isEditLoading" (onClick)="onPostEditCancel()">
+                <ng-icon icon name="matCancel"></ng-icon>Mégse
+              </app-icon-btn>
+            }
+          </div>
+        }
+      </div>
       <div class="post-body">
-        <h1>{{post?.title}}</h1>
-        <article [innerHTML]="(post?.body || '') | linky:{ sanitizeHtml: true }"></article>
+        @if (isEditMode) {
+          <input appAutofocus type="text" class="title-edit" [(ngModel)]="editedPost.title">
+          <textarea class="body-edit" [(ngModel)]="editedPost.body" rows="20" autocorrect="off"></textarea>
+        }
+        @else {
+          <h1>{{post?.title}}</h1>
+          <article [innerHTML]="(post?.body || '') | linky:{ sanitizeHtml: true }"></article>
+        }
         @if (post?.images?.length) {
           <div class="image-section">
             @for (img of post!.images; track $index) {

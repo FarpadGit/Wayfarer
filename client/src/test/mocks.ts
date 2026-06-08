@@ -36,6 +36,7 @@ export const mockPost: postType = {
     },
   ],
   comments: [],
+  uploaderEmail: mockUser.email,
 };
 
 export const mockComment: commentType = {

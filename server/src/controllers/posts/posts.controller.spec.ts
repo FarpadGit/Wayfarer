@@ -11,7 +11,7 @@ describe('PostsController', () => {
   const mockPostService = {
     getPostWithComments: jest.fn().mockResolvedValue('mock post return value'),
     getPostImages: jest.fn().mockResolvedValue([{ name: 'fakeImage.jpg' }]),
-    updatePost: jest.fn().mockResolvedValue(mockPost.id),
+    updatePost: jest.fn().mockResolvedValue(mockPost.slug),
     deletePost: jest.fn().mockResolvedValue(mockPost.id),
   };
 
@@ -105,15 +105,15 @@ describe('PostsController', () => {
       const result = await postsController.patchPost(
         mockPost.id,
         mockRequest,
-        { images: mockImages },
+        { title: mockPost.title, body: mockPost.body, images: mockImages },
         mockResponse,
       );
 
-      expect(result).toBe(mockPost.id);
+      expect(result).toBe(mockPost.slug);
       expect(mockPostService.updatePost).toHaveBeenCalledWith(
         mockPost.id,
         mockRequest.cookies.userId,
-        expect.objectContaining({}),
+        expect.objectContaining({ title: mockPost.title, body: mockPost.body }),
         mockImages,
       );
       expect(mockResponse.badRequest).not.toHaveBeenCalled();
@@ -126,7 +126,7 @@ describe('PostsController', () => {
       const result = await postsController.patchPost(
         mockPost.id,
         mockRequest,
-        { images: mockImages },
+        { title: mockPost.title, body: mockPost.body, images: mockImages },
         mockResponse,
       );
 
@@ -149,7 +149,7 @@ describe('PostsController', () => {
       const result = await postsController.patchPost(
         mockPost.id,
         mockRequest,
-        { images: mockImages },
+        { title: mockPost.title, body: mockPost.body, images: mockImages },
         mockResponse,
       );
 

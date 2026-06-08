@@ -131,6 +131,11 @@ describe('PostService', () => {
   });
 
   describe('update post', () => {
+    const updatedPost = {
+      title: 'Updated Post Title',
+      body: 'Updated lorem ipsum',
+    };
+    const updatedPostSlug = 'updated-post-title';
     const mockNewImages = [
       {
         name: mockImage.name,
@@ -140,21 +145,46 @@ describe('PostService', () => {
       },
     ];
 
-    it('should update a post with new images', async () => {
+    it('should update a post', async () => {
+      mockPostRepo.findOne?.mockResolvedValueOnce(mockPostWithComments);
+      mockPostRepo.findOne?.mockResolvedValueOnce(null);
       const result = await postService.updatePost(
         mockPost.id,
         mockUser.id,
-        {},
+        updatedPost,
+        [],
+      );
+
+      expect(mockPostRepo.save).toHaveBeenCalledWith({
+        ...mockPost,
+        ...updatedPost,
+        slug: updatedPostSlug,
+      });
+      expect(mockImageRepo.save).not.toHaveBeenCalled();
+      expect(result).toBe(mockPost.slug);
+    });
+
+    it('should update a post with new images', async () => {
+      mockPostRepo.findOne?.mockResolvedValueOnce(mockPostWithComments);
+      mockPostRepo.findOne?.mockResolvedValueOnce(null);
+      const result = await postService.updatePost(
+        mockPost.id,
+        mockUser.id,
+        updatedPost,
         mockNewImages,
       );
 
-      expect(mockPostRepo.save).toHaveBeenCalledWith(mockPost);
+      expect(mockPostRepo.save).toHaveBeenCalledWith({
+        ...mockPost,
+        ...updatedPost,
+        slug: updatedPostSlug,
+      });
       expect(mockImageRepo.save).toHaveBeenCalledTimes(mockNewImages.length);
       expect(mockImageRepo.save).toHaveBeenCalledWith({
         ...mockImage,
         id: undefined,
       });
-      expect(result).toBe(mockPost.id);
+      expect(result).toBe(mockPost.slug);
     });
 
     it('should update a post by removing images', async () => {
@@ -169,7 +199,7 @@ describe('PostService', () => {
 
       expect(mockPostRepo.save).toHaveBeenCalledWith(mockPost);
       expect(mockImageRepo.remove).toHaveBeenCalledWith(mockImage);
-      expect(result).toBe(mockPost.id);
+      expect(result).toBe(mockPost.slug);
     });
 
     it('should update a post and its images', async () => {
@@ -187,7 +217,7 @@ describe('PostService', () => {
         ...mockImage,
         url: 'fakenewurl.com',
       });
-      expect(result).toBe(mockPost.id);
+      expect(result).toBe(mockPost.slug);
     });
 
     it("should return null if post doesn't exist", async () => {
@@ -196,8 +226,8 @@ describe('PostService', () => {
       const result = await postService.updatePost(
         mockPost.id,
         mockUser.id,
-        {},
-        mockNewImages,
+        updatedPost,
+        [],
       );
 
       expect(result).toBe(null);
@@ -209,8 +239,8 @@ describe('PostService', () => {
       const result = await postService.updatePost(
         mockPost.id,
         'bad User ID',
-        {},
-        mockNewImages,
+        updatedPost,
+        [],
       );
 
       expect(result).toHaveProperty('PrivilegeError');
@@ -219,19 +249,25 @@ describe('PostService', () => {
     });
 
     it("should update someone else's post if user is admin", async () => {
+      mockPostRepo.findOne?.mockResolvedValueOnce(mockPostWithComments);
+      mockPostRepo.findOne?.mockResolvedValueOnce(null);
       const result = await postService.updatePost(
         mockPost.id,
         mockUserService.ADMIN_USER_ID,
-        {},
+        updatedPost,
         mockNewImages,
       );
 
-      expect(mockPostRepo.save).toHaveBeenCalledWith({ ...mockPost });
+      expect(mockPostRepo.save).toHaveBeenCalledWith({
+        ...mockPost,
+        ...updatedPost,
+        slug: updatedPostSlug,
+      });
       expect(mockImageRepo.save).toHaveBeenCalledWith({
         ...mockImage,
         id: undefined,
       });
-      expect(result).toBe(mockPost.id);
+      expect(result).toBe(mockPost.slug);
     });
   });
 
@@ -257,6 +293,8 @@ describe('PostService', () => {
             likeCount: expect.any(Number),
           }),
         ],
+        uploader: undefined,
+        uploaderEmail: mockPost.uploader.email,
       });
     });
 

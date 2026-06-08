@@ -3,27 +3,31 @@ import { mockAdmin, mockCategory, mockGuest, mockPost } from '../mocks';
 
 export function assertionsForPosts() {
   describe('posts controllers', () => {
-    it('/posts/:id (GET)', async () => {
+    it('/posts/:slug (GET)', async () => {
       return app
         .inject({
           method: 'GET',
-          url: '/posts/1',
+          url: '/posts/slug-1',
         })
         .then((result) => {
           const parsedPayload = JSON.parse(result.payload, dateTimeReviver);
 
           expect(result.statusCode).toBe(200);
-          expect(parsedPayload).toEqual(mockPost);
+          expect(parsedPayload).toEqual({
+            ...mockPost,
+            uploader: undefined,
+            uploaderEmail: mockPost.uploader.email,
+          });
         });
     });
 
-    it('/posts/:id (GET) (not found)', async () => {
+    it('/posts/:slug (GET) (not found)', async () => {
       mockPostRepo.findOne?.mockResolvedValueOnce(null);
 
       return app
         .inject({
           method: 'GET',
-          url: '/posts/1',
+          url: '/posts/slug-1',
         })
         .then((result) => {
           expect(result.statusCode).toBe(404);
@@ -35,12 +39,19 @@ export function assertionsForPosts() {
         ...mockPost,
         uploader: mockGuest,
       });
+      mockPostRepo.findOne?.mockResolvedValueOnce({
+        ...mockPost,
+        uploader: mockGuest,
+      });
+      mockPostRepo.findOne?.mockResolvedValueOnce(null);
 
       return app
         .inject({
           method: 'PATCH',
           url: '/posts/1',
           body: {
+            title: 'Updated Title',
+            body: 'Updated Body',
             images: [
               {
                 name: 'img.jpg',
@@ -53,6 +64,7 @@ export function assertionsForPosts() {
         })
         .then((result) => {
           expect(result.statusCode).toBe(200);
+          expect(result.body).toBe('updated-title');
         });
     });
 
@@ -64,6 +76,8 @@ export function assertionsForPosts() {
           method: 'PATCH',
           url: '/posts/1',
           body: {
+            title: 'Updated Title',
+            body: 'Updated Body',
             images: [
               {
                 name: 'img.jpg',
@@ -90,6 +104,8 @@ export function assertionsForPosts() {
           method: 'PATCH',
           url: '/posts/1',
           body: {
+            title: 'Updated Title',
+            body: 'Updated Body',
             images: [
               {
                 name: 'img.jpg',

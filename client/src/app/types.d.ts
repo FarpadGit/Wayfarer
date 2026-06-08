@@ -24,6 +24,7 @@ type postType = {
   id: string;
   title: string;
   body: string;
+  uploaderEmail: string;
   images?: {
     name: string;
     url: string;

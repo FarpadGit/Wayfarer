@@ -20,7 +20,9 @@ export type CommentsBody = {
   message?: string;
   parentId?: string | null;
 };
-export type ImageServerBody = {
+export type PostEditBody = {
+  title?: string;
+  body?: string;
   images: {
     name: string;
     url: string;
