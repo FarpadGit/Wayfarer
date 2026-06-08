@@ -5,7 +5,10 @@ import { ModalService } from 'ngx-modal-ease';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { matRemoveCircle } from '@ng-icons/material-icons/baseline';
 
-export type newPostType = Omit<Required<postType>, 'id' | 'comments'> & {
+export type newPostType = Pick<
+  Required<postType>,
+  'title' | 'body' | 'images'
+> & {
   files: File[];
 };
 
