@@ -21,7 +21,7 @@
         class="post-delete-btn"
         [appTooltip]="'poszt törlése'"
         [ngClass]="{ 'hide': highlighted }"
-        [iconClass]="'btn btn-black btn-large'"
+        [variant]="['black', 'large']"
         [ariaLabel]="'Delete Post'"
         [loading]="isDeleting"
         (appConfirmPopup)="DeleteButtonClicked()"

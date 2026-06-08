@@ -4,9 +4,8 @@
   }
   @case ('error') {
     <div class="post-container" [@post-fade-in-out]="animationState">
-      <app-icon-btn data-test-back-btn [iconClass]="'post-back-btn'" (onClick)="backButtonClicked()">
-        <ng-icon icon name="matArrowBack"></ng-icon>
-        Vissza
+      <app-icon-btn data-test-back-btn [variant]="['responsive-large']" (onClick)="backButtonClicked()">
+        <ng-icon icon name="matArrowBack"></ng-icon>Vissza
       </app-icon-btn>
       <div class="post-body">
         <h1 class="error-msg" style="text-align: center;">{{ error }}</h1>
@@ -16,10 +15,9 @@
   }
   @case ('success') {
     <div class="post-container" [@post-fade-in-out]="animationState">
-      <app-icon-btn data-test-back-btn [iconClass]="'post-back-btn'" (onClick)="backButtonClicked()">
-        <ng-icon icon name="matArrowBack"></ng-icon>
-          Vissza
-      </app-icon-btn>
+        <app-icon-btn data-test-back-btn [variant]="['responsive-large']" (onClick)="backButtonClicked()">
+          <ng-icon icon name="matArrowBack"></ng-icon>Vissza
+        </app-icon-btn>
       <div class="post-body">
         <h1>{{post?.title}}</h1>
         <article [innerHTML]="(post?.body || '') | linky:{ sanitizeHtml: true }"></article>

@@ -20,7 +20,7 @@
         [appTooltip]="isLiked ? 'Unlike' : 'Like'"
         (onClick)="onToggleCommentLike()"
         [ariaLabel]="isLiked ? 'Unlike' : 'Like'"
-        [iconClass]="'btn-red'"
+        [variant]="['red']"
         data-test-like-btn
         >
             <ng-icon icon [name]="isLiked ? 'matFavorite' : 'matFavoriteBorder'"></ng-icon>
@@ -53,7 +53,7 @@
         <div>
           <app-icon-btn
             [appTooltip]="'Törlés'"
-            [iconClass]="'btn-black'"
+            [variant]="['black']"
             [ariaLabel]="'Delete'"
             [loading]="isDeleting"
             (appConfirmPopup)="onCommentDelete()"

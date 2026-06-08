@@ -14,7 +14,7 @@
     <app-icon-btn 
     class="category-delete-btn"
     [appTooltip]="'járás törlése'"
-    [iconClass]="'btn btn-large '.concat(isActive ? 'btn-white' : 'btn-black')"
+    [variant]="['large', isActive ? 'white' : 'black']"
     [ariaLabel]="'Delete Category'"
     [loading]="isDeleting"
     (appConfirmPopup)="DeleteButtonClicked()"

@@ -34,7 +34,7 @@
               <img [src]="image.url" alt="uploaded image" />
               <!-- [appTooltip]="'Törlés'" -->
               <app-icon-btn
-                [iconClass]="'btn-red btn-large'"
+                [variant]="['red', 'large']"
                 [ariaLabel]="'Delete'"
                 (onClick)="handleImageDelete($index)"
               >

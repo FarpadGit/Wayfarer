@@ -1,21 +1,9 @@
-%font-large {
-    font-size: large;
-}
-
 @mixin colored-btn($primary, $hover) {
     --app-btn-color: #{$primary};
 
-    &:hover,
+    &:hover:not(:disabled),
     &:focus-visible {
         --app-btn-color: #{$hover};
-    }
-}
-
-.post-back-btn {
-    @extend %font-large;
-
-    @media (max-width: 639px) {
-        font-size: medium;
     }
 }
 
@@ -27,6 +15,10 @@
     &-red {
         @include colored-btn(var(--app-danger-color), var(--app-danger-color-hover));
     }
+
+    &-orange {
+        @include colored-btn(var(--app-glow-color), var(--app-glow-color-hover));
+    }
     
     &-black {
         @include colored-btn(var(--app-black-color), var(--app-black-color-hover));
@@ -37,16 +29,23 @@
     }
 
     &-large {
-        @extend %font-large; 
+        font-size: large;
     }
-}
 
-.column {
-    flex-direction: column;
-}
+    &-res-large {
+        font-size: large;
+        @media (max-width: 639px) {
+            font-size: medium;
+        }
+    }
 
-.p-0 {
-    padding: 0;
+    &-vertical {
+        flex-direction: column;
+    }
+
+    &-p-0 {
+        padding: 0;
+    }
 }
 
 .spinner {

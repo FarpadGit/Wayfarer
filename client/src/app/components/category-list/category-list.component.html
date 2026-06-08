@@ -18,7 +18,7 @@
           >
           <app-icon-btn 
           class="add-button"
-          [iconClass]="'btn-large'"
+          [variant]="['large']"
           (mousedown)="$event.preventDefault()"
           (onClick)="isInputActive ? addCategory(addCategoryInput.value) : showInput()"
           >

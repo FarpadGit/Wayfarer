@@ -36,7 +36,7 @@
     font-weight: bold;
     overflow: hidden;
 
-    &:hover,
+    &:hover:not(:disabled),
     &:focus-visible {
         --app-btn-color: var(--app-btn-color-hover);
     }
@@ -81,7 +81,7 @@
     display: flex;
     align-items: center;
 
-    &:hover,
+    &:hover:not(:disabled),
     &:focus-visible {
         --app-btn-color: var(--app-glow-color-hover);
     }
@@ -90,7 +90,7 @@
         position: relative;
         --app-btn-color: var(--app-danger-color);
 
-        &:hover,
+        &:hover:not(:disabled),
         &:focus-visible {
             --app-btn-color: var(--app-danger-color-hover);
         }
