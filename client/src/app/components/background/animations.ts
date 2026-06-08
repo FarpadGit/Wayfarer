@@ -25,6 +25,15 @@ export const dropDownAnimations = trigger('drop-down', [
       offset: 1,
     }),
   ),
+  state(
+    bgStates.quickEntering,
+    style({
+      height: '100vh',
+      width: '100vw',
+      'margin-left': '0vw',
+      'margin-right': '0px',
+    }),
+  ),
   transition('* => ' + bgStates.entering, [
     style({ position: 'fixed' }),
     group([
@@ -66,7 +75,7 @@ export const dropDownAnimations = trigger('drop-down', [
       }),
     ),
   ]),
-  transition(bgStates.none + ' => ' + bgStates.entered, [
+  transition(bgStates.none + ' => ' + bgStates.quickEntering, [
     group([
       animate(
         '1s ease',

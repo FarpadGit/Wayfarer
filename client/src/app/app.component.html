@@ -1,5 +1,5 @@
 <div class="app-wrapper" [ngClass]="{ 'blur': blur }">
-  @if(animationState === bgStates.entering) {
+  @if(isEntering) {
     <div class="backdrop-image" @fade-in></div>
   }
   <app-background />

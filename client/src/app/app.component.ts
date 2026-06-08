@@ -43,8 +43,8 @@ export class AppComponent {
     private transitionService: TransitionService,
   ) {}
 
-  get bgStates() {
-    return bgStates;
+  get isEntering() {
+    return this.animationState === bgStates.entering;
   }
 
   get animationState() {

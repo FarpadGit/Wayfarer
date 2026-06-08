@@ -89,8 +89,8 @@ export class PostListComponent {
       this.transitionService.firstTime = false;
     } else {
       this.transitionService.blur = true;
-      this.animationService.forceEnteredAnimation();
-      this.transitionService.callDelayedNavigate(750);
+      this.animationService.startQuickEnterAnimation();
+      this.transitionService.callDelayedNavigate(1000);
     }
   }
 

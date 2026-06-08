@@ -6,6 +6,7 @@ export enum bgStates {
   none = 'none',
   collapsing = 'collapsing',
   entering = 'entering',
+  quickEntering = 'quickEntering',
   entered = 'entered',
   exiting = 'exiting',
 }
@@ -37,10 +38,15 @@ export class AnimationService implements OnDestroy {
 
   startCollapseAnimation = () => (this.bgAnimationState = bgStates.collapsing);
   startEnterAnimation = () => (this.bgAnimationState = bgStates.entering);
-  forceEnteredAnimation = () => (this.bgAnimationState = bgStates.entered);
+  startQuickEnterAnimation = () =>
+    (this.bgAnimationState = bgStates.quickEntering);
   startExitAnimation = () => (this.bgAnimationState = bgStates.exiting);
   endAnimation = () => {
-    if (this.bgAnimationState === bgStates.entering)
+    if (
+      [bgStates.entering, bgStates.quickEntering].includes(
+        this.bgAnimationState,
+      )
+    )
       this.bgAnimationState = bgStates.entered;
     else this.bgAnimationState = bgStates.none;
   };

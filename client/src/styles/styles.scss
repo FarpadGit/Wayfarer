@@ -54,6 +54,10 @@ body {
   &:has(.new-post-dialog) {
     overflow: hidden;
   }
+
+  &:has(.app-wrapper.blur) {
+    overflow: hidden;
+  }
 }
 
 .hide {

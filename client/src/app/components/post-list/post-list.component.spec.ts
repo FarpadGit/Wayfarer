@@ -44,7 +44,7 @@ describe('PostListComponent', () => {
     animationSpy = jasmine.createSpyObj('AnimationService', [
       'startEnterAnimation',
       'startCollapseAnimation',
-      'forceEnteredAnimation',
+      'startQuickEnterAnimation',
     ]);
     loginSpy = jasmine.createSpyObj('LoginService', [], {
       currentUserEmail: '',
@@ -116,7 +116,7 @@ describe('PostListComponent', () => {
     fixture.detectChanges();
 
     expect(transitionSpy_blur?.set).toHaveBeenCalledWith(true);
-    expect(animationSpy.forceEnteredAnimation).toHaveBeenCalled();
+    expect(animationSpy.startQuickEnterAnimation).toHaveBeenCalled();
     expect(transitionSpy.callDelayedNavigate).toHaveBeenCalled();
   });
 
