@@ -23,7 +23,7 @@ describe('CategoryListService', () => {
           value: () => mockCategories,
           execute: () => Promise.resolve(mockCategories),
         },
-      }
+      },
     );
     postListSpy = jasmine.createSpyObj('PostListService', [
       'getCurrentCategory',
@@ -51,16 +51,16 @@ describe('CategoryListService', () => {
   });
 
   it('should return loading signal value', () => {
-    expect(service.loading).toBe(categoryApiSpy.getCategoriesAsync.loading());
+    expect(service.loading()).toBe(categoryApiSpy.getCategoriesAsync.loading());
   });
 
   it('should return error signal value', () => {
-    expect(service.error).toBe(categoryApiSpy.getCategoriesAsync.error());
+    expect(service.error()).toBe(categoryApiSpy.getCategoriesAsync.error());
   });
 
   it('should return value signal value', () => {
-    expect(service.allCategories).toEqual(
-      categoryApiSpy.getCategoriesAsync.value()!
+    expect(service.allCategories()).toEqual(
+      categoryApiSpy.getCategoriesAsync.value()!,
     );
   });
 
@@ -82,7 +82,7 @@ describe('CategoryListService', () => {
     await service.selectFirstCategory();
 
     expect(postListSpy.getPostsByCategory).toHaveBeenCalledWith(
-      firstCategory.id
+      firstCategory.id,
     );
   });
 
@@ -108,7 +108,7 @@ describe('CategoryListService', () => {
 
     setTimeout(() => {
       expect(categoryApiSpy.deleteCategory).toHaveBeenCalledWith(
-        mockCategory.id
+        mockCategory.id,
       );
       expect(executeSpy).toHaveBeenCalled();
       done();

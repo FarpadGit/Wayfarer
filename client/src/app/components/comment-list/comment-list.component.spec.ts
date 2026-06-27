@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideNoopAnimations } from '@angular/platform-browser/animations';
 
 import { CommentListComponent } from './comment-list.component';
 import { PostService } from '../../services/post.service';
@@ -11,7 +10,6 @@ describe('CommentListComponent', () => {
   let component: CommentListComponent;
   let fixture: ComponentFixture<CommentListComponent>;
   let postSpy: jasmine.SpyObj<PostService>;
-  let loginSpy: jasmine.SpyObj<LoginService>;
 
   const mockCommentStack = [
     { ...mockComment, id: 'fakeComment1ID' },
@@ -22,9 +20,6 @@ describe('CommentListComponent', () => {
 
   beforeEach(async () => {
     postSpy = jasmine.createSpyObj('PostService', ['getReplies']);
-    loginSpy = jasmine.createSpyObj('LoginService', [], {
-      currentUserEmail: '',
-    });
 
     postSpy.getReplies.withArgs(mockCommentStack[0].id).and.returnValue([
       { ...mockComment_child, id: 'fakeChildComment1ID' },
@@ -41,8 +36,10 @@ describe('CommentListComponent', () => {
       imports: [CommentListComponent],
       providers: [
         { provide: PostService, useValue: postSpy },
-        { provide: LoginService, useValue: loginSpy },
-        provideNoopAnimations(),
+        {
+          provide: LoginService,
+          useValue: { doesUserHaveAccess: () => () => false },
+        },
       ],
     }).compileComponents();
 
@@ -58,14 +55,14 @@ describe('CommentListComponent', () => {
 
   it('should display each comment in a component', () => {
     const commentElements = fixture.debugElement.queryAll(
-      (e) => e.name === 'app-comment'
+      (e) => e.name === 'app-comment',
     );
 
     // counts component.comments + all of their children by calling the mock function that sets those children
     // this will always return the correct number of mock comments we set in advance
     const parentsWithChildrenCount = component.comments.reduce(
       (sum, e) => sum + 1 + component.getChildComments(e.id).length,
-      0
+      0,
     );
 
     expect(commentElements.length).toBe(parentsWithChildrenCount);
@@ -74,27 +71,27 @@ describe('CommentListComponent', () => {
   it('should display child comments nested under the parent', () => {
     const rootCommentIDs = component.comments.map((comment) => comment.id);
     const commentElements = fixture.debugElement.queryAll(
-      (e) => e.name === 'app-comment'
+      (e) => e.name === 'app-comment',
     );
     const rootCommentElements = commentElements.filter((comment) => {
       const commentComponent = comment.componentInstance as CommentComponent;
       return rootCommentIDs.includes(commentComponent.comment.id);
     });
     const nestedStackElements = rootCommentElements.map((comment) =>
-      comment.parent?.nativeElement.querySelectorAll('.comment-stack')
+      comment.parent?.nativeElement.querySelectorAll('.comment-stack'),
     );
 
     expect(nestedStackElements[0].length).toBe(
-      postSpy.getReplies(component.comments[0].id).length
+      postSpy.getReplies(component.comments[0].id)!.length,
     );
     expect(nestedStackElements[1].length).toBe(
-      postSpy.getReplies(component.comments[1].id).length
+      postSpy.getReplies(component.comments[1].id)!.length,
     );
     expect(nestedStackElements[2].length).toBe(
-      postSpy.getReplies(component.comments[2].id).length
+      postSpy.getReplies(component.comments[2].id)!.length,
     );
     expect(nestedStackElements[3].length).toBe(
-      postSpy.getReplies(component.comments[3].id).length
+      postSpy.getReplies(component.comments[3].id)!.length,
     );
   });
 
@@ -102,10 +99,10 @@ describe('CommentListComponent', () => {
     expect(component.areChildrenHidden.every((e) => e === false)).toBeTrue();
 
     const nestedCommentElements = fixture.debugElement.queryAll(
-      (e) => e.classes['nested-comments-stack'] === true
+      (e) => e.classes['nested-comments-stack'] === true,
     );
     const collapseButton = nestedCommentElements[0].nativeElement.querySelector(
-      'button'
+      'button',
     ) as HTMLButtonElement;
 
     collapseButton.click();

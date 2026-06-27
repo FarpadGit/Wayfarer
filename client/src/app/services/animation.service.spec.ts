@@ -26,59 +26,75 @@ describe('AnimationService', () => {
   });
 
   it('should change to "collapsing" state', async () => {
-    expect(service.bgAnimationState).toBe(bgStates.none);
+    expect(service.bgAnimationState()).toBe(bgStates.none);
 
     service.startCollapseAnimation();
 
-    expect(service.bgAnimationState).toBe(bgStates.collapsing);
+    expect(service.bgAnimationState()).toBe(bgStates.collapsing);
+    expect(service.blur()).toBe(false);
   });
 
   it('should change to "entering" state', async () => {
-    expect(service.bgAnimationState).toBe(bgStates.none);
+    expect(service.bgAnimationState()).toBe(bgStates.none);
 
     service.startEnterAnimation();
 
-    expect(service.bgAnimationState).toBe(bgStates.entering);
+    expect(service.bgAnimationState()).toBe(bgStates.entering);
+    expect(service.blur()).toBe(false);
+  });
+
+  it('should change to "quickEntering" state', async () => {
+    expect(service.bgAnimationState()).toBe(bgStates.none);
+
+    service.startQuickEnterAnimation();
+
+    expect(service.bgAnimationState()).toBe(bgStates.quickEntering);
+    expect(service.blur()).toBe(true);
   });
 
   it('should change to "entered" state', async () => {
-    expect(service.bgAnimationState).toBe(bgStates.none);
+    expect(service.bgAnimationState()).toBe(bgStates.none);
 
     service.startEnterAnimation();
     service.endAnimation();
 
-    expect(service.bgAnimationState).toBe(bgStates.entered);
+    expect(service.bgAnimationState()).toBe(bgStates.entered);
+    expect(service.blur()).toBe(false);
   });
 
   it('should change to "exiting" state', async () => {
-    expect(service.bgAnimationState).toBe(bgStates.none);
+    expect(service.bgAnimationState()).toBe(bgStates.none);
 
     service.startExitAnimation();
 
-    expect(service.bgAnimationState).toBe(bgStates.exiting);
+    expect(service.bgAnimationState()).toBe(bgStates.exiting);
+    expect(service.blur()).toBe(true);
   });
 
   it('should change to "none" state', async () => {
     service.startExitAnimation();
 
-    expect(service.bgAnimationState).toBe(bgStates.exiting);
+    expect(service.bgAnimationState()).toBe(bgStates.exiting);
 
     service.endAnimation();
 
-    expect(service.bgAnimationState).toBe(bgStates.none);
+    expect(service.bgAnimationState()).toBe(bgStates.none);
+    expect(service.blur()).toBe(false);
   });
 
   it('should change states automatically on router NavigationStart event (enter)', () => {
     service.startEnterAnimation();
     routerEvents.next(new NavigationStart(0, ''));
 
-    expect(service.bgAnimationState).toBe(bgStates.entered);
+    expect(service.bgAnimationState()).toBe(bgStates.entered);
+    expect(service.blur()).toBe(false);
   });
 
   it('should change states automatically on router NavigationStart event (exit)', () => {
     service.startExitAnimation();
     routerEvents.next(new NavigationStart(0, ''));
 
-    expect(service.bgAnimationState).toBe(bgStates.none);
+    expect(service.bgAnimationState()).toBe(bgStates.none);
+    expect(service.blur()).toBe(false);
   });
 });

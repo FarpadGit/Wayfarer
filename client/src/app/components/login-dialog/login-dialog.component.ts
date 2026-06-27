@@ -17,10 +17,10 @@ export class LoginDialogComponent {
   ) {}
 
   get currentUserName() {
-    return this.loginService.currentUserName;
+    return this.loginService.currentUserName();
   }
   get isGuestUser() {
-    return this.loginService.currentUserEmail === userAccounts.GUEST.email;
+    return this.loginService.currentUserEmail() === userAccounts.GUEST.email;
   }
 
   async onLoginClick() {

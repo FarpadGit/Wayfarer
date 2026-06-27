@@ -1,0 +1,100 @@
+.post-list {
+    &.enter {
+        animation: pl-enter 0.5s ease;
+    }
+
+    &.animating, &.finished {
+        overflow-y: clip;
+        overflow-x: visible;
+        pointer-events: none;
+    }
+
+    &.finished {
+        animation: fade 0.2s forwards;
+
+        @keyframes fade {
+            from { opacity: 1; }
+            to { 
+                opacity: 0; 
+                visibility: hidden; 
+            }
+        }
+    }
+
+    @keyframes pl-enter {
+        from {
+            opacity: 0;
+            top: 20px;
+        }
+        to {
+            opacity: 1;
+            top: 0px;
+        }
+    }
+}
+
+.body-container {
+    &.animating, &.finished {
+        animation: collapse 1s var(--app-easing-function) forwards;
+
+        @keyframes collapse {
+            to { 
+                translate: 0 calc(-100% + var(--app-post-list-header-height));
+                overflow-y: clip;
+                overflow-x: visible; 
+            }
+        }
+    }
+}
+
+app-post-item {
+    &.enter {
+        translate: -100%;
+        animation: pi-enter 0.5s ease var(--stagger-in);
+
+        @keyframes pi-enter {
+            from {
+                translate: -100%;
+            }
+            to {
+                translate: 0%;
+            }
+        }
+    }
+
+    &.leave {
+        position: absolute;
+        width: 100%;
+        top: calc(var(--i) * 100% / 6);
+
+        animation: pi-leave 0.5s ease var(--stagger-out);
+
+        @keyframes pi-leave {
+            from {
+                translate: 0%;
+            }
+            to {
+                translate: 100%;
+            }
+        }
+    }
+}
+
+.empty-list-notice {
+    &.enter {
+        translate: 0 -10%;
+        opacity: 0;
+        animation: l-enter 0.5s ease 0.6s;
+
+        @keyframes l-enter {
+            from {
+                translate: 0 -10%;
+                opacity: 0;
+            }
+            to {
+                translate: 0 0%;
+                opacity: 1;
+            }
+        }
+    }
+}

@@ -1,10 +1,11 @@
 .post-item {
-    --highlightDuration: 200ms;
     position: relative;
     border: 1px solid transparent;
     border-bottom-color: var(--app-post-list-border-color);
     padding: 1rem;
-    transition: scale var(--highlightDuration) linear, filter var(--highlightDuration) linear, border-color var(--highlightDuration) linear, background-color var(--highlightDuration) linear;
+    transition-property: scale, filter, border-color, background-color;
+    transition-timing-function: linear;
+    transition-duration: 200ms;
     overflow: hidden;
 
     &:before {
@@ -16,12 +17,11 @@
         height: 100%;
         margin-left: 200%;
         background: var(--app-post-highlight-img-url) center 40% / 100% no-repeat;
-        transition: left var(--highlightDuration) ease, margin-left var(--highlightDuration) ease;
+        transition: left 200ms ease, margin-left 200ms ease;
         z-index: -1;
     }
 
-    h3,
-    p {
+    h3, p {
         width: fit-content;
         padding-right: 4rem;
 
@@ -58,14 +58,14 @@
     }
 }
 
-/* post item highlight animation */
+/* post item highlight animations */
 
-:host-context(.post-list-body:has(.post-item.highlight)) .post-item:not(.highlight) {
+:host-context(.post-list-body:has(.post-item.highlighted)) .post-item:not(.highlighted) {
     filter: blur(0.15rem);
     scale: 1;
 }
 
-:host-context(.body-container:not(.collapsed)) .post-item.highlight {
+:host-context(.body-container:not(.collapsed)) .post-item.highlighted {
     filter: none;
     scale: 1.1;
     border-color: black;
@@ -74,7 +74,7 @@
     z-index: 10;
 }
 
-.post-item.highlight {
+.post-item.highlighted {
     &:hover:before,
     &:focus-visible:before {
         left: 0;

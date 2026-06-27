@@ -9,3 +9,14 @@
         grid-template-rows: min-content 1fr;
     }
 }
+
+.absolute {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    padding-bottom: 2rem;
+}
+
+.hidden {
+    display: none;
+}

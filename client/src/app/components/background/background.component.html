@@ -1,9 +1,11 @@
-<div class="background-image" [ngClass]="{ 'full': onPostPage, 'blur': blur }"
-      [@drop-down]="animationState"
-      (@drop-down.done)="animationState === bgStates.entering ? navigate() : null"
+<div class="background-image" 
+    [class.full]="onPostPage"
+    [class.blur]="blur"
+    [ngClass]="animationState"
+    (animationend)="handleAnimationEnd()"
   >
   <img
-    [ngSrc]="'../../../assets/bgs/' + backgroundImage"
+    [ngSrc]="'/assets/bgs/' + backgroundImage"
     fill
     priority
     alt=""
@@ -12,7 +14,7 @@
   />
   <div
     id="Logo"
-    [@slide-up]="animationState"
+    [ngClass]="animationState"
   >
     Wayfarer
   </div>

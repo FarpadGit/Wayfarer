@@ -1,4 +1,11 @@
-import { Component, Directive, ElementRef, OnInit } from '@angular/core';
+import {
+  Component,
+  Directive,
+  ElementRef,
+  OnInit,
+  signal,
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PostService } from '../../services/post.service';
 import { TransitionService } from '../../services/transition.service';
@@ -15,13 +22,6 @@ import {
   matSaveAll,
   matCancel,
 } from '@ng-icons/material-icons/baseline';
-import {
-  animate,
-  state,
-  style,
-  transition,
-  trigger,
-} from '@angular/animations';
 
 @Directive({ selector: '[appAutofocus]', standalone: true })
 export class AutofocusDirective implements OnInit {
@@ -36,6 +36,7 @@ export class AutofocusDirective implements OnInit {
   selector: 'app-post',
   standalone: true,
   imports: [
+    CommonModule,
     FormsModule,
     LoaderComponent,
     IconBtnComponent,
@@ -47,19 +48,9 @@ export class AutofocusDirective implements OnInit {
   ],
   providers: [PostService],
   templateUrl: './post.component.html',
-  styleUrl: './post.component.scss',
+  styleUrls: ['./post.component.scss', './animations.scss'],
   viewProviders: [
     provideIcons({ matArrowBack, matEditNote, matSaveAll, matCancel }),
-  ],
-  animations: [
-    trigger('post-fade-in-out', [
-      transition(':enter', [
-        style({ opacity: 0, top: '20px' }),
-        animate('0.5s 0.5s ease', style({ opacity: 1, top: '0px' })),
-      ]),
-      state(bgStates.exiting, style({ opacity: 0, left: '100px' })),
-      transition('* => ' + bgStates.exiting, animate('0.5s ease')),
-    ]),
   ],
 })
 export class PostComponent {
@@ -69,9 +60,9 @@ export class PostComponent {
     private animationService: AnimationService,
   ) {}
 
-  isEditMode = false;
-  isEditLoading = false;
-  hasEditError = false;
+  isEditModeSignal = signal(false);
+  isEditLoadingSignal = signal(false);
+  hasEditErrorSignal = signal(false);
   editedPost = { title: '', body: '' };
 
   get loadingState() {
@@ -90,14 +81,26 @@ export class PostComponent {
   }
 
   get authorLoggedIn() {
-    return this.postService.isAuthorLoggedIn();
+    return this.postService.isAuthorLoggedIn;
   }
 
   get animationState() {
-    return this.animationService.bgAnimationState;
+    const filter = [bgStates.exiting];
+    const state = this.animationService.bgAnimationState();
+    return filter.includes(state) ? state : '';
   }
   get rootComments() {
     return this.postService.rootComments;
+  }
+
+  get isEditMode() {
+    return this.isEditModeSignal();
+  }
+  get isEditLoading() {
+    return this.isEditLoadingSignal();
+  }
+  get hasEditError() {
+    return this.hasEditErrorSignal();
   }
 
   onCommentCreate(message: string) {
@@ -105,32 +108,32 @@ export class PostComponent {
   }
 
   backButtonClicked() {
-    if (this.isEditLoading) return;
+    if (this.isEditLoadingSignal()) return;
     this.animationService.startExitAnimation();
     this.transitionService.callDelayedNavigate(1000, '/', true);
   }
 
   async onPostEdit() {
-    if (this.isEditLoading) return;
-    if (!this.isEditMode) {
+    if (this.isEditLoadingSignal()) return;
+    if (!this.isEditModeSignal()) {
       this.editedPost.title = this.post!.title;
       this.editedPost.body = this.post!.body;
-      this.isEditMode = true;
+      this.isEditModeSignal.set(true);
     } else {
-      this.isEditLoading = true;
+      this.isEditLoadingSignal.set(true);
       const newSlug = await this.postService.updatePost(
         this.post!.id,
         this.editedPost,
       );
-      this.isEditLoading = false;
-      this.isEditMode = false;
+      this.isEditLoadingSignal.set(false);
+      this.isEditModeSignal.set(false);
 
-      if (newSlug == null) this.hasEditError = true;
+      if (newSlug == null) this.hasEditErrorSignal.set(true);
       else this.transitionService.callNavigate('/posts/' + newSlug, true);
     }
   }
 
   onPostEditCancel() {
-    if (!this.isEditLoading) this.isEditMode = false;
+    if (!this.isEditLoadingSignal()) this.isEditModeSignal.set(false);
   }
 }

@@ -1,20 +1,23 @@
-<div class="post-list" [@list-fade-in-out]="animationState"
-  (@list-fade-in-out.done)="animationState === animStates.finished ? startEnterAnimation() : null"
+<div class="post-list" [ngClass]="animationStateClass"
+  animate.enter="enter"
+  (animationend)="animationState() === animStates.finished && startEnterAnimation()"
 >
-  <div class="post-list-header" [ngClass]="{'collapsing': animationState === animStates.animating}">
+  <div class="post-list-header" [ngClass]="{'collapsing': animationState() === animStates.animating}">
     <h2>Posztok</h2>
     <app-new-post-button />
   </div>
   <div class="body-wrapper">
-    <div class="body-container" [@collapsable]="animationState"
-      (@collapsable.done)="animationState === animStates.animating ? animationState = animStates.finished : null"
+    <div class="body-container" [ngClass]="animationStateClass"
+      (animationend)="animationState() === animStates.animating && animationState.set(animStates.finished)"
     >
       <div class="post-list-body" 
-        [ngClass]="{ 'loading': reloading, 'clipped': isListClipped }"
+        [ngClass]="{ 'loading': reloading, 'has-highlighted': hasHighlighted }"
       >
-        @for(post of posts | paginate: { itemsPerPage: paginator.itemsPerPage, currentPage: paginator.currentPage }; let i = $index; track post) {
+        @for(post of posts | paginate: { itemsPerPage: paginator.itemsPerPage, currentPage: paginator.currentPage }; let i = $index; track post.id) {
           <app-post-item 
-              [@items-enter-leave]="{value: '', params: { 'delay-in': 50 + i * 200, 'delay-out': i * 200, i: i }}"
+              [ngStyle]="{'--stagger-in': (50 + i * 200) + 'ms', '--stagger-out': (i * 200) + 'ms', '--i': i}"
+              animate.enter="enter"
+              animate.leave="leave"
               [id]="post.id"
               [slug]="post.slug"
               [title]="post.title"
@@ -23,16 +26,16 @@
               [isDeleting]="isPostDeleting(post.id)"
               (onClick)="onPostItemClicked($event)"
               (onDeleteClick)="deletePost($event)"
-              (onHighlightChanged)="onHightlightChanged($event)"
+              (onHighlightChanged)="handleHighlightChanged($event)"
             />
         }
         @if(posts.length === 0) {
-          <div class="empty-list-notice" @label-fade-in>
+          <div class="empty-list-notice" animate.enter="enter">
             Légy az első aki erre az útra tér
           </div>
         }
       </div>
-      <div class="post-list-footer" [ngClass]="{'collapsing': animationState === animStates.animating}">
+      <div class="post-list-footer" [ngClass]="{'collapsing': animationState() === animStates.animating}">
         <h3>
           <app-paginator #paginator></app-paginator>
         </h3>

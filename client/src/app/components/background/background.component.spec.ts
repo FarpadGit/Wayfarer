@@ -1,6 +1,5 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideNoopAnimations } from '@angular/platform-browser/animations';
 
 import { BackgroundComponent } from './background.component';
 import {
@@ -8,14 +7,12 @@ import {
   TransitionService,
 } from '../../services/transition.service';
 import { AnimationService, bgStates } from '../../services/animation.service';
-import { setSpyProperty } from '../../../test/test.utils';
+import { BehaviorSubject } from 'rxjs';
 
 describe('BackgroundComponent', () => {
   class mockAnimationServiceClass {
-    state = signal(bgStates.none);
-    get bgAnimationState() {
-      return this.state();
-    }
+    bgAnimationState = signal(bgStates.none);
+    blur = signal(false);
   }
 
   let component: BackgroundComponent;
@@ -23,23 +20,26 @@ describe('BackgroundComponent', () => {
   let transitionSpy: jasmine.SpyObj<TransitionService>;
   let mockAnimationService: mockAnimationServiceClass;
   let rootDiv: HTMLDivElement;
+  let navigationStateSubject: BehaviorSubject<navStates>;
 
   beforeEach(async () => {
+    navigationStateSubject = new BehaviorSubject(navStates.none as navStates);
+
     transitionSpy = jasmine.createSpyObj(
       'TransitionService',
-      ['readyToNavigate', 'callDelayedNavigate'],
+      ['currentUrl', 'callDelayedNavigate', 'readyToNavigate'],
       {
-        navigationState: navStates.none,
-        currentUrl: '',
-      }
+        navigationState: navigationStateSubject,
+      },
     );
 
     mockAnimationService = new mockAnimationServiceClass();
 
+    transitionSpy.currentUrl.and.returnValue('');
+
     await TestBed.configureTestingModule({
       imports: [BackgroundComponent],
       providers: [
-        provideNoopAnimations(),
         { provide: TransitionService, useValue: transitionSpy },
         { provide: AnimationService, useValue: mockAnimationService },
       ],
@@ -56,32 +56,34 @@ describe('BackgroundComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should not be blurred when idle', () => {
-    expect(component.animationState).toBe(bgStates.none);
-    expect(component.blur).toBeFalse();
-  });
-
-  it('should expand to full screen when animation is entering, then blur', async () => {
-    mockAnimationService.state.set(bgStates.entering);
+  it('should expand to full screen when animation is entering', async () => {
+    mockAnimationService.bgAnimationState.set(bgStates.entering);
     fixture.detectChanges();
+    await fixture.whenRenderingDone();
+    await new Promise((res) => setTimeout(() => res(0), 1600));
+    const { width: bgWidth, height: bgHeight } = getComputedStyle(rootDiv);
+    const widthValue = Number.parseInt(bgWidth);
+    const heightValue = Number.parseInt(bgHeight);
 
-    expect(component.animationState).toBe(bgStates.entering);
-    expect(component.blur).toBeFalse();
-
-    await fixture.whenStable();
-
-    expect(component.blur).toBeTrue();
     expect(transitionSpy.callDelayedNavigate).toHaveBeenCalled();
-    expect(rootDiv.style.position).toBe('fixed');
-    expect(rootDiv.style.height.endsWith('vh')).toBe(true);
-    expect(Number.parseInt(rootDiv.style.height)).toBeGreaterThanOrEqual(100);
-    expect(rootDiv.style.width.endsWith('vw')).toBe(true);
-    expect(Number.parseInt(rootDiv.style.width)).toBeGreaterThanOrEqual(100);
+    expect(widthValue).toBeGreaterThanOrEqual(window.innerWidth);
+    expect(heightValue).toBeGreaterThanOrEqual(window.innerHeight);
   });
 
-  it('should be full screen and not blurred on posts page', () => {
-    setSpyProperty(transitionSpy, 'currentUrl', '/posts/123');
+  it('should expand to full screen when animation is quick-entering', async () => {
+    mockAnimationService.bgAnimationState.set(bgStates.quickEntering);
     fixture.detectChanges();
+    await fixture.whenRenderingDone();
+    const { width: bgWidth, height: bgHeight } = getComputedStyle(rootDiv);
+
+    expect(bgWidth).toBe(window.innerWidth + 'px');
+    expect(bgHeight).toBe(window.innerHeight + 'px');
+  });
+
+  it('should be full screen on posts page', async () => {
+    transitionSpy.currentUrl.and.returnValue('/posts/123');
+    fixture.detectChanges();
+    await fixture.whenRenderingDone();
     const {
       width: bgWidth,
       height: bgHeight,
@@ -91,14 +93,13 @@ describe('BackgroundComponent', () => {
     expect(bgWidth).toBe(window.innerWidth + 'px');
     expect(bgHeight).toBe(window.innerHeight + 'px');
     expect(bgPosition).toBe('fixed');
-    expect(component.blur).toBeFalse();
   });
 
-  it('should be blurred when animation is exiting', () => {
-    mockAnimationService.state.set(bgStates.exiting);
-    fixture.detectChanges();
+  it('should load a new background image if navigation state is "waiting"', () => {
+    expect(component.backgroundImage).toBe('');
 
-    expect(component.animationState).toBe(bgStates.exiting);
-    expect(component.blur).toBeTrue();
+    navigationStateSubject.next(navStates.waiting);
+
+    expect(component.backgroundImage).not.toBe('');
   });
 });

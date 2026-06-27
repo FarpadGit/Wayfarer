@@ -1,11 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { signal } from '@angular/core';
 import { PostItemComponent } from './post-item.component';
 import { LoginService } from '../../../services/login.service';
-import {
-  acceptDeleteConfirmDialogAnd,
-  setSpyProperty,
-} from '../../../../test/test.utils';
+import { acceptDeleteConfirmDialogAnd } from '../../../../test/test.utils';
 import { mockPostTitle } from '../../../../test/mocks';
 
 describe('PostItemComponent', () => {
@@ -13,11 +11,12 @@ describe('PostItemComponent', () => {
   let fixture: ComponentFixture<PostItemComponent>;
   let loginSpy: jasmine.SpyObj<LoginService>;
   let rootDiv: HTMLDivElement;
+  const isAuthorLoggedIn = signal(false);
 
   beforeEach(async () => {
-    loginSpy = jasmine.createSpyObj('LoginService', [], {
-      currentUserEmail: '',
-    });
+    loginSpy = jasmine.createSpyObj('LoginService', ['doesUserHaveAccess']);
+    loginSpy.doesUserHaveAccess.and.returnValue(isAuthorLoggedIn);
+    isAuthorLoggedIn.set(false);
 
     await TestBed.configureTestingModule({
       imports: [PostItemComponent],
@@ -45,15 +44,13 @@ describe('PostItemComponent', () => {
       component.uploadedSince,
     );
 
-    expect(titleElement?.innerText.includes(component.title)).toBeTrue();
-    expect(
-      detailsElement?.innerText.includes(component.uploader.name),
-    ).toBeTrue();
-    expect(detailsElement?.innerText.includes(formattedUploadDate)).toBeTrue();
+    expect(titleElement?.innerText).toMatch(component.title);
+    expect(detailsElement?.innerText).toMatch(component.uploader.name);
+    expect(detailsElement?.innerText).toMatch(formattedUploadDate);
   });
 
   it('should display delete button if uploader is logged in', () => {
-    setSpyProperty(loginSpy, 'currentUserEmail', component.uploader.email);
+    isAuthorLoggedIn.set(true);
     fixture.detectChanges();
     const iconButtonElement = rootDiv.querySelector('app-icon-btn');
 
@@ -78,7 +75,7 @@ describe('PostItemComponent', () => {
       done();
     });
 
-    setSpyProperty(loginSpy, 'currentUserEmail', component.uploader.email);
+    isAuthorLoggedIn.set(true);
     fixture.detectChanges();
 
     const deleteButtonElement = rootDiv

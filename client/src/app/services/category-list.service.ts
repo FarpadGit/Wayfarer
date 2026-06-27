@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { computed, Injectable } from '@angular/core';
 import { userAccounts } from './login.service';
 import { PostListService } from './post-list.service';
 import { CategoryApiService } from './API/category.api.service';
@@ -16,17 +16,17 @@ export class CategoryListService {
   private forcedLoading = false;
 
   get loading() {
-    return this.forcedLoading || this.getCategoriesFn.loading();
+    return computed(() => this.forcedLoading || this.getCategoriesFn.loading());
   }
   get error() {
-    return this.getCategoriesFn.error();
+    return this.getCategoriesFn.error;
   }
   get allCategories() {
-    return this.getCategoriesFn.value() ?? [];
+    return computed(() => this.getCategoriesFn.value() ?? []);
   }
 
-  getCurrentCategory() {
-    return this.postListService.getCurrentCategory();
+  get getCurrentCategory() {
+    return this.postListService.getCurrentCategory;
   }
 
   setCurrentCategory(id: string) {
@@ -34,7 +34,9 @@ export class CategoryListService {
   }
 
   async selectFirstCategory() {
-    await this.postListService.getPostsByCategory(this.allCategories[0].id);
+    const firstCategory = this.allCategories().at(0);
+    if (firstCategory)
+      await this.postListService.getPostsByCategory(firstCategory.id);
   }
 
   async refreshCategories() {

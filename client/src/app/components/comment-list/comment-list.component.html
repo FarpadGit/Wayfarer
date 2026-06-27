@@ -1,8 +1,12 @@
 @for(comment of comments; track comment.id; let i = $index) {
-    <div class="comment-stack" @fade-in-out>
+    <div class="comment-stack" animate.enter="enter" animate.leave="leave">
         <app-comment [comment]="comment" />
         @if(getChildComments(comment.id).length > 0) {
-            <div class="nested-comments-stack" [ngClass]="{ 'hide': areChildrenHidden[i] }" @fade-in-out>
+            <div class="nested-comments-stack" 
+                [ngClass]="{ 'hide': areChildrenHidden[i] }" 
+                animate.enter="enter" 
+                animate.leave="leave"
+            >
                 <button
                     class="collapse-line"
                     aria-label="Hide Replies"
@@ -18,7 +22,7 @@
                 [ngStyle]="{ 'margin-top': '1rem' }"
                 (click)="areChildrenHidden[i] = false"
             >
-            Mutatsd a megjegyzést
+                Mutatsd a megjegyzést
             </button>
         }
     </div>

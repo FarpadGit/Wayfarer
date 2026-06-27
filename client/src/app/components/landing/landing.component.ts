@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { PostListComponent } from '../post-list/post-list.component';
 import { CategoryListComponent } from '../category-list/category-list.component';
 import { PostListService } from '../../services/post-list.service';
@@ -20,16 +20,16 @@ export class LandingComponent implements OnInit {
     private imageService: ImagesApiService,
   ) {}
 
-  loaded = false;
+  private loaded = signal(false);
 
   get loadingState() {
-    if (this.categoryListService.error || this.postListService.error)
+    if (this.categoryListService.error() || this.postListService.error())
       return 'error';
-    else if (!this.loaded) return 'loading';
+    else if (!this.loaded()) return 'loading';
     return 'success';
   }
   get error() {
-    return this.categoryListService.error ?? this.postListService.error;
+    return this.categoryListService.error() ?? this.postListService.error();
   }
 
   async ngOnInit(): Promise<void> {
@@ -37,6 +37,6 @@ export class LandingComponent implements OnInit {
     if (this.categoryListService.getCurrentCategory() === '')
       await this.categoryListService.selectFirstCategory();
     await this.imageService.pingServer();
-    this.loaded = true;
+    this.loaded.set(true);
   }
 }

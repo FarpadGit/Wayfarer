@@ -22,13 +22,18 @@ export class PostService implements OnDestroy {
         this.getPostFn.execute(this.slug).then((post) => {
           post.comments = this.replaceAuthorNames(post.comments || []);
           this.localComments.set(post.comments);
+          this._isAuthorLoggedIn = this.loginService.doesUserHaveAccess(
+            post.uploaderEmail,
+          );
         });
       }
     });
   }
 
   slug = '';
-
+  private _isAuthorLoggedIn:
+    | ReturnType<typeof this.loginService.doesUserHaveAccess>
+    | undefined;
   private getPostFn = this.postApiService.getPostAsync;
 
   get loading() {
@@ -46,6 +51,10 @@ export class PostService implements OnDestroy {
 
   ngOnDestroy(): void {
     this.routeSub?.unsubscribe();
+  }
+
+  get isAuthorLoggedIn() {
+    return this._isAuthorLoggedIn?.() ?? false;
   }
 
   private replaceAuthorNames(comments: commentType[]) {
@@ -72,16 +81,8 @@ export class PostService implements OnDestroy {
     return this.commentsByParentId()['null'];
   }
 
-  getReplies(parentId: string) {
+  getReplies(parentId: string): commentType[] | undefined {
     return this.commentsByParentId()[parentId];
-  }
-
-  isAuthorLoggedIn() {
-    return (
-      this.loginService.currentUserEmail === this.post?.uploaderEmail ||
-      this.loginService.currentUserEmail ===
-        import.meta.env['NG_APP_ADMIN_EMAIL']
-    );
   }
 
   async updatePost(id: string, newPost: { title?: string; body?: string }) {
@@ -129,8 +130,8 @@ export class PostService implements OnDestroy {
       message,
       parentId,
       user: {
-        email: this.loginService.currentUserEmail,
-        name: this.loginService.currentUserName,
+        email: this.loginService.currentUserEmail(),
+        name: this.loginService.currentUserName(),
       },
     };
 

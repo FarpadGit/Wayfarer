@@ -40,11 +40,12 @@
   --app-backdrop-url: url("../assets/background.jpg");
   --app-post-highlight-img-url: url("../assets/Landscape.jpg");
   --app-worldmap-img-url: url("../assets/WorldMap.png");
-  --app-globe-img-url: url("../assets/globe.jpg");
   --app-banner-img-desktop-url: url("../assets/ForestEntry1.jpg");
   --app-banner-img-mobile-url: url("../assets/ForestEntry2.jpg");
   --app-banner-img-url: var(--app-banner-img-desktop-url);
+  --app-banner-height: 24vh;
   --app-login-drawer-height: 30vh;
+  --app-easing-function: cubic-bezier(0.87, 0, 0.13, 1);
 }
 
 body {

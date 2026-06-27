@@ -57,3 +57,22 @@
         transition: background-color 100ms ease-in-out;
     }
 }
+
+// fade-in & fade-out
+.enter {
+    animation: enter 0.25s ease;
+}
+.leave {
+    animation: enter 0.25s ease reverse forwards;
+}
+
+@keyframes enter {
+    from {
+        translate: 0 -20%;
+        opacity: 0;
+    }
+    to {
+        translate: 0 0%;
+        opacity: 1;
+    }
+}

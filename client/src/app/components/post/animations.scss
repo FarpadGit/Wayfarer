@@ -1,0 +1,40 @@
+.post-container {
+    // fade-in
+    &:not(.exiting){
+        opacity: 0;
+        top: 20px;
+        animation: enter 0.5s ease 0.5s forwards;
+    }
+
+    &.exiting {
+        left: 0;
+        animation: exit 0.5s ease forwards;
+    }
+}
+
+.absolute {
+    position: absolute;
+    visibility: hidden;
+}
+
+@keyframes enter {
+    from {
+        opacity: 0;
+        top: 20px;
+    }
+    to {
+        opacity: 1;
+        top: 0px;
+    }
+}
+
+@keyframes exit {
+    from {
+        opacity: 1;
+        left: 0px;
+    }
+    to {
+        opacity: 0;
+        left: 100px;
+    }
+}

@@ -26,7 +26,7 @@ describe('PostListService', () => {
           execute: () => Promise.resolve(mockPosts),
         },
         userId: mockLoggedInUserId,
-      }
+      },
     );
     imagesApiSpy = jasmine.createSpyObj('ImagesApiService', [
       'uploadImages',
@@ -54,15 +54,15 @@ describe('PostListService', () => {
   });
 
   it('should return loading signal value', () => {
-    expect(service.reloading).toBe(postApiSpy.getPostsAsync.loading());
+    expect(service.reloading()).toBe(postApiSpy.getPostsAsync.loading());
   });
 
   it('should return error signal value', () => {
-    expect(service.error).toBe(postApiSpy.getPostsAsync.error());
+    expect(service.error()).toBe(postApiSpy.getPostsAsync.error());
   });
 
   it('should return value signal value', () => {
-    expect(service.posts).toEqual(postApiSpy.getPostsAsync.value()!);
+    expect(service.posts()).toEqual(postApiSpy.getPostsAsync.value()!);
   });
 
   it("should set current active category and return all of it's posts", async () => {
@@ -92,7 +92,7 @@ describe('PostListService', () => {
       expect(imagesApiSpy.uploadImages).toHaveBeenCalledWith(
         [new File([], 'fakeImg1.jpg')],
         mockCreatedPostId,
-        mockLoggedInUserId
+        mockLoggedInUserId,
       );
       expect(executeSpy).toHaveBeenCalled();
     }, 0);

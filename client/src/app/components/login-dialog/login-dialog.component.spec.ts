@@ -15,8 +15,8 @@ describe('LoginDialogComponent', () => {
   beforeEach(async () => {
     loginSpy = jasmine.createSpyObj(
       'LoginService',
-      ['loginUser', 'logoutUser'],
-      { currentUserName: '', currentUserEmail: '', isCurrentUserSignedIn: '' }
+      ['currentUserName', 'currentUserEmail', 'loginUser', 'logoutUser'],
+      { isCurrentUserSignedIn: '' },
     );
     modalSpy = jasmine.createSpyObj('ModalService', ['close']);
 
@@ -41,32 +41,32 @@ describe('LoginDialogComponent', () => {
   });
 
   it('should display guest user info if logged in as guest', () => {
-    setSpyProperty(loginSpy, 'currentUserName', userAccounts.GUEST.display);
-    setSpyProperty(loginSpy, 'currentUserEmail', userAccounts.GUEST.email);
+    loginSpy.currentUserName.and.returnValue(userAccounts.GUEST.display);
+    loginSpy.currentUserEmail.and.returnValue(userAccounts.GUEST.email);
     fixture.detectChanges();
     const h2 = rootDiv.querySelector('h2');
 
     expect(component.isGuestUser).toBeTrue();
     expect(component.currentUserName).toBe(userAccounts.GUEST.display);
-    expect(h2?.innerText.includes(component.currentUserName)).toBeTrue();
+    expect(h2?.innerText).toMatch(userAccounts.GUEST.display);
   });
 
   it('should display user info if user is logged in', () => {
     const mockUsername = 'Fake User';
     const mockUserEmail = 'user@email.com';
-    setSpyProperty(loginSpy, 'currentUserName', mockUsername);
-    setSpyProperty(loginSpy, 'currentUserEmail', mockUserEmail);
+    loginSpy.currentUserName.and.returnValue(mockUsername);
+    loginSpy.currentUserEmail.and.returnValue(mockUserEmail);
     fixture.detectChanges();
     const h2 = rootDiv.querySelector('h2');
 
     expect(component.isGuestUser).toBeFalse();
     expect(component.currentUserName).toBe(mockUsername);
-    expect(h2?.innerText.includes(component.currentUserName)).toBeTrue();
+    expect(h2?.innerText).toMatch(mockUsername);
   });
 
   it('should display login and cancel buttons if logged in as guest', () => {
-    setSpyProperty(loginSpy, 'currentUserName', userAccounts.GUEST.display);
-    setSpyProperty(loginSpy, 'currentUserEmail', userAccounts.GUEST.email);
+    loginSpy.currentUserName.and.returnValue(userAccounts.GUEST.display);
+    loginSpy.currentUserEmail.and.returnValue(userAccounts.GUEST.email);
     fixture.detectChanges();
     const buttons = rootDiv.querySelectorAll('button');
     const guestButton = rootDiv.querySelector('[data-test-guest-btn]');
@@ -77,8 +77,8 @@ describe('LoginDialogComponent', () => {
   });
 
   it('should display login, cancel and "continue as guest" buttons if user is logged in', () => {
-    setSpyProperty(loginSpy, 'currentUserName', 'Fake User');
-    setSpyProperty(loginSpy, 'currentUserEmail', 'user@email.com');
+    loginSpy.currentUserName.and.returnValue('Fake User');
+    loginSpy.currentUserEmail.and.returnValue('user@email.com');
     fixture.detectChanges();
     const buttons = rootDiv.querySelectorAll('button');
     const guestButton = rootDiv.querySelector('[data-test-guest-btn]');
@@ -91,7 +91,7 @@ describe('LoginDialogComponent', () => {
   it('should call loginUser on login button press if user is not logged in', () => {
     setSpyProperty(loginSpy, 'isCurrentUserSignedIn', false);
     const loginButton = rootDiv.querySelector(
-      '[data-test-login-btn]'
+      '[data-test-login-btn]',
     ) as HTMLButtonElement;
     loginButton.click();
     fixture.detectChanges();
@@ -103,7 +103,7 @@ describe('LoginDialogComponent', () => {
   it('should first call logoutUser then loginUser on login button press if user is already logged in', async () => {
     setSpyProperty(loginSpy, 'isCurrentUserSignedIn', true);
     const loginButton = rootDiv.querySelector(
-      '[data-test-login-btn]'
+      '[data-test-login-btn]',
     ) as HTMLButtonElement;
     loginButton.click();
     fixture.detectChanges();
@@ -115,7 +115,7 @@ describe('LoginDialogComponent', () => {
 
   it('should first call logoutUser then loginUser on guest button press', () => {
     const guestButton = rootDiv.querySelector(
-      '[data-test-guest-btn]'
+      '[data-test-guest-btn]',
     ) as HTMLButtonElement;
     guestButton.click();
     fixture.detectChanges();
@@ -127,7 +127,7 @@ describe('LoginDialogComponent', () => {
 
   it('should close modal on cancel button press', () => {
     const cancelButton = rootDiv.querySelector(
-      '[data-test-cancel-btn]'
+      '[data-test-cancel-btn]',
     ) as HTMLButtonElement;
     cancelButton.click();
     fixture.detectChanges();

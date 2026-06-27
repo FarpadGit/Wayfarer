@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LoginService } from '../../../services/login.service';
 import { IconBtnComponent } from '../../UI/icon-btn/icon-btn.component';
@@ -25,7 +25,7 @@ import { tablerEraser } from '@ng-icons/tabler-icons';
     }),
   ],
 })
-export class PostItemComponent {
+export class PostItemComponent implements OnInit {
   @Input() id: string = '';
   @Input() slug: string = '';
   @Input() title: string = '';
@@ -38,34 +38,28 @@ export class PostItemComponent {
 
   constructor(private loginService: LoginService) {}
 
-  static highlightAnimationDuration = 200;
-  get highlightDuration() {
-    return PostItemComponent.highlightAnimationDuration;
-  }
+  isHighlighted = false;
+  isAnimating = false;
+  isAuthorLoggedIn:
+    | ReturnType<typeof this.loginService.doesUserHaveAccess>
+    | undefined;
 
-  _highlighted = false;
-  get highlighted() {
-    return this._highlighted;
-  }
-  set highlighted(value: boolean) {
-    this._highlighted = value;
-    this.onHighlightChanged.emit(value);
-  }
-
-  get authorLoggedIn() {
-    return (
-      this.loginService.currentUserEmail === this.uploader.email ||
-      this.loginService.currentUserEmail ===
-        import.meta.env['NG_APP_ADMIN_EMAIL']
+  ngOnInit(): void {
+    this.isAuthorLoggedIn = this.loginService.doesUserHaveAccess(
+      this.uploader.email,
     );
   }
 
-  PostItemClicked(e: Event) {
+  get authorLoggedIn() {
+    return this.isAuthorLoggedIn?.() ?? false;
+  }
+
+  postItemClicked(e: Event) {
     e.preventDefault();
     this.onClick.emit(this.slug);
   }
 
-  DeleteButtonClicked() {
+  deleteButtonClicked() {
     this.isDeleting = true;
     this.onDeleteClick.emit(this.id);
   }

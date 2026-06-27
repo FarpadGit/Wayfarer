@@ -1,13 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { signal } from '@angular/core';
 import { CommentComponent } from './comment.component';
 import { CommentFormComponent } from '../UI/comment-form/comment-form.component';
 import { LoginService } from '../../services/login.service';
 import { PostService } from '../../services/post.service';
-import {
-  acceptDeleteConfirmDialogAnd,
-  setSpyProperty,
-} from '../../../test/test.utils';
+import { acceptDeleteConfirmDialogAnd } from '../../../test/test.utils';
 import { mockComment } from '../../../test/mocks';
 
 describe('CommentComponent', () => {
@@ -16,6 +14,7 @@ describe('CommentComponent', () => {
   let postSpy: jasmine.SpyObj<PostService>;
   let loginSpy: jasmine.SpyObj<LoginService>;
   let rootDiv: HTMLDivElement;
+  const isAuthorLoggedIn = signal(false);
 
   beforeEach(async () => {
     postSpy = jasmine.createSpyObj('PostService', [
@@ -25,9 +24,10 @@ describe('CommentComponent', () => {
       'toggleCommentLike',
     ]);
 
-    loginSpy = jasmine.createSpyObj('LoginService', [], {
-      currentUserEmail: '',
-    });
+    loginSpy = jasmine.createSpyObj('LoginService', ['doesUserHaveAccess']);
+
+    loginSpy.doesUserHaveAccess.and.returnValue(isAuthorLoggedIn);
+    isAuthorLoggedIn.set(false);
 
     await TestBed.configureTestingModule({
       imports: [CommentComponent],
@@ -90,7 +90,7 @@ describe('CommentComponent', () => {
   });
 
   it('should display like, reply, edit and delete buttons if author is logged in', () => {
-    setSpyProperty(loginSpy, 'currentUserEmail', component.comment.user.email);
+    isAuthorLoggedIn.set(true);
     fixture.detectChanges();
     const likeButton = rootDiv
       .querySelector('[data-test-like-btn]')
@@ -120,14 +120,14 @@ describe('CommentComponent', () => {
 
     expect(postSpy.toggleCommentLike).toHaveBeenCalledWith(
       component.comment.id,
-      !component.comment.isLikedByMe
+      !component.comment.isLikedByMe,
     );
   });
 
   it('should enter editing mode if edit button is pressed', () => {
     expect(component.isEditing).toBeFalse();
 
-    setSpyProperty(loginSpy, 'currentUserEmail', component.comment.user.email);
+    isAuthorLoggedIn.set(true);
     fixture.detectChanges();
     rootDiv
       .querySelector('[data-test-edit-btn]')
@@ -155,10 +155,10 @@ describe('CommentComponent', () => {
     component.isEditing = true;
     fixture.detectChanges();
     const commentFormDebugElement = fixture.debugElement.query(
-      (e) => e.name === 'app-comment-form'
+      (e) => e.name === 'app-comment-form',
     );
     const submitButton = commentFormDebugElement.query(
-      (e) => e.name === 'button'
+      (e) => e.name === 'button',
     ).nativeElement as HTMLButtonElement;
     const commentFormComponent =
       commentFormDebugElement.componentInstance as CommentFormComponent;
@@ -169,7 +169,7 @@ describe('CommentComponent', () => {
 
     expect(postSpy.updateComment).toHaveBeenCalledWith(
       component.comment.id,
-      editedMessage
+      editedMessage,
     );
     expect(component.isEditing).toBeFalse();
   });
@@ -201,10 +201,10 @@ describe('CommentComponent', () => {
     component.isReplying = true;
     fixture.detectChanges();
     const commentFormDebugElement = fixture.debugElement.query(
-      (e) => e.name === 'app-comment-form'
+      (e) => e.name === 'app-comment-form',
     );
     const submitButton = commentFormDebugElement.query(
-      (e) => e.name === 'button'
+      (e) => e.name === 'button',
     ).nativeElement as HTMLButtonElement;
     const commentFormComponent =
       commentFormDebugElement.componentInstance as CommentFormComponent;
@@ -215,13 +215,13 @@ describe('CommentComponent', () => {
 
     expect(postSpy.createComment).toHaveBeenCalledWith(
       replyMessage,
-      component.comment.id
+      component.comment.id,
     );
     expect(component.isReplying).toBeFalse();
   });
 
   it('should call deleteComment if delete button is pressed', (done) => {
-    setSpyProperty(loginSpy, 'currentUserEmail', component.comment.user.email);
+    isAuthorLoggedIn.set(true);
     fixture.detectChanges();
     const deleteButton = rootDiv
       .querySelector('[data-test-delete-btn]')

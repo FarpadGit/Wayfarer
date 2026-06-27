@@ -1,10 +1,10 @@
-<div class="app-wrapper" [ngClass]="{ 'blur': blur }">
+<div class="app-wrapper" [class.blur]="blur">
   @if(isEntering) {
-    <div class="backdrop-image" @fade-in></div>
+    <div class="backdrop-image" animate.enter="enter"></div>
   }
   <app-background />
-  <div class="app-container">
-    <app-login-button class="login-btn" [@fade-out]="animationState"></app-login-button>
+  <div class="app-container" [class.quickEntering]="animationState === 'quickEntering'">
+    <app-login-button class="login-btn" [ngClass]="animationState"></app-login-button>
     <router-outlet></router-outlet>
   </div>
 </div>

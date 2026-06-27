@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, signal } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { PostListService } from '../../../services/post-list.service';
 import {
@@ -25,10 +25,10 @@ import { IconBtnComponent } from '../icon-btn/icon-btn.component';
 export class NewPostButtonComponent implements OnDestroy {
   constructor(
     private modalService: ModalService,
-    private postListService: PostListService
+    private postListService: PostListService,
   ) {}
 
-  loading: boolean = false;
+  loading = signal(false);
   private dialogSub: Subscription | null = null;
 
   async open() {
@@ -43,9 +43,9 @@ export class NewPostButtonComponent implements OnDestroy {
     });
 
     if (response.data) {
-      this.loading = true;
+      this.loading.set(true);
       await this.createPost(response.data as newPostType);
-      this.loading = false;
+      this.loading.set(false);
     }
   }
 

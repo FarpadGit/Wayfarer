@@ -1,8 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideNoopAnimations } from '@angular/platform-browser/animations';
 
+import { signal } from '@angular/core';
 import { PostListComponent } from './post-list.component';
-import { animStates } from './animations';
 import { PostListService } from '../../services/post-list.service';
 import { TransitionService } from '../../services/transition.service';
 import { AnimationService } from '../../services/animation.service';
@@ -22,33 +21,36 @@ describe('PostListComponent', () => {
   let animationSpy: jasmine.SpyObj<AnimationService>;
   let loginSpy: jasmine.SpyObj<LoginService>;
   let rootDiv: HTMLDivElement;
+  const isAuthorLoggedIn = signal(false);
 
   beforeEach(async () => {
-    postListSpy = jasmine.createSpyObj('PostListService', ['deletePost'], {
-      reloading: false,
-      error: null,
-      posts: [
-        { ...mockPostTitle, id: 'fakePostTitle1ID' },
-        { ...mockPostTitle, id: 'fakePostTitle2ID' },
-        { ...mockPostTitle, id: 'fakePostTitle3ID' },
-      ],
-    });
+    postListSpy = jasmine.createSpyObj('PostListService', [
+      'reloading',
+      'error',
+      'posts',
+      'deletePost',
+    ]);
     transitionSpy = jasmine.createSpyObj(
       'TransitionService',
       ['setNavigate', 'callDelayedNavigate'],
-      {
-        firstTime: true,
-        blur: false,
-      },
+      { firstTime: true },
     );
     animationSpy = jasmine.createSpyObj('AnimationService', [
       'startEnterAnimation',
       'startCollapseAnimation',
       'startQuickEnterAnimation',
     ]);
-    loginSpy = jasmine.createSpyObj('LoginService', [], {
-      currentUserEmail: '',
-    });
+    loginSpy = jasmine.createSpyObj('LoginService', ['doesUserHaveAccess']);
+
+    postListSpy.reloading.and.returnValue(false);
+    postListSpy.error.and.returnValue(null);
+    postListSpy.posts.and.returnValue([
+      { ...mockPostTitle, id: 'fakePostTitle1ID' },
+      { ...mockPostTitle, id: 'fakePostTitle2ID' },
+      { ...mockPostTitle, id: 'fakePostTitle3ID' },
+    ]);
+    loginSpy.doesUserHaveAccess.and.returnValue(isAuthorLoggedIn);
+    isAuthorLoggedIn.set(false);
 
     await TestBed.configureTestingModule({
       imports: [PostListComponent],
@@ -56,7 +58,6 @@ describe('PostListComponent', () => {
         { provide: PostListService, useValue: postListSpy },
         { provide: TransitionService, useValue: transitionSpy },
         { provide: AnimationService, useValue: animationSpy },
-        provideNoopAnimations(),
       ],
     })
       .overrideProvider(LoginService, { useValue: loginSpy })
@@ -75,7 +76,7 @@ describe('PostListComponent', () => {
   it('should display all posts', () => {
     const postItemElements = rootDiv.querySelectorAll('app-post-item');
 
-    expect(component.posts.length).toBe(postListSpy.posts.length);
+    expect(component.posts.length).toBe(postListSpy.posts().length);
     expect(postItemElements.length).toBe(component.posts.length);
   });
 
@@ -99,15 +100,14 @@ describe('PostListComponent', () => {
     fixture.detectChanges();
 
     expect(transitionSpy.setNavigate).toHaveBeenCalledWith(
-      jasmine.stringContaining(postListSpy.posts[0].slug),
+      jasmine.stringContaining(postListSpy.posts()[0].slug),
     );
     expect(animationSpy.startCollapseAnimation).toHaveBeenCalled();
-    expect(component.animationState).toBe(animStates.animating);
+    expect(component.animationState()).toBe(component.animStates.animating);
     expect(transitionSpy_firstTime?.set).toHaveBeenCalledWith(false);
   });
 
   it('should play a simple animation if a post item is clicked and it is not the first time', () => {
-    const transitionSpy_blur = getSpyProperty(transitionSpy, 'blur');
     setSpyProperty(transitionSpy, 'firstTime', false);
 
     const postItemElement = rootDiv.querySelector('app-post-item');
@@ -115,17 +115,12 @@ describe('PostListComponent', () => {
     categoryTitleElement?.click();
     fixture.detectChanges();
 
-    expect(transitionSpy_blur?.set).toHaveBeenCalledWith(true);
     expect(animationSpy.startQuickEnterAnimation).toHaveBeenCalled();
     expect(transitionSpy.callDelayedNavigate).toHaveBeenCalled();
   });
 
   it('should call deletePost if delete button is clicked and confirmed', (done) => {
-    setSpyProperty(
-      loginSpy,
-      'currentUserEmail',
-      postListSpy.posts[0].uploader.email,
-    );
+    isAuthorLoggedIn.set(true);
     fixture.detectChanges();
 
     const deleteButtonElement = rootDiv
@@ -137,7 +132,7 @@ describe('PostListComponent', () => {
 
     acceptDeleteConfirmDialogAnd(() => {
       expect(postListSpy.deletePost).toHaveBeenCalledWith(
-        postListSpy.posts[0].id,
+        postListSpy.posts()[0].id,
       );
       expect(component.paginator?.currentPage).toBe(0);
       done();
@@ -145,10 +140,12 @@ describe('PostListComponent', () => {
   });
 
   it('should not be visible if animation finished', async () => {
-    component.animationState = component.animStates.finished;
+    component.animationState.set(component.animStates.finished);
     fixture.detectChanges();
-    await fixture.whenStable();
+    await fixture.whenRenderingDone();
+    await new Promise((res) => setTimeout(() => res(0), 300));
+    const { visibility } = getComputedStyle(rootDiv);
 
-    expect(rootDiv.style.visibility).toBe('hidden');
+    expect(visibility).toBe('hidden');
   });
 });

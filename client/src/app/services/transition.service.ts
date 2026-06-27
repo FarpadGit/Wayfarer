@@ -1,6 +1,6 @@
-import { Injectable, signal } from '@angular/core';
-import { Location } from '@angular/common';
-import { Router } from '@angular/router';
+import { Injectable, OnDestroy, signal } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
+import { BehaviorSubject, Subscription } from 'rxjs';
 
 export enum navStates {
   none = 'none',
@@ -11,33 +11,30 @@ export enum navStates {
 @Injectable({
   providedIn: 'root',
 })
-export class TransitionService {
-  constructor(
-    private router: Router,
-    private location: Location,
-  ) {}
+export class TransitionService implements OnDestroy {
+  constructor(private router: Router) {
+    this.routersub = this.router.events.subscribe(
+      (event) =>
+        event instanceof NavigationEnd && this._currentUrl.set(event.url),
+    );
+  }
 
   firstTime = true;
-  private navigationStateSignal = signal<navStates>(navStates.none);
+  private navState = new BehaviorSubject<navStates>(navStates.none);
   get navigationState() {
-    return this.navigationStateSignal();
-  }
-  private set navigationState(value: navStates) {
-    this.navigationStateSignal.set(value);
+    return this.navState.asObservable();
   }
 
-  private blurSignal = signal<boolean>(false);
-  get blur() {
-    return this.blurSignal();
-  }
-  set blur(value: boolean) {
-    this.blurSignal.set(value);
+  private _currentUrl = signal('/');
+  get currentUrl() {
+    return this._currentUrl.asReadonly();
   }
 
   private redirectUrl = '';
+  private routersub: Subscription | undefined;
 
-  get currentUrl() {
-    return this.location.path();
+  ngOnDestroy(): void {
+    this.routersub?.unsubscribe();
   }
 
   setNavigate(redirectUrl: string) {
@@ -46,8 +43,8 @@ export class TransitionService {
 
   callNavigate(redirectUrl?: string, force: boolean = false) {
     if (redirectUrl) this.setNavigate(redirectUrl);
-    if (this.navigationState === navStates.ready || force) this.beginNavigate();
-    else this.navigationState = navStates.waiting;
+    if (this.navState.value === navStates.ready || force) this.beginNavigate();
+    else this.navState.next(navStates.waiting);
   }
 
   callDelayedNavigate(
@@ -61,13 +58,12 @@ export class TransitionService {
   }
 
   readyToNavigate() {
-    if (this.navigationState === navStates.waiting) this.beginNavigate();
-    else this.navigationState = navStates.ready;
+    if (this.navState.value === navStates.waiting) this.beginNavigate();
+    else this.navState.next(navStates.ready);
   }
 
   private beginNavigate() {
     this.router.navigateByUrl(this.redirectUrl);
-    this.navigationState = navStates.none;
-    this.blur = false;
+    this.navState.next(navStates.none);
   }
 }

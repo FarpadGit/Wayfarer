@@ -3,8 +3,8 @@
   [variant]="['black', 'vertical', 'unpadded']"
   spinnerSize="large"
   [ariaLabel]="'Create New Post'"
-  [loading]="loading"
-  [disabled]="loading"
+  [loading]="loading()"
+  [disabled]="loading()"
   (click)="open()"
 >
   <ng-icon icon name="matPostAdd" class="icon"></ng-icon>

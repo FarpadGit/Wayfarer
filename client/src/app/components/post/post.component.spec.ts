@@ -1,12 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideNoopAnimations } from '@angular/platform-browser/animations';
 
 import { PostComponent } from './post.component';
-import { CommentFormComponent } from '../UI/comment-form/comment-form.component';
 import { PostService } from '../../services/post.service';
 import { TransitionService } from '../../services/transition.service';
 import { AnimationService, bgStates } from '../../services/animation.service';
 import { LoginService } from '../../services/login.service';
+import { CommentFormComponent } from '../UI/comment-form/comment-form.component';
 import { setSpyProperty } from '../../../test/test.utils';
 import { mockComment, mockPost } from '../../../test/mocks';
 
@@ -30,13 +29,14 @@ describe('PostComponent', () => {
         'updatePost',
         'localComments',
         'createComment',
-        'getReplies',
         'isAuthorLoggedIn',
+        'getReplies',
       ],
       {
         loading: false,
         error: null,
         post: mockPost,
+        isAuthorLoggedIn: false,
         rootComments: [],
       },
     );
@@ -44,11 +44,12 @@ describe('PostComponent', () => {
       'callNavigate',
       'callDelayedNavigate',
     ]);
-    animationSpy = jasmine.createSpyObj(
-      'AnimationService',
-      ['startExitAnimation'],
-      { bgAnimationState: bgStates.none },
-    );
+    animationSpy = jasmine.createSpyObj('AnimationService', [
+      'bgAnimationState',
+      'startExitAnimation',
+    ]);
+
+    animationSpy.bgAnimationState.and.returnValue(bgStates.none);
 
     await TestBed.configureTestingModule({
       imports: [PostComponent],
@@ -56,12 +57,18 @@ describe('PostComponent', () => {
         { provide: PostService, useValue: postSpy },
         { provide: TransitionService, useValue: transitionSpy },
         { provide: AnimationService, useValue: animationSpy },
-        { provide: LoginService, useValue: { currentUserEmail: '' } },
-        provideNoopAnimations(),
       ],
     })
       .overrideComponent(PostComponent, {
         remove: { providers: [PostService] },
+        add: {
+          providers: [
+            {
+              provide: LoginService,
+              useValue: { doesUserHaveAccess: () => () => false },
+            },
+          ],
+        },
       })
       .compileComponents();
 
@@ -89,17 +96,17 @@ describe('PostComponent', () => {
 
     expect(component.loadingState).toBe('success');
     expect(component.post).toEqual(mockPost);
-    expect(titleElement?.innerText.includes(mockPost.title))
+    expect(titleElement?.innerText)
       .withContext('title mismatch')
-      .toBeTrue();
-    expect(bodyElement?.innerText.includes(mockPost.body))
+      .toMatch(mockPost.title);
+    expect(bodyElement?.innerText)
       .withContext('body mismatch')
-      .toBeTrue();
+      .toMatch(mockPost.body);
     expect(images.length).toBe(mockPost.images!.length);
     for (let i = 0; i < images.length; i++) {
-      expect(images[i].src.endsWith(mockPost.images![i].thumbnail!))
+      expect(images[i].src)
         .withContext('image mismatch')
-        .toBeTrue();
+        .toMatch(mockPost.images![i].thumbnail!);
     }
     expect(commentFormElement).toBeTruthy();
   });
@@ -134,7 +141,7 @@ describe('PostComponent', () => {
   });
 
   it('should display an edit button if author is logged in', () => {
-    postSpy.isAuthorLoggedIn.and.returnValue(true);
+    setSpyProperty(postSpy, 'isAuthorLoggedIn', true);
     fixture.detectChanges();
     const editButton = rootDiv.querySelector('[data-test-edit-btn]');
 
@@ -142,7 +149,7 @@ describe('PostComponent', () => {
   });
 
   it('should replace post title and article with edit elements and also display a cancel button if edit button is clicked', () => {
-    postSpy.isAuthorLoggedIn.and.returnValue(true);
+    setSpyProperty(postSpy, 'isAuthorLoggedIn', true);
     fixture.detectChanges();
     const editButton = rootDiv
       .querySelector('[data-test-edit-btn]')
@@ -160,7 +167,7 @@ describe('PostComponent', () => {
 
   it('should update post contents and reload post page with new slug', async () => {
     const newSlug = 'mockNewSlug';
-    component.isEditMode = true;
+    component.isEditModeSignal.set(true);
     postSpy.updatePost.and.resolveTo(newSlug);
     await component.onPostEdit();
 

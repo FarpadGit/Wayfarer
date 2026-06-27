@@ -5,11 +5,13 @@ import { LoginService, userAccounts } from './login.service';
 import { ApiService } from './API/api.service';
 import { mockUser } from '../../test/mocks';
 import { OAuthEvent, OAuthService } from 'angular-oauth2-oidc';
+import { Router } from '@angular/router';
 
 describe('LoginService', () => {
   let service: LoginService;
   let apiSpy: jasmine.SpyObj<ApiService>;
   let oauthSpy: jasmine.SpyObj<OAuthService>;
+  let routerSpy: jasmine.SpyObj<Router>;
   let oauthEvents: BehaviorSubject<OAuthEvent | {}>;
 
   beforeEach(() => {
@@ -28,17 +30,22 @@ describe('LoginService', () => {
       ],
       {
         events: oauthEvents,
-      }
+        state: 'redirectUrl',
+      },
     );
     oauthSpy.getIdentityClaims.and.returnValue({
       name: mockUser.name,
       email: mockUser.email,
+    });
+    routerSpy = jasmine.createSpyObj('Router', ['navigateByUrl'], {
+      url: '',
     });
 
     TestBed.configureTestingModule({
       providers: [
         { provide: ApiService, useValue: apiSpy },
         { provide: OAuthService, useValue: oauthSpy },
+        { provide: Router, useValue: routerSpy },
       ],
     });
 
@@ -47,6 +54,12 @@ describe('LoginService', () => {
 
   it('should be created', () => {
     expect(service).toBeTruthy();
+  });
+
+  it('should redirect after successful login flow', () => {
+    oauthEvents.next({ type: 'token_received' });
+
+    expect(routerSpy.navigateByUrl).toHaveBeenCalledWith('redirectUrl');
   });
 
   it('should initate oauth login flow', () => {
@@ -80,6 +93,18 @@ describe('LoginService', () => {
     expect(oauthSpy.logOut).toHaveBeenCalled();
   });
 
+  it('should return if currently logged in user can access resources (true)', async () => {
+    const result = service.doesUserHaveAccess(mockUser.email);
+
+    expect(result()).toBe(true);
+  });
+
+  it('should return if currently logged in user can access resources (false)', async () => {
+    const result = service.doesUserHaveAccess('wrong@email.com');
+
+    expect(result()).toBe(false);
+  });
+
   it('should return if current user is logged in', async () => {
     expect(service.isCurrentUserSignedIn).toBeTrue();
 
@@ -89,22 +114,22 @@ describe('LoginService', () => {
   });
 
   it("should return currently logged in user's name", async () => {
-    expect(service.currentUserName).toBe(mockUser.name);
+    expect(service.currentUserName()).toBe(mockUser.name);
   });
 
   it("should return currently logged in user's email", async () => {
-    expect(service.currentUserEmail).toBe(mockUser.email);
+    expect(service.currentUserEmail()).toBe(mockUser.email);
   });
 
   it("should return guest user's name", async () => {
     oauthSpy.getIdentityClaims.and.returnValue({});
 
-    expect(service.currentUserName).toBe(userAccounts.GUEST.display);
+    expect(service.currentUserName()).toBe(userAccounts.GUEST.display);
   });
 
   it("should return guest user's email", async () => {
     oauthSpy.getIdentityClaims.and.returnValue({});
 
-    expect(service.currentUserEmail).toBe(userAccounts.GUEST.email);
+    expect(service.currentUserEmail()).toBe(userAccounts.GUEST.email);
   });
 });

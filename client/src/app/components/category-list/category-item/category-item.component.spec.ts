@@ -1,11 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { signal } from '@angular/core';
 import { CategoryItemComponent } from './category-item.component';
 import { LoginService } from '../../../services/login.service';
-import {
-  acceptDeleteConfirmDialogAnd,
-  setSpyProperty,
-} from '../../../../test/test.utils';
+import { acceptDeleteConfirmDialogAnd } from '../../../../test/test.utils';
 import { mockCategory, mockUser } from '../../../../test/mocks';
 
 describe('CategoryItemComponent', () => {
@@ -13,11 +11,13 @@ describe('CategoryItemComponent', () => {
   let fixture: ComponentFixture<CategoryItemComponent>;
   let loginSpy: jasmine.SpyObj<LoginService>;
   let rootDiv: HTMLDivElement;
+  const isAuthorLoggedIn = signal(false);
 
   beforeEach(async () => {
-    loginSpy = jasmine.createSpyObj('LoginService', [], {
-      currentUserEmail: '',
-    });
+    loginSpy = jasmine.createSpyObj('LoginService', ['doesUserHaveAccess']);
+
+    loginSpy.doesUserHaveAccess.and.returnValue(isAuthorLoggedIn);
+    isAuthorLoggedIn.set(false);
 
     await TestBed.configureTestingModule({
       imports: [CategoryItemComponent],
@@ -44,18 +44,16 @@ describe('CategoryItemComponent', () => {
     const titleElement = rootDiv.querySelector('a');
     const detailsElement = rootDiv.querySelector('p');
     const formattedUploadDate = component.getUploadedSinceText(
-      component.uploadedSince
+      component.uploadedSince,
     );
 
-    expect(titleElement?.innerText.includes(component.title)).toBeTrue();
-    expect(
-      detailsElement?.innerText.includes(component.creator.name)
-    ).toBeTrue();
-    expect(detailsElement?.innerText.includes(formattedUploadDate)).toBeTrue();
+    expect(titleElement?.innerText).toMatch(component.title);
+    expect(detailsElement?.innerText).toMatch(component.creator.name);
+    expect(detailsElement?.innerText).toMatch(formattedUploadDate);
   });
 
   it('should display delete button if creator is logged in', () => {
-    setSpyProperty(loginSpy, 'currentUserEmail', component.creator.email);
+    isAuthorLoggedIn.set(true);
     fixture.detectChanges();
     const iconButtonElement = rootDiv.querySelector('app-icon-btn');
 
@@ -80,7 +78,7 @@ describe('CategoryItemComponent', () => {
       done();
     });
 
-    setSpyProperty(loginSpy, 'currentUserEmail', component.creator.email);
+    isAuthorLoggedIn.set(true);
     fixture.detectChanges();
 
     const deleteButtonElement = rootDiv

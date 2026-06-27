@@ -1,17 +1,9 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
-import { TransitionService } from './services/transition.service';
 import { AnimationService, bgStates } from './services/animation.service';
 import { BackgroundComponent } from './components/background/background.component';
 import { LoginButtonComponent } from './components/UI/login-button/login-button.component';
-import {
-  animate,
-  state,
-  style,
-  transition,
-  trigger,
-} from '@angular/animations';
 
 @Component({
   selector: 'app-root',
@@ -23,35 +15,26 @@ import {
     BackgroundComponent,
   ],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss',
-  animations: [
-    trigger('fade-in', [
-      transition(':enter', [
-        style({ opacity: 0 }),
-        animate('0.5s', style({ opacity: 1 })),
-      ]),
-    ]),
-    trigger('fade-out', [
-      state(bgStates.entering, style({ opacity: 0, 'pointer-events': 'none' })),
-      transition('* => ' + bgStates.entering, [animate('0.5s')]),
-    ]),
-  ],
+  styleUrls: ['./app.component.scss', './animations.scss'],
 })
 export class AppComponent {
-  constructor(
-    private animationService: AnimationService,
-    private transitionService: TransitionService,
-  ) {}
+  constructor(private animationService: AnimationService) {}
 
   get isEntering() {
-    return this.animationState === bgStates.entering;
+    return this.animationService.bgAnimationState() === bgStates.entering;
   }
 
   get animationState() {
-    return this.animationService.bgAnimationState;
+    const filter = [
+      bgStates.entering,
+      bgStates.quickEntering,
+      bgStates.exiting,
+    ];
+    const state = this.animationService.bgAnimationState();
+    return filter.includes(state) ? state : '';
   }
 
   get blur() {
-    return this.transitionService.blur;
+    return this.animationService.blur();
   }
 }

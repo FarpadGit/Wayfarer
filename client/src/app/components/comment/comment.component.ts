@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { PostService } from '../../services/post.service';
 import { LoginService } from '../../services/login.service';
 import { CommentFormComponent } from '../UI/comment-form/comment-form.component';
@@ -36,7 +36,7 @@ import {
     }),
   ],
 })
-export class CommentComponent {
+export class CommentComponent implements OnInit {
   @Input() comment!: commentType;
 
   constructor(
@@ -49,16 +49,22 @@ export class CommentComponent {
     timeStyle: 'short',
   });
 
-  get displayDate() {
-    return this.dateFormatter.format(Date.parse(this.comment.createdAt || '0'));
+  isAuthorLoggedIn:
+    | ReturnType<typeof this.loginService.doesUserHaveAccess>
+    | undefined;
+
+  ngOnInit(): void {
+    this.isAuthorLoggedIn = this.loginService.doesUserHaveAccess(
+      this.comment.user.email,
+    );
   }
 
   get authorLoggedIn() {
-    return (
-      this.loginService.currentUserEmail === this.comment.user.email ||
-      this.loginService.currentUserEmail ===
-        import.meta.env['NG_APP_ADMIN_EMAIL']
-    );
+    return this.isAuthorLoggedIn?.() ?? false;
+  }
+
+  get displayDate() {
+    return this.dateFormatter.format(Date.parse(this.comment.createdAt || '0'));
   }
 
   isReplying = false;

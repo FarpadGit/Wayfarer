@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
 
@@ -13,7 +14,6 @@ import {
   mockPostTitle,
   mockUser,
 } from '../../test/mocks';
-import { setSpyProperty } from '../../test/test.utils';
 
 describe('PostService', () => {
   let service: PostService;
@@ -21,6 +21,7 @@ describe('PostService', () => {
   let postApiSpy: jasmine.SpyObj<PostApiService>;
   let commentApiSpy: jasmine.SpyObj<CommentApiService>;
   let loginSpy: jasmine.SpyObj<LoginService>;
+  const isAuthorLoggedIn = signal(false);
   const mockPostWithComments: postType = {
     ...mockPost,
     comments: [
@@ -57,12 +58,17 @@ describe('PostService', () => {
       'deleteComment',
       'toggleCommentLike',
     ]);
-    loginSpy = jasmine.createSpyObj('LoginService', [], {
-      currentUserEmail: mockUser.email,
-      currentUserName: mockUser.name,
-    });
+    loginSpy = jasmine.createSpyObj('LoginService', [
+      'currentUserEmail',
+      'currentUserName',
+      'doesUserHaveAccess',
+    ]);
 
     commentApiSpy.createComment.and.resolveTo('FakeCreatedCommentID');
+    loginSpy.currentUserEmail.and.returnValue(mockUser.email);
+    loginSpy.currentUserName.and.returnValue(mockUser.name);
+    loginSpy.doesUserHaveAccess.and.returnValue(isAuthorLoggedIn);
+    isAuthorLoggedIn.set(false);
 
     TestBed.configureTestingModule({
       providers: [
@@ -85,7 +91,9 @@ describe('PostService', () => {
 
   it('should load post and comments if ActivatedRoute has corresponding "slug" parameter', () => {
     expect(service.slug).toBeTruthy();
-    expect(service.localComments().length).toBe(7);
+    expect(service.localComments().length).toBe(
+      mockPostWithComments.comments.length,
+    );
   });
 
   it('should return loading signal value', () => {
@@ -118,15 +126,15 @@ describe('PostService', () => {
   });
 
   it('should return true if post author is logged in', () => {
-    setSpyProperty(loginSpy, 'currentUserEmail', mockUser.email);
+    isAuthorLoggedIn.set(true);
 
-    expect(service.isAuthorLoggedIn()).toBeTrue();
+    expect(service.isAuthorLoggedIn).toBeTrue();
   });
 
   it('should return false if post author is not logged in', () => {
-    setSpyProperty(loginSpy, 'currentUserEmail', 'DifferentUser@mail.com');
+    isAuthorLoggedIn.set(false);
 
-    expect(service.isAuthorLoggedIn()).toBeFalse();
+    expect(service.isAuthorLoggedIn).toBeFalse();
   });
 
   it('should update post', async () => {

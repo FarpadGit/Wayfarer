@@ -1,9 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideNoopAnimations } from '@angular/platform-browser/animations';
 
+import { Component } from '@angular/core';
 import { AppComponent } from './app.component';
 import { AnimationService, bgStates } from './services/animation.service';
-import { TransitionService } from './services/transition.service';
+import { BackgroundComponent } from './components/background/background.component';
+
+@Component({
+  selector: 'app-background',
+  standalone: true,
+  template: '',
+})
+export class mockComponent {}
 
 describe('AppComponent', () => {
   let component: AppComponent;
@@ -14,17 +21,20 @@ describe('AppComponent', () => {
     await TestBed.configureTestingModule({
       imports: [AppComponent],
       providers: [
-        provideNoopAnimations(),
         {
           provide: AnimationService,
-          useValue: { bgAnimationState: bgStates.none },
-        },
-        {
-          provide: TransitionService,
-          useValue: { blur: false, currentUrl: '/' },
+          useValue: {
+            bgAnimationState: () => bgStates.none,
+            blur: () => false,
+          },
         },
       ],
-    }).compileComponents();
+    })
+      .overrideComponent(AppComponent, {
+        remove: { imports: [BackgroundComponent] },
+        add: { imports: [mockComponent] },
+      })
+      .compileComponents();
 
     fixture = TestBed.createComponent(AppComponent);
     component = fixture.componentInstance;
@@ -38,7 +48,7 @@ describe('AppComponent', () => {
 
   it('should display Background Component', () => {
     const backgroundComponent = fixture.debugElement.query(
-      (e) => e.name === 'app-background'
+      (e) => e.name === 'app-background',
     );
 
     expect(backgroundComponent).toBeTruthy();
@@ -46,7 +56,7 @@ describe('AppComponent', () => {
 
   it('should display floating login button', () => {
     const loginButton = fixture.debugElement.query(
-      (e) => e.name === 'app-login-button'
+      (e) => e.name === 'app-login-button',
     );
 
     expect(loginButton).toBeTruthy();

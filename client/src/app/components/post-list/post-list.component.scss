@@ -79,9 +79,15 @@
         border-left: 1px solid var(--app-post-list-border-color);
         border-right: 1px solid var(--app-post-list-border-color);
         transition: opacity 0.5s ease;
+        overflow: clip;
 
-        &.clipped {
-            overflow: clip;
+        &:has(app-post-item.enter) {
+            pointer-events: none;
+            overflow-clip-margin: 0;
+        }
+
+        &.has-highlighted {
+            overflow-clip-margin: 4rem;
         }
 
         &.loading {
@@ -110,6 +116,6 @@
     }
 }
 
-.body-wrapper:not(:has(.highlight)) {
+.body-wrapper:not(:has(.highlighted)) {
     overflow-y: clip;
 }

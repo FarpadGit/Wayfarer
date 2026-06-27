@@ -3,7 +3,7 @@
     <app-loader [text]="'Poszt betöltése...'" [inverted]="true"/>
   }
   @case ('error') {
-    <div class="post-container" [@post-fade-in-out]="animationState">
+    <div class="post-container" [ngClass]="animationState">
       <app-icon-btn data-test-back-btn [variant]="['responsive-large']" (onClick)="backButtonClicked()">
         <ng-icon icon name="matArrowBack"></ng-icon>Vissza
       </app-icon-btn>
@@ -14,7 +14,7 @@
     </div>
   }
   @case ('success') {
-    <div class="post-container" [@post-fade-in-out]="animationState">
+    <div class="post-container" [ngClass]="animationState" animate.leave="absolute">
       <div class="commands">
         <app-icon-btn data-test-back-btn [variant]="['responsive-large']" [disabled]="isEditLoading" (onClick)="backButtonClicked()">
           <ng-icon icon name="matArrowBack"></ng-icon>Vissza

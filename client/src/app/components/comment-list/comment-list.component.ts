@@ -1,8 +1,7 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PostService } from '../../services/post.service';
 import { CommentComponent } from '../comment/comment.component';
-import { animate, style, transition, trigger } from '@angular/animations';
 
 @Component({
   selector: 'app-comment-list',
@@ -10,33 +9,18 @@ import { animate, style, transition, trigger } from '@angular/animations';
   imports: [CommonModule, CommentComponent],
   templateUrl: './comment-list.component.html',
   styleUrl: './comment-list.component.scss',
-  animations: [
-    trigger('fade-in-out', [
-      transition(':enter', [
-        style({ translate: '0 -20%', opacity: 0 }),
-        animate('0.25s ease', style({ translate: '0 0%', opacity: 1 })),
-      ]),
-      transition(':leave', [
-        animate('0.25s ease', style({ translate: '0 -20%', opacity: 0 })),
-      ]),
-    ]),
-  ],
 })
-export class CommentListComponent {
-  @Input('comments') _comments: commentType[] = [];
-  get comments() {
-    return this._comments;
-  }
-  set comments(value: commentType[]) {
-    this._comments = value;
-    this.areChildrenHidden = this.comments.map(() => false);
-  }
+export class CommentListComponent implements OnInit {
+  @Input() comments: commentType[] = [];
+  areChildrenHidden: boolean[] = [];
 
   constructor(private postService: PostService) {}
+
+  ngOnInit(): void {
+    this.areChildrenHidden = this.comments.map(() => false);
+  }
 
   getChildComments(id: string) {
     return this.postService.getReplies(id) ?? [];
   }
-
-  areChildrenHidden: boolean[] = [];
 }

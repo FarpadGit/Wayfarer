@@ -6,7 +6,7 @@
         <h1 class="error-msg">{{ error }}</h1>
     }
     @case ('success') {
-        <div class="grid-layout">
+        <div class="grid-layout" animate.enter="absolute" animate.leave="absolute hidden">
             <app-category-list></app-category-list>
             <app-post-list></app-post-list>
         </div>

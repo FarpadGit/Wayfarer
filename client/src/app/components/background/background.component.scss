@@ -1,20 +1,19 @@
 .background-image {
-    --offset-top: -76vh;
     --background-offset: bottom center;
+    --transitions: filter 2s ease, scale 2s ease, border-radius 1s ease;
     overflow: hidden;
     position: relative;
     width: 80vw;
-    height: calc(100vh + var(--offset-top));
+    height: var(--app-banner-height);
     background: var(--app-banner-img-url) var(--background-offset) / 105vw 105vh no-repeat;
-    margin-left: 10vw;
-    margin-right: 10vw;
+    margin: 0 10vw;
     scale: 1;
     z-index: 10;
     filter: none;
     border: 2px solid black;
     border-top: 0;
     border-radius: 0 0 1rem 1rem;
-    transition: filter 2s ease, scale 2s ease, border-radius 1s ease;
+    transition: var(--transitions);
     pointer-events: none;
 
     &.blur {
@@ -62,7 +61,7 @@
 
     @media (max-width: 639px) {
            --app-banner-img-url: var(--app-banner-img-mobile-url);
-            --offset-top: -80vh;
+            --app-banner-height: 20vh;
     }
 }
 

@@ -1,14 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideNoopAnimations } from '@angular/platform-browser/animations';
 
+import { signal } from '@angular/core';
 import { CategoryListComponent } from './category-list.component';
 import { CategoryListService } from '../../services/category-list.service';
 import { AnimationService, bgStates } from '../../services/animation.service';
 import { LoginService } from '../../services/login.service';
-import {
-  acceptDeleteConfirmDialogAnd,
-  setSpyProperty,
-} from '../../../test/test.utils';
+import { acceptDeleteConfirmDialogAnd } from '../../../test/test.utils';
 import { mockCategory } from '../../../test/mocks';
 
 describe('CategoryListComponent', () => {
@@ -18,41 +15,40 @@ describe('CategoryListComponent', () => {
   let animationSpy: jasmine.SpyObj<AnimationService>;
   let loginSpy: jasmine.SpyObj<LoginService>;
   let rootDiv: HTMLDivElement;
+  const isAuthorLoggedIn = signal(false);
 
   beforeEach(async () => {
-    categoryListSpy = jasmine.createSpyObj(
-      'CategoryListService',
-      [
-        'getCurrentCategory',
-        'createCategory',
-        'setCurrentCategory',
-        'deleteCategory',
-        'getCurrentCategory',
-        'selectFirstCategory',
-      ],
-      {
-        loading: false,
-        error: null,
-        allCategories: [mockCategory, { ...mockCategory, id: 'fakeID2' }],
-      }
-    );
+    categoryListSpy = jasmine.createSpyObj('CategoryListService', [
+      'loading',
+      'allCategories',
+      'getCurrentCategory',
+      'createCategory',
+      'setCurrentCategory',
+      'deleteCategory',
+      'getCurrentCategory',
+      'selectFirstCategory',
+    ]);
 
-    animationSpy = jasmine.createSpyObj('CategoryListService', [], {
-      bgAnimationState: bgStates.none,
-    });
+    animationSpy = jasmine.createSpyObj('AnimationService', [
+      'bgAnimationState',
+    ]);
 
-    loginSpy = jasmine.createSpyObj('LoginService', [], {
-      currentUserEmail: '',
-    });
+    loginSpy = jasmine.createSpyObj('LoginService', ['doesUserHaveAccess']);
 
     categoryListSpy.getCurrentCategory.and.returnValue(mockCategory.id);
+    categoryListSpy.allCategories.and.returnValue([
+      mockCategory,
+      { ...mockCategory, id: 'fakeID2' },
+    ]);
+    animationSpy.bgAnimationState.and.returnValue(bgStates.none);
+    loginSpy.doesUserHaveAccess.and.returnValue(isAuthorLoggedIn);
+    isAuthorLoggedIn.set(false);
 
     await TestBed.configureTestingModule({
       imports: [CategoryListComponent],
       providers: [
         { provide: CategoryListService, useValue: categoryListSpy },
         { provide: AnimationService, useValue: animationSpy },
-        provideNoopAnimations(),
       ],
     })
       .overrideProvider(LoginService, { useValue: loginSpy })
@@ -73,7 +69,7 @@ describe('CategoryListComponent', () => {
     const categoryItemElements = rootDiv.querySelectorAll('app-category-item');
 
     expect(component.categories.length).toBe(
-      categoryListSpy.allCategories.length
+      categoryListSpy.allCategories().length,
     );
     expect(categoryItemElements.length).toBe(component.categories.length);
   });
@@ -85,7 +81,7 @@ describe('CategoryListComponent', () => {
     addCategoryButtonElement?.click();
     fixture.detectChanges();
 
-    expect(component.isInputActive).toBeTrue();
+    expect(component.isInputActive()).toBeTrue();
   });
 
   it('should call createCategory if add button is clicked with non-empty input', () => {
@@ -95,7 +91,7 @@ describe('CategoryListComponent', () => {
     addCategoryButtonElement?.click();
     fixture.detectChanges();
 
-    expect(component.isInputActive).toBeTrue();
+    expect(component.isInputActive()).toBeTrue();
 
     const addCategoryInputElement = rootDiv
       .querySelector('.input-container')
@@ -105,7 +101,7 @@ describe('CategoryListComponent', () => {
     fixture.detectChanges();
 
     expect(categoryListSpy.createCategory).toHaveBeenCalledWith(
-      mockCategory.title
+      mockCategory.title,
     );
   });
 
@@ -116,16 +112,12 @@ describe('CategoryListComponent', () => {
     fixture.detectChanges();
 
     expect(categoryListSpy.setCurrentCategory).toHaveBeenCalledWith(
-      categoryListSpy.allCategories[0].id
+      categoryListSpy.allCategories()[0].id,
     );
   });
 
   it('should call deleteCategory if delete button is clicked and confirmed', (done) => {
-    setSpyProperty(
-      loginSpy,
-      'currentUserEmail',
-      categoryListSpy.allCategories[0].creator.email
-    );
+    isAuthorLoggedIn.set(true);
     fixture.detectChanges();
 
     const deleteButtonElement = rootDiv
@@ -136,7 +128,7 @@ describe('CategoryListComponent', () => {
     fixture.detectChanges();
     acceptDeleteConfirmDialogAnd(() => {
       expect(categoryListSpy.deleteCategory).toHaveBeenCalledWith(
-        categoryListSpy.allCategories[0].id
+        categoryListSpy.allCategories()[0].id,
       );
       expect(categoryListSpy.selectFirstCategory).toHaveBeenCalled();
       done();
@@ -144,9 +136,10 @@ describe('CategoryListComponent', () => {
   });
 
   it('should not be visible if animation finished', () => {
-    component.animationState = component.animStates.finished;
+    component.animState.set(component.animStates.finished);
     fixture.detectChanges();
+    const { visibility } = getComputedStyle(rootDiv);
 
-    expect(rootDiv.parentElement?.style.visibility).toBe('hidden');
+    expect(visibility).toBe('hidden');
   });
 });

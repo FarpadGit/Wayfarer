@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { computed, Injectable, signal } from '@angular/core';
 import { userAccounts } from './login.service';
 import { PostApiService } from './API/post.api.service';
 import { ImagesApiService } from './API/images.api.service';
@@ -15,23 +15,23 @@ export class PostListService {
   private getPostsFn = this.postApiService.getPostsAsync;
 
   get reloading() {
-    return this.getPostsFn.loading();
+    return this.getPostsFn.loading;
   }
   get error() {
-    return this.getPostsFn.error();
+    return this.getPostsFn.error;
   }
   get posts() {
-    return this.getPostsFn.value() ?? [];
+    return computed(() => this.getPostsFn.value() ?? []);
   }
 
-  private currentCategoryId: string = '';
-  getCurrentCategory() {
-    return this.currentCategoryId;
+  private currentCategoryId = signal('');
+  get getCurrentCategory() {
+    return this.currentCategoryId.asReadonly();
   }
 
   async getPostsByCategory(categoryId: string) {
     await this.getPostsFn.execute(categoryId).then((posts) => {
-      this.currentCategoryId = categoryId;
+      this.currentCategoryId.set(categoryId);
       posts.sort(
         (post1, post2) =>
           new Date(post2.createdAt).valueOf() -
@@ -42,7 +42,7 @@ export class PostListService {
   }
 
   private refreshPosts() {
-    this.getPostsByCategory(this.currentCategoryId);
+    this.getPostsByCategory(this.currentCategoryId());
   }
 
   private replaceAuthorNames(posts: postTitleType[]) {

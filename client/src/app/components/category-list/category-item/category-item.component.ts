@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LoginService } from '../../../services/login.service';
 import { IconBtnComponent } from '../../UI/icon-btn/icon-btn.component';
@@ -25,7 +25,7 @@ import { tablerEraser } from '@ng-icons/tabler-icons';
     }),
   ],
 })
-export class CategoryItemComponent {
+export class CategoryItemComponent implements OnInit {
   @Input() id: string = '';
   @Input() title: string = '';
   @Input() creator: userType = { email: '', name: '' };
@@ -37,12 +37,18 @@ export class CategoryItemComponent {
   constructor(private loginService: LoginService) {}
 
   isDeleting = false;
-  get authorLoggedIn() {
-    return (
-      this.loginService.currentUserEmail === this.creator.email ||
-      this.loginService.currentUserEmail ===
-        import.meta.env['NG_APP_ADMIN_EMAIL']
+  isAuthorLoggedIn:
+    | ReturnType<typeof this.loginService.doesUserHaveAccess>
+    | undefined;
+
+  ngOnInit(): void {
+    this.isAuthorLoggedIn = this.loginService.doesUserHaveAccess(
+      this.creator.email,
     );
+  }
+
+  get authorLoggedIn() {
+    return this.isAuthorLoggedIn?.() ?? false;
   }
 
   PostItemClicked(e: Event) {
